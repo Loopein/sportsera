@@ -1,0 +1,47 @@
+{
+  "name": "sportsera",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "clean": "node -e \"try{require('fs').rmSync('.next',{recursive:true,force:true});}catch(e){if(e.code!=='ENOENT'&&e.code!=='EPERM'){throw e;}if(e.code==='EPERM'){console.warn('Could not remove .next (likely in use). Stop dev server and rerun npm run clean.');}}\"",
+    "dev": "next dev --webpack",
+    "dev:turbo": "next dev --turbopack",
+    "build": "next build",
+    "build:clean": "npm run clean && next build",
+    "cf:build": "opennextjs-cloudflare build",
+    "cf:preview": "npm run cf:build && opennextjs-cloudflare preview",
+    "cf:deploy": "npm run cf:build && opennextjs-cloudflare deploy",
+    "cf:typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
+    "clsx": "^2.1.1",
+    "next": "16.1.6",
+    "pg": "^8.20.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-icons": "^5.6.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@opennextjs/cloudflare": "^1.17.1",
+    "@playwright/test": "^1.54.2",
+    "@types/node": "^22.17.1",
+    "@types/pg": "^8.18.0",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9.34.0",
+    "eslint-config-next": "16.1.6",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4",
+    "wrangler": "^4.72.0"
+  }
+}
