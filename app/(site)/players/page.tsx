@@ -1,30 +1,113 @@
 import Link from "next/link";
+import { FiArrowRight, FiAward, FiUser } from "react-icons/fi";
+import { AdSlot } from "@/components/shared/AdSlot";
+import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/shared/EmptyState";
 import { getPlayers } from "@/lib/api/read";
 
 export const revalidate = 60;
+
+function getInitials(name: string): string {
+  return (
+    name
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join("") || "PL"
+  );
+}
 
 export default async function PlayersPage(): Promise<React.ReactElement> {
   const players = await getPlayers();
 
   return (
-    <div className="space-y-5">
-      <section>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">Players</h1>
-        <p className="mt-1 text-sm text-slate-600">Player profiles, career stats and recent form.</p>
-      </section>
-      <div className="grid gap-4 md:grid-cols-2">
-        {players.map((player) => (
-          <Link
-            key={player.id}
-            href={`/players/${player.id}`}
-            className="rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-300"
-          >
-            <p className="text-lg font-semibold text-slate-900">{player.name}</p>
-            <p className="text-sm text-slate-600">{player.role}</p>
-          </Link>
-        ))}
-      </div>
+    <div className="space-y-6">
+      <Card as="section" variant="strong" className="p-5 sm:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-brand-700">
+              <FiAward className="h-3.5 w-3.5" aria-hidden="true" />
+              Player Directory
+            </p>
+            <h1 className="mt-1 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">Players</h1>
+            <p className="mt-1 text-sm text-slate-600">
+              Player profiles, batting and bowling styles, career statistics, and recent form.
+            </p>
+          </div>
+          <span className="score-pill">{players.length} players</span>
+        </div>
+      </Card>
+
+      <AdSlot variant="in-feed" label="Sponsored · Players Hub" />
+
+      {players.length ? (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {players.map((player) => (
+            <Link
+              key={player.id}
+              href={`/players/${player.id}`}
+              className="group block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+            >
+              <Card
+                as="article"
+                interactive
+                className="flex h-full flex-col justify-between p-5 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:border-brand-300 group-hover:shadow-lg"
+              >
+                <div>
+                  <div className="flex items-center gap-3.5">
+                    <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-brand-200 bg-brand-50 text-sm font-black text-brand-700 shadow-sm">
+                      {getInitials(player.name)}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="truncate text-lg font-extrabold text-slate-900 group-hover:text-brand-700">
+                        {player.name}
+                      </p>
+                      <span className="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2.5 py-0.5 text-[11px] font-bold text-brand-700">
+                        <FiUser className="h-3 w-3" aria-hidden="true" />
+                        {player.role}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 space-y-1.5 rounded-xl bg-slate-50/90 p-3 text-xs text-slate-600">
+                    <p className="flex items-center justify-between gap-2">
+                      <span className="font-semibold text-slate-500">Batting</span>
+                      <span className="truncate font-bold text-slate-800">{player.battingStyle ?? "-"}</span>
+                    </p>
+                    <p className="flex items-center justify-between gap-2">
+                      <span className="font-semibold text-slate-500">Bowling</span>
+                      <span className="truncate font-bold text-slate-800">{player.bowlingStyle ?? "-"}</span>
+                    </p>
+                  </div>
+
+                  {player.recentForm.length ? (
+                    <div className="mt-3 flex flex-wrap items-center gap-1.5">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Form:</span>
+                      {player.recentForm.slice(0, 4).map((item, idx) => (
+                        <span
+                          key={`${player.id}-form-${idx}`}
+                          className="rounded-md border border-slate-200 bg-white px-2 py-0.5 text-[11px] font-bold tabular-nums text-slate-700"
+                        >
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+
+                <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 text-xs font-bold uppercase tracking-wider text-brand-700">
+                  <span>View Career Profile</span>
+                  <FiArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />
+                </div>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <EmptyState title="No players available" description="Player profiles will appear here once added." />
+      )}
+      <AdSlot variant="leaderboard" label="Sponsored · Player Directory" />
     </div>
   );
 }
-

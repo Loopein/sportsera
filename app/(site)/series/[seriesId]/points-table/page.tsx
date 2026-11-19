@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { SeriesTabs } from "@/app/(site)/series/[seriesId]/SeriesTabs";
 import { PointsTable } from "@/components/series/PointsTable";
+import { AdSlot } from "@/components/shared/AdSlot";
 import { getSeriesById } from "@/lib/api/read";
 
 type SeriesPointsProps = {
@@ -16,6 +17,7 @@ export default async function SeriesPointsPage({ params }: SeriesPointsProps): P
     <div className="space-y-4">
       <SeriesTabs seriesId={data.series.id} currentPath={`/series/${data.series.id}/points-table`} />
       <PointsTable rows={data.standings} />
+      <AdSlot variant="leaderboard" label="Sponsored · Points Table" />
     </div>
   );
 }

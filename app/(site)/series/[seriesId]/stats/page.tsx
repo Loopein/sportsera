@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { SeriesTabs } from "@/app/(site)/series/[seriesId]/SeriesTabs";
+import { AdSlot } from "@/components/shared/AdSlot";
 import { getSeriesById } from "@/lib/api/read";
 
 type SeriesStatsProps = {
@@ -23,6 +24,7 @@ export default async function SeriesStatsPage({ params }: SeriesStatsProps): Pro
           <li className="rounded-md bg-slate-50 px-3 py-2">Matches are updated in near-real-time from read APIs.</li>
         </ul>
       </section>
+      <AdSlot variant="leaderboard" label="Sponsored · Series Stats" />
     </div>
   );
 }

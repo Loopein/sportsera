@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { PlayerTabs } from "@/app/(site)/players/[playerId]/PlayerTabs";
 import { PlayerStats } from "@/components/player/PlayerStats";
+import { AdSlot } from "@/components/shared/AdSlot";
 import { getPlayer } from "@/lib/api/read";
 
 type PlayerCareerProps = {
@@ -16,6 +17,7 @@ export default async function PlayerCareerPage({ params }: PlayerCareerProps): P
     <div className="space-y-4">
       <PlayerTabs playerId={player.id} currentPath={`/players/${player.id}/career`} />
       <PlayerStats career={player.career} />
+      <AdSlot variant="leaderboard" label="Sponsored · Career Records" />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { SeriesTabs } from "@/app/(site)/series/[seriesId]/SeriesTabs";
 import { FixturesList } from "@/components/series/FixturesList";
+import { AdSlot } from "@/components/shared/AdSlot";
 import { getMatches, getSeriesById } from "@/lib/api/read";
 
 type SeriesFixturesProps = {
@@ -18,6 +19,7 @@ export default async function SeriesFixturesPage({ params }: SeriesFixturesProps
     <div className="space-y-4">
       <SeriesTabs seriesId={seriesData.series.id} currentPath={`/series/${seriesData.series.id}/fixtures`} />
       <FixturesList matches={filtered} />
+      <AdSlot variant="leaderboard" label="Sponsored · Series Fixtures" />
     </div>
   );
 }

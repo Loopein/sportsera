@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { GoogleAdSenseScript } from "@/components/shared/GoogleAdSenseScript";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_POWERED_BY } from "@/lib/constants/site";
 import "@/styles/tokens.css";
 import "@/app/globals.css";
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body className="min-h-screen antialiased">
+        <GoogleAdSenseScript />
         <div className="flex min-h-screen flex-col">
           <Header />
           <main className="flex-1">{children}</main>

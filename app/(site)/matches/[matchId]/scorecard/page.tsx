@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MatchTabs } from "@/app/(site)/matches/[matchId]/MatchTabs";
 import { ScorecardTable } from "@/components/match/ScorecardTable";
+import { AdSlot } from "@/components/shared/AdSlot";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { getMatchScorecard, getMatchSummary, getTeam } from "@/lib/api/read";
 import type { MatchSummary, ScorecardInnings } from "@/types/match";
@@ -157,9 +158,9 @@ export default async function ScorecardPage({ params, searchParams }: ScorecardP
             <span className="text-brand-700"> - {kickoffLabel}</span>
           </p>
 
-          <div className="mt-5 grid grid-cols-[1fr_auto_1fr] items-center gap-6">
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg border border-brand-200 bg-brand-50">
+          <div className="mt-5 grid grid-cols-1 items-center gap-4 sm:grid-cols-[1fr_auto_1fr] sm:gap-6">
+            <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-brand-200 bg-brand-50 sm:h-12 sm:w-12">
                 {summary.teamA.logo ? (
                   <img src={summary.teamA.logo} alt={summary.teamA.name} className="h-full w-full object-cover" />
                 ) : (
@@ -168,23 +169,23 @@ export default async function ScorecardPage({ params, searchParams }: ScorecardP
                   </span>
                 )}
               </div>
-              <div>
-                <p className="text-lg font-semibold text-slate-900">{summary.teamA.name}</p>
-                <p className="text-sm text-slate-600">{summary.teamA.score ?? "-"}</p>
+              <div className="min-w-0">
+                <p className="truncate text-base font-extrabold text-slate-900 sm:text-lg">{summary.teamA.name}</p>
+                <p className="text-sm font-bold tabular-nums text-slate-700">{summary.teamA.score ?? "-"}</p>
               </div>
             </div>
 
-            <div className="text-center">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">vs</p>
-              <p className="mt-2 text-sm font-medium text-slate-700">{summary.resultText ?? metaLabel}</p>
+            <div className="rounded-xl bg-slate-50 px-3 py-2 text-center sm:bg-transparent sm:p-0">
+              <p className="text-xs font-extrabold uppercase tracking-wider text-slate-400">vs</p>
+              <p className="mt-1 text-xs font-semibold text-slate-700 sm:mt-2 sm:text-sm">{summary.resultText ?? metaLabel}</p>
             </div>
 
-            <div className="flex items-center justify-end gap-4 text-right">
-              <div>
-                <p className="text-lg font-semibold text-slate-900">{summary.teamB.name}</p>
-                <p className="text-sm text-slate-600">{summary.teamB.score ?? "-"}</p>
+            <div className="flex min-w-0 items-center justify-between gap-3 sm:justify-end sm:gap-4 sm:text-right">
+              <div className="min-w-0 order-2 sm:order-1">
+                <p className="truncate text-base font-extrabold text-slate-900 sm:text-lg">{summary.teamB.name}</p>
+                <p className="text-sm font-bold tabular-nums text-slate-700">{summary.teamB.score ?? "-"}</p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg border border-brand-200 bg-brand-50">
+              <div className="order-1 flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-brand-200 bg-brand-50 sm:order-2 sm:h-12 sm:w-12">
                 {summary.teamB.logo ? (
                   <img src={summary.teamB.logo} alt={summary.teamB.name} className="h-full w-full object-cover" />
                 ) : (
@@ -216,6 +217,8 @@ export default async function ScorecardPage({ params, searchParams }: ScorecardP
           </div>
         ) : null}
       </section>
+
+      <AdSlot variant="in-feed" label="Sponsored · Live Match Partner" />
 
       {hasInnings && selectedInnings ? (
         <div className="space-y-0">
@@ -288,6 +291,8 @@ export default async function ScorecardPage({ params, searchParams }: ScorecardP
       ) : (
         <EmptyState title="Scorecard not available yet" />
       )}
+
+      <AdSlot variant="leaderboard" label="Sponsored · Scorecard Footer" />
     </div>
   );
 }

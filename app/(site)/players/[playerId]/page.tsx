@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { PlayerTabs } from "@/app/(site)/players/[playerId]/PlayerTabs";
 import { PlayerHeader } from "@/components/player/PlayerHeader";
 import { PlayerStats } from "@/components/player/PlayerStats";
+import { AdSlot } from "@/components/shared/AdSlot";
 import { getPlayer } from "@/lib/api/read";
 
 type PlayerOverviewProps = {
@@ -17,7 +18,9 @@ export default async function PlayerOverviewPage({ params }: PlayerOverviewProps
     <div className="space-y-4">
       <PlayerTabs playerId={player.id} currentPath={`/players/${player.id}`} />
       <PlayerHeader player={player} />
+      <AdSlot variant="in-feed" label="Sponsored · Player Profile" />
       <PlayerStats career={player.career} />
+      <AdSlot variant="leaderboard" label="Sponsored · Player Analytics" />
     </div>
   );
 }

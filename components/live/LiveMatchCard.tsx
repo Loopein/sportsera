@@ -41,80 +41,115 @@ function LiveMatchCardComponent({ match }: { match: LiveMatch }): React.ReactEle
   return (
     <Link
       href={ctaHref}
-      className="group block min-w-0 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+      className="group block h-full min-w-0 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
     >
       <Card
         as="article"
         variant="strong"
-        className="h-full w-full min-w-0 overflow-hidden p-5 transition-all duration-300 group-hover:border-brand-200 group-hover:shadow-md md:min-h-0 md:p-4"
+        className="relative flex h-full w-full min-w-0 flex-col justify-between overflow-hidden p-4 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:border-brand-300 group-hover:shadow-lg sm:p-5"
       >
-        <div className="mb-4 flex items-center justify-between gap-2 md:mb-3">
-          <p className="inline-flex min-w-0 items-center gap-1.5 truncate text-sm font-semibold uppercase tracking-wide text-slate-500 md:text-xs">
-            <SeriesIcon
-              className={`h-3.5 w-3.5 shrink-0 ${
-                isLive ? "animate-pulse-soft text-red-500" : isUpcoming ? "text-brand-600" : isCompleted ? "text-emerald-600" : "text-amber-600"
-              }`}
-              aria-hidden="true"
-            />
-            <span className="truncate">{match.seriesName}</span>
-          </p>
-          <MatchStatusBadge status={match.status} label={badgeLabel} />
-        </div>
-        <div className="space-y-2 rounded-xl bg-slate-50 p-4 md:p-3">
-          <div className="flex items-center justify-between gap-3 text-base md:text-sm">
-            <div className="flex items-center gap-2">
-              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-brand-100 text-xs font-extrabold text-brand-700 md:h-7 md:w-7 md:text-[11px]">
-                {match.teamA.shortName.slice(0, 2)}
+        <div>
+          <div className="mb-3.5 flex items-center justify-between gap-2">
+            <div className="flex min-w-0 items-center gap-1.5">
+              <SeriesIcon
+                className={`h-3.5 w-3.5 shrink-0 ${
+                  isLive
+                    ? "animate-pulse-soft text-red-500"
+                    : isUpcoming
+                      ? "text-brand-600"
+                      : isCompleted
+                        ? "text-emerald-600"
+                        : "text-amber-600"
+                }`}
+                aria-hidden="true"
+              />
+              <span className="truncate text-xs font-bold uppercase tracking-wider text-slate-600">
+                {match.seriesName}
               </span>
-              <span className="font-bold text-slate-900">{match.teamA.shortName}</span>
+              {match.format ? (
+                <span className="shrink-0 rounded-md border border-slate-200 bg-white px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-700">
+                  {match.format}
+                </span>
+              ) : null}
             </div>
-            <span className="text-lg font-extrabold text-slate-900 md:text-base">{match.teamA.score ?? "-"}</span>
+            <MatchStatusBadge status={match.status} label={badgeLabel} />
           </div>
-          <div className="flex items-center justify-between gap-3 text-base md:text-sm">
-            <div className="flex items-center gap-2">
-              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-brand-200 text-xs font-extrabold text-brand-700 md:h-7 md:w-7 md:text-[11px]">
-                {match.teamB.shortName.slice(0, 2)}
+
+          <div className="space-y-2.5 rounded-xl border border-slate-200/80 bg-white/90 p-3.5 shadow-inner">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-2.5">
+                <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-brand-200 bg-brand-50 text-xs font-black text-brand-700">
+                  {match.teamA.shortName.slice(0, 3)}
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-extrabold text-slate-900">{match.teamA.shortName}</p>
+                  <p className="truncate text-[11px] font-medium text-slate-500">{match.teamA.name}</p>
+                </div>
+              </div>
+              <span className="shrink-0 text-right text-sm font-black tabular-nums text-slate-900 sm:text-base">
+                {match.teamA.score || "-"}
               </span>
-              <span className="font-bold text-slate-900">{match.teamB.shortName}</span>
             </div>
-            <span className="text-lg font-extrabold text-slate-900 md:text-base">{match.teamB.score ?? "-"}</span>
+
+            <div className="h-px bg-slate-100" />
+
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-2.5">
+                <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-indigo-200 bg-indigo-50 text-xs font-black text-indigo-800">
+                  {match.teamB.shortName.slice(0, 3)}
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-extrabold text-slate-900">{match.teamB.shortName}</p>
+                  <p className="truncate text-[11px] font-medium text-slate-500">{match.teamB.name}</p>
+                </div>
+              </div>
+              <span className="shrink-0 text-right text-sm font-black tabular-nums text-slate-900 sm:text-base">
+                {match.teamB.score || "-"}
+              </span>
+            </div>
+
+            <div className="pt-1">
+              <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-slate-100 gap-0.5">
+                <div className="h-full rounded-l-full bg-brand-600 transition-all duration-500" style={{ width: teamAWidth }} />
+                <div className="h-full rounded-r-full bg-indigo-400 transition-all duration-500" style={{ width: teamBWidth }} />
+              </div>
+            </div>
           </div>
-          <div className="mt-1 space-y-1">
-            <div className="h-2 rounded-full bg-slate-200 md:h-1.5">
-              <div className="h-2 rounded-full bg-brand-500 md:h-1.5" style={{ width: teamAWidth }} />
-            </div>
-            <div className="h-2 rounded-full bg-slate-200 md:h-1.5">
-              <div className="h-2 rounded-full bg-brand-400 md:h-1.5" style={{ width: teamBWidth }} />
-            </div>
+
+          <div className="mt-3 flex min-h-[2.35rem] w-full items-center gap-2 rounded-xl border border-brand-100 bg-brand-50/80 px-3 py-2 text-xs font-semibold text-brand-900">
+            {isUpcoming ? (
+              <>
+                <FiClock className="h-3.5 w-3.5 shrink-0 text-brand-700" aria-hidden="true" />
+                <UpcomingCountdown startAt={startAt} fallbackValue="Upcoming fixture" valueClassName="text-brand-800" />
+              </>
+            ) : (
+              <>
+                <SummaryIcon
+                  className={`h-3.5 w-3.5 shrink-0 ${isLive ? "text-red-600" : "text-brand-700"}`}
+                  aria-hidden="true"
+                />
+                <span className="truncate">{match.summary || "Live match in progress"}</span>
+              </>
+            )}
           </div>
         </div>
-        <p className="mt-3 inline-flex w-full items-center gap-2 rounded-lg bg-brand-50 px-3.5 py-2.5 text-sm font-semibold text-brand-800 md:px-3 md:py-2">
-          {isUpcoming ? (
-            <>
-              <FiClock className="h-4 w-4 shrink-0 text-brand-700" aria-hidden="true" />
-              <UpcomingCountdown startAt={startAt} fallbackValue="Upcoming" valueClassName="text-brand-800" />
-            </>
-          ) : (
-            <>
-              <SummaryIcon className={`h-4 w-4 shrink-0 ${isLive ? "text-red-600" : "text-brand-700"}`} aria-hidden="true" />
-              <span className="truncate">{match.summary}</span>
-            </>
-          )}
-        </p>
-        <div className="mt-4 flex items-center justify-between gap-2 text-sm text-slate-500 md:text-xs">
-          <span className="inline-flex min-w-0 items-center gap-1.5 truncate">
-            <FiMapPin className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden="true" />
-            <span className="truncate">{match.venue}</span>
-          </span>
-          <span className="inline-flex max-w-[48%] items-center gap-1 truncate text-right sm:max-w-none">
-            <FiClock className="h-3.5 w-3.5 text-slate-400" aria-hidden="true" />
-            <span className="truncate">{footerLabel}</span>
-          </span>
+
+        <div className="mt-3.5 pt-3 border-t border-slate-200/70">
+          <div className="flex items-center justify-between gap-2 text-xs text-slate-500">
+            <span className="inline-flex min-w-0 items-center gap-1 truncate">
+              <FiMapPin className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden="true" />
+              <span className="truncate">{match.venue}</span>
+            </span>
+            <span className="inline-flex shrink-0 items-center gap-1 text-[11px] font-medium">
+              <FiClock className="h-3 w-3 text-slate-400" aria-hidden="true" />
+              <span>{footerLabel}</span>
+            </span>
+          </div>
+          <div className="mt-3 flex w-full items-center justify-between rounded-xl bg-brand-600 px-3.5 py-2 text-xs font-bold uppercase tracking-wider text-white shadow-sm transition-all duration-200 group-hover:bg-brand-700">
+            <span>{ctaLabel}</span>
+            <FiArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />
+          </div>
         </div>
-        <span className="mt-4 inline-flex items-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-base font-semibold text-white transition-all duration-200 group-hover:bg-brand-700 md:py-2 md:text-sm">
-          {ctaLabel}
-          <FiArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
-        </span>
       </Card>
     </Link>
   );
@@ -126,4 +161,3 @@ export const LiveMatchCard = memo(
 );
 
 LiveMatchCard.displayName = "LiveMatchCard";
-

@@ -1,6 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { TeamTabs } from "@/app/(site)/teams/[teamId]/TeamTabs";
+import { FixturesList } from "@/components/series/FixturesList";
+import { AdSlot } from "@/components/shared/AdSlot";
 import { getMatches, getTeam } from "@/lib/api/read";
 
 type TeamFixturesProps = {
@@ -17,21 +18,8 @@ export default async function TeamFixturesPage({ params }: TeamFixturesProps): P
   return (
     <div className="space-y-4">
       <TeamTabs teamId={team.id} currentPath={`/teams/${team.id}/fixtures`} />
-      <div className="space-y-3">
-        {teamMatches.map((match) => (
-          <Link
-            key={match.id}
-            href={`/matches/${match.id}`}
-            className="block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-300"
-          >
-            <p className="font-semibold text-slate-900">
-              {match.teamA.shortName} vs {match.teamB.shortName}
-            </p>
-            <p className="text-sm text-slate-600">{match.seriesName}</p>
-          </Link>
-        ))}
-      </div>
+      <FixturesList matches={teamMatches} />
+      <AdSlot variant="leaderboard" label="Sponsored · Team Schedule" />
     </div>
   );
 }
-

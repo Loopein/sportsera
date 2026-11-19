@@ -5,6 +5,9 @@ import { FiCalendar, FiCheckCircle, FiChevronDown } from "react-icons/fi";
 import { getMatches } from "@/lib/api/read";
 import { cn } from "@/lib/utils/text";
 import { LiveMatchList } from "@/components/live/LiveMatchList";
+import { AdSlot } from "@/components/shared/AdSlot";
+import { EmptyState } from "@/components/shared/EmptyState";
+import { Card } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 type MatchesPageProps = {
@@ -122,178 +125,212 @@ export default async function MatchesPage({ searchParams }: MatchesPageProps): P
 
   return (
     <div className="space-y-6">
-      <div className="-mx-1 overflow-x-auto pb-1">
-        <div className="flex min-w-max items-center gap-6 border-b border-slate-200 px-1">
-          <Link
-            href="/matches?tab=live-upcoming"
-            className={cn(
-              "inline-flex items-center gap-1.5 border-b-2 pb-2 text-xs font-extrabold uppercase tracking-wide transition-colors sm:text-sm",
-              tab === "live-upcoming"
-                ? "border-[#08104a] text-[#08104a]"
-                : "border-transparent text-slate-500 hover:text-slate-700"
-            )}
-          >
-            <BiBroadcast className="h-3.5 w-3.5" aria-hidden="true" />
-            Live & Upcoming
-          </Link>
-          <Link
-            href="/matches?tab=results"
-            className={cn(
-              "inline-flex items-center gap-1.5 border-b-2 pb-2 text-xs font-extrabold uppercase tracking-wide transition-colors sm:text-sm",
-              tab === "results"
-                ? "border-[#08104a] text-[#08104a]"
-                : "border-transparent text-slate-500 hover:text-slate-700"
-            )}
-          >
-            <FiCheckCircle className="h-3.5 w-3.5" aria-hidden="true" />
-            Results
-          </Link>
-          <Link
-            href="/matches?tab=fixtures"
-            className={cn(
-              "inline-flex items-center gap-1.5 border-b-2 pb-2 text-xs font-extrabold uppercase tracking-wide transition-colors sm:text-sm",
-              tab === "fixtures"
-                ? "border-[#08104a] text-[#08104a]"
-                : "border-transparent text-slate-500 hover:text-slate-700"
-            )}
-          >
-            <FiCalendar className="h-3.5 w-3.5" aria-hidden="true" />
-            Fixtures
-          </Link>
+      <Card as="section" variant="strong" className="p-5 sm:p-6">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700 ring-1 ring-brand-200/80">
+              <BiBroadcast className="h-5 w-5" aria-hidden="true" />
+            </span>
+            <div>
+              <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">Matches</h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Browse live action, upcoming fixtures, and completed match results with instant filters.
+              </p>
+            </div>
+          </div>
+          <span className="score-pill">{matches.length} matches</span>
         </div>
-      </div>
 
-      <div className="flex flex-wrap gap-2">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              className={filterTriggerClass}
-            >
-              <span className="truncate">Series: {seriesLabel}</span>
-              <FiChevronDown
-                aria-hidden="true"
-                className="h-4 w-4 shrink-0 text-slate-500 transition group-data-[state=open]:rotate-180 group-data-[state=open]:text-brand-700"
-              />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="max-h-60 w-52 overflow-y-auto">
-            <DropdownMenuItem
-              asChild
+        <div className="-mx-1 mt-5 overflow-x-auto pb-1">
+          <div className="inline-flex min-w-max items-center gap-1.5 rounded-2xl border border-slate-200/80 bg-slate-50/90 p-1.5">
+            <Link
+              href="/matches?tab=live-upcoming"
               className={cn(
-                "text-sm font-semibold",
-                selectedSeries === "all"
-                  ? "bg-brand-600 text-white focus:bg-brand-600 focus:text-white"
-                  : "text-slate-700 hover:bg-slate-100"
+                "inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-extrabold uppercase tracking-wide transition sm:text-sm",
+                tab === "live-upcoming"
+                  ? "bg-[rgb(6,12,58)] text-white shadow-sm"
+                  : "text-slate-600 hover:bg-white hover:text-slate-900"
               )}
             >
-              <Link href={buildHref({ series: "all" })}>All Series</Link>
-            </DropdownMenuItem>
-            {series.map((seriesName) => (
-              <DropdownMenuItem
-                key={seriesName}
-                asChild
-                className={cn(
-                  "text-sm font-semibold",
-                  selectedSeries === seriesName
-                    ? "bg-brand-600 text-white focus:bg-brand-600 focus:text-white"
-                    : "text-slate-700 hover:bg-slate-100"
-                )}
-              >
-                <Link href={buildHref({ series: seriesName })}>{seriesName}</Link>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              className={filterTriggerClass}
-            >
-              <span className="truncate">Team: {teamLabel}</span>
-              <FiChevronDown
-                aria-hidden="true"
-                className="h-4 w-4 shrink-0 text-slate-500 transition group-data-[state=open]:rotate-180 group-data-[state=open]:text-brand-700"
-              />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="max-h-60 w-56 overflow-y-auto">
-            <DropdownMenuItem
-              asChild
+              <BiBroadcast className="h-3.5 w-3.5" aria-hidden="true" />
+              Live &amp; Upcoming
+            </Link>
+            <Link
+              href="/matches?tab=results"
               className={cn(
-                "text-sm font-semibold",
-                selectedTeam === "all"
-                  ? "bg-brand-600 text-white focus:bg-brand-600 focus:text-white"
-                  : "text-slate-700 hover:bg-slate-100"
+                "inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-extrabold uppercase tracking-wide transition sm:text-sm",
+                tab === "results"
+                  ? "bg-[rgb(6,12,58)] text-white shadow-sm"
+                  : "text-slate-600 hover:bg-white hover:text-slate-900"
               )}
             >
-              <Link href={buildHref({ team: "all" })}>All Teams</Link>
-            </DropdownMenuItem>
-            {teams.map((team) => (
-              <DropdownMenuItem
-                key={team.id}
-                asChild
-                className={cn(
-                  "text-sm font-semibold",
-                  selectedTeam === team.id
-                    ? "bg-brand-600 text-white focus:bg-brand-600 focus:text-white"
-                    : "text-slate-700 hover:bg-slate-100"
-                )}
-              >
-                <Link href={buildHref({ team: team.id })}>{team.name}</Link>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              className={filterTriggerClass}
-            >
-              <span className="truncate">Venue: {venueLabel}</span>
-              <FiChevronDown
-                aria-hidden="true"
-                className="h-4 w-4 shrink-0 text-slate-500 transition group-data-[state=open]:rotate-180 group-data-[state=open]:text-brand-700"
-              />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="max-h-60 w-64 overflow-y-auto">
-            <DropdownMenuItem
-              asChild
+              <FiCheckCircle className="h-3.5 w-3.5" aria-hidden="true" />
+              Results
+            </Link>
+            <Link
+              href="/matches?tab=fixtures"
               className={cn(
-                "text-sm font-semibold",
-                selectedVenue === "all"
-                  ? "bg-brand-600 text-white focus:bg-brand-600 focus:text-white"
-                  : "text-slate-700 hover:bg-slate-100"
+                "inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-extrabold uppercase tracking-wide transition sm:text-sm",
+                tab === "fixtures"
+                  ? "bg-[rgb(6,12,58)] text-white shadow-sm"
+                  : "text-slate-600 hover:bg-white hover:text-slate-900"
               )}
             >
-              <Link href={buildHref({ venue: "all" })}>All Venues</Link>
-            </DropdownMenuItem>
-            {venues.map((venue) => (
-              <DropdownMenuItem
-                key={venue}
-                asChild
+              <FiCalendar className="h-3.5 w-3.5" aria-hidden="true" />
+              Fixtures
+            </Link>
+          </div>
+        </div>
+      </Card>
+
+      <Card as="section" className="space-y-3 p-3.5 sm:p-4">
+        <div className="flex flex-wrap items-center justify-between gap-2.5">
+          <div className="flex flex-wrap gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button type="button" className={filterTriggerClass}>
+                  <span className="truncate">Series: {seriesLabel}</span>
+                  <FiChevronDown
+                    aria-hidden="true"
+                    className="h-4 w-4 shrink-0 text-slate-500 transition group-data-[state=open]:rotate-180 group-data-[state=open]:text-brand-700"
+                  />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="max-h-60 w-52 overflow-y-auto">
+                <DropdownMenuItem
+                  asChild
+                  className={cn(
+                    "text-sm font-semibold",
+                    selectedSeries === "all"
+                      ? "bg-brand-600 text-white focus:bg-brand-600 focus:text-white"
+                      : "text-slate-700 hover:bg-slate-100"
+                  )}
+                >
+                  <Link href={buildHref({ series: "all" })}>All Series</Link>
+                </DropdownMenuItem>
+                {series.map((seriesName) => (
+                  <DropdownMenuItem
+                    key={seriesName}
+                    asChild
+                    className={cn(
+                      "text-sm font-semibold",
+                      selectedSeries === seriesName
+                        ? "bg-brand-600 text-white focus:bg-brand-600 focus:text-white"
+                        : "text-slate-700 hover:bg-slate-100"
+                    )}
+                  >
+                    <Link href={buildHref({ series: seriesName })}>{seriesName}</Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button type="button" className={filterTriggerClass}>
+                  <span className="truncate">Team: {teamLabel}</span>
+                  <FiChevronDown
+                    aria-hidden="true"
+                    className="h-4 w-4 shrink-0 text-slate-500 transition group-data-[state=open]:rotate-180 group-data-[state=open]:text-brand-700"
+                  />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="max-h-60 w-56 overflow-y-auto">
+                <DropdownMenuItem
+                  asChild
+                  className={cn(
+                    "text-sm font-semibold",
+                    selectedTeam === "all"
+                      ? "bg-brand-600 text-white focus:bg-brand-600 focus:text-white"
+                      : "text-slate-700 hover:bg-slate-100"
+                  )}
+                >
+                  <Link href={buildHref({ team: "all" })}>All Teams</Link>
+                </DropdownMenuItem>
+                {teams.map((team) => (
+                  <DropdownMenuItem
+                    key={team.id}
+                    asChild
+                    className={cn(
+                      "text-sm font-semibold",
+                      selectedTeam === team.id
+                        ? "bg-brand-600 text-white focus:bg-brand-600 focus:text-white"
+                        : "text-slate-700 hover:bg-slate-100"
+                    )}
+                  >
+                    <Link href={buildHref({ team: team.id })}>{team.name}</Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button type="button" className={filterTriggerClass}>
+                  <span className="truncate">Venue: {venueLabel}</span>
+                  <FiChevronDown
+                    aria-hidden="true"
+                    className="h-4 w-4 shrink-0 text-slate-500 transition group-data-[state=open]:rotate-180 group-data-[state=open]:text-brand-700"
+                  />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="max-h-60 w-64 overflow-y-auto">
+                <DropdownMenuItem
+                  asChild
+                  className={cn(
+                    "text-sm font-semibold",
+                    selectedVenue === "all"
+                      ? "bg-brand-600 text-white focus:bg-brand-600 focus:text-white"
+                      : "text-slate-700 hover:bg-slate-100"
+                  )}
+                >
+                  <Link href={buildHref({ venue: "all" })}>All Venues</Link>
+                </DropdownMenuItem>
+                {venues.map((venue) => (
+                  <DropdownMenuItem
+                    key={venue}
+                    asChild
+                    className={cn(
+                      "text-sm font-semibold",
+                      selectedVenue === venue
+                        ? "bg-brand-600 text-white focus:bg-brand-600 focus:text-white"
+                        : "text-slate-700 hover:bg-slate-100"
+                    )}
+                  >
+                    <Link href={buildHref({ venue })}>{venue}</Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+
+        <AdSlot variant="banner-compact" label="Sponsored · Match Filter Desk" />
+      </Card>
+
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="inline-flex max-w-full items-center gap-2 rounded-xl bg-[rgb(6,12,58)] px-4 py-2 text-xs font-extrabold uppercase tracking-wider text-white shadow-sm sm:text-sm">
+          <FiCalendar className="h-4 w-4 text-brand-200" aria-hidden="true" />
+          <span className="truncate">{sectionDate}</span>
+        </div>
+        {availableDays.length > 1 ? (
+          <div className="flex max-w-full items-center gap-1.5 overflow-x-auto pb-1">
+            {availableDays.slice(0, 6).map((day) => (
+              <Link
+                key={day}
+                href={buildHref({ day })}
                 className={cn(
-                  "text-sm font-semibold",
-                  selectedVenue === venue
-                    ? "bg-brand-600 text-white focus:bg-brand-600 focus:text-white"
-                    : "text-slate-700 hover:bg-slate-100"
+                  "shrink-0 rounded-lg border px-2.5 py-1 text-xs font-bold tabular-nums transition",
+                  day === selectedDay
+                    ? "border-brand-600 bg-brand-600 text-white shadow-sm"
+                    : "border-slate-200 bg-white text-slate-600 hover:border-brand-200 hover:bg-brand-50"
                 )}
               >
-                <Link href={buildHref({ venue })}>{venue}</Link>
-              </DropdownMenuItem>
+                {day}
+              </Link>
             ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-
-      <div className="inline-flex max-w-full items-center gap-2 rounded-sm bg-[#08104a] px-4 py-2.5 text-xs font-extrabold uppercase tracking-wide text-white sm:text-base">
-        <FiCalendar className="h-4 w-4" aria-hidden="true" />
-        <span className="truncate">{sectionDate}</span>
+          </div>
+        ) : null}
       </div>
 
       <div className="space-y-4">
@@ -301,14 +338,16 @@ export default async function MatchesPage({ searchParams }: MatchesPageProps): P
           <LiveMatchList matches={cardMatches} />
         ) : (
           <div className="space-y-4">
-            <div className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center">
-              <p className="text-base font-semibold text-slate-900">No matches found for the selected filters.</p>
-              <p className="mt-2 text-sm text-slate-600">Try changing date, series, team, or venue.</p>
-            </div>
+            <EmptyState
+              title="No matches found for the selected filters."
+              description="Try changing the date, series, team, or venue."
+            />
             <LiveMatchList matches={[]} emptyCount={3} emptyLabel="No data found" />
           </div>
         )}
       </div>
+
+      <AdSlot variant="leaderboard" label="Sponsored · Match Center Banner" />
     </div>
   );
 }

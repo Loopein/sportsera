@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { TeamTabs } from "@/app/(site)/teams/[teamId]/TeamTabs";
 import { TeamSquad } from "@/components/team/TeamSquad";
+import { AdSlot } from "@/components/shared/AdSlot";
 import { getTeam } from "@/lib/api/read";
 
 type TeamSquadProps = {
@@ -16,6 +17,7 @@ export default async function TeamSquadPage({ params }: TeamSquadProps): Promise
     <div className="space-y-4">
       <TeamTabs teamId={team.id} currentPath={`/teams/${team.id}/squad`} />
       <TeamSquad members={team.squad} />
+      <AdSlot variant="leaderboard" label="Sponsored · Squad Lineup" />
     </div>
   );
 }

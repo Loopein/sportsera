@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MatchTabs } from "@/app/(site)/matches/[matchId]/MatchTabs";
 import { UpcomingCountdown } from "@/components/match/UpcomingCountdown";
+import { AdSlot } from "@/components/shared/AdSlot";
 import { TeamSquad } from "@/components/team/TeamSquad";
 import { getMatchSummary, getPlayers, getTeam } from "@/lib/api/read";
 
@@ -76,19 +77,23 @@ export default async function SquadsPage({ params, searchParams }: SquadsPagePro
               {summary.seriesName}
               <span className="text-brand-700"> - {kickoffLabel}</span>
             </p>
-            <div className="mt-5 grid grid-cols-[1fr_auto_1fr] items-center gap-3 text-center">
-              <div>
-                <span className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-lg border border-brand-200 bg-brand-50 text-sm font-extrabold text-brand-700">
-                  {summary.teamA.shortName.slice(0, 2)}
+            <div className="mt-5 grid grid-cols-[1fr_auto_1fr] items-center gap-2 text-center sm:gap-4">
+              <div className="min-w-0">
+                <span className="mx-auto inline-flex h-11 w-11 items-center justify-center rounded-xl border border-brand-200 bg-brand-50 text-sm font-extrabold text-brand-700 sm:h-12 sm:w-12">
+                  {summary.teamA.shortName.slice(0, 3)}
                 </span>
-                <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900">{summary.teamA.name}</p>
+                <p className="mt-2 truncate text-lg font-black tracking-tight text-slate-900 sm:text-2xl md:text-3xl">
+                  {summary.teamA.name}
+                </p>
               </div>
-              <span className="text-xl font-semibold text-slate-500">vs</span>
-              <div>
-                <span className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-lg border border-brand-200 bg-brand-50 text-sm font-extrabold text-brand-700">
-                  {summary.teamB.shortName.slice(0, 2)}
+              <span className="text-sm font-extrabold uppercase text-slate-400 sm:text-lg">vs</span>
+              <div className="min-w-0">
+                <span className="mx-auto inline-flex h-11 w-11 items-center justify-center rounded-xl border border-brand-200 bg-brand-50 text-sm font-extrabold text-brand-700 sm:h-12 sm:w-12">
+                  {summary.teamB.shortName.slice(0, 3)}
                 </span>
-                <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900">{summary.teamB.name}</p>
+                <p className="mt-2 truncate text-lg font-black tracking-tight text-slate-900 sm:text-2xl md:text-3xl">
+                  {summary.teamB.name}
+                </p>
               </div>
             </div>
             <div className="mt-3 text-center">
@@ -186,6 +191,8 @@ export default async function SquadsPage({ params, searchParams }: SquadsPagePro
             )}
           </div>
         </section>
+
+        <AdSlot variant="leaderboard" label="Sponsored · Playing XI & Squads" />
       </div>
     );
   }
@@ -193,6 +200,7 @@ export default async function SquadsPage({ params, searchParams }: SquadsPagePro
   return (
     <div className="space-y-4">
       <MatchTabs matchId={summary.id} currentPath={`/matches/${summary.id}/squads`} status={summary.status} />
+      <AdSlot variant="in-feed" label="Sponsored · Match Squads" />
       <div className="grid gap-4 lg:grid-cols-2">
         <section className="space-y-3">
           <h2 className="text-xl font-semibold text-slate-900">{summary.teamA.name}</h2>
@@ -203,6 +211,7 @@ export default async function SquadsPage({ params, searchParams }: SquadsPagePro
           <TeamSquad members={teamB?.squad ?? []} />
         </section>
       </div>
+      <AdSlot variant="leaderboard" label="Sponsored · Team Rosters" />
     </div>
   );
 }

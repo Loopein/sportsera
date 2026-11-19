@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap");
 
 :root {
   color-scheme: light;
@@ -8,23 +8,21 @@
   --surface-strong: #e5ebff;
   --text: rgb(6, 12, 58);
   --text-muted: #42507a;
-  --border-soft: #d9dff1;
+  --border-soft: #d9e1f4;
   --accent: rgb(6, 12, 58);
   --accent-strong: #050a31;
   --accent-soft: #e8edff;
   --success-soft: #d7f7ea;
   --danger-soft: #ffe3e3;
-  --radius-card: 16px;
+  --radius-card: 18px;
   --radius-pill: 999px;
-  --shadow-soft: 0 12px 24px -18px rgba(6, 12, 58,0.22);
-  --shadow-pop: 0 18px 36px -18px rgba(6, 12, 58,0.34);
-  --font-display: "Montserrat", "Segoe UI", sans-serif;
-  --font-body: "Montserrat", "Segoe UI", sans-serif;
+  --shadow-soft: 0 10px 26px -16px rgba(6, 12, 58, 0.16), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+  --shadow-pop: 0 20px 42px -18px rgba(6, 12, 58, 0.24), 0 4px 12px -2px rgba(15, 23, 42, 0.06);
+  --font-display: "Montserrat", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-body: "Montserrat", "Segoe UI", system-ui, -apple-system, sans-serif;
 
-  --bg-radial-a: #eef2ff;
-  --bg-radial-b: #f5f7ff;
-  --bg-gradient-start: #ffffff;
-  --bg-gradient-end: #f8faff;
+  --bg-radial-a: #e8eeff;
+  --bg-radial-b: #f1f5ff;
+  --bg-gradient-start: #f9fbff;
+  --bg-gradient-end: #f3f6fd;
 }
-
-

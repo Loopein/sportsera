@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { LivePageClient } from "@/app/(site)/live/LivePageClient";
+import { AdSlot } from "@/components/shared/AdSlot";
 import { Card } from "@/components/ui/card";
 import { getLiveMatches } from "@/lib/api/read";
 
@@ -21,7 +22,9 @@ export default async function LivePage(): Promise<React.ReactElement> {
           Compact match cards with controlled refresh so users can scan quickly without jitter.
         </p>
       </Card>
+      <AdSlot variant="in-feed" label="Sponsored · Live Feed" />
       <LivePageClient initialMatches={matches} />
+      <AdSlot variant="leaderboard" label="Sponsored · Live Center Banner" />
     </div>
   );
 }

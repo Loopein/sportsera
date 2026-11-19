@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { MatchSummaryLive } from "@/app/(site)/matches/[matchId]/MatchSummaryLive";
 import { MatchTabs } from "@/app/(site)/matches/[matchId]/MatchTabs";
+import { AdSlot } from "@/components/shared/AdSlot";
 import { getMatchSummary } from "@/lib/api/read";
 
 type MatchPageProps = {
@@ -31,7 +32,9 @@ export default async function MatchPage({ params }: MatchPageProps): Promise<Rea
   return (
     <div className="space-y-4">
       <MatchTabs matchId={match.id} currentPath={`/matches/${match.id}`} status={match.status} />
+      <AdSlot variant="in-feed" label="Sponsored · Match Summary" />
       <MatchSummaryLive initialMatch={match} />
+      <AdSlot variant="leaderboard" label="Sponsored · Match Center" />
     </div>
   );
 }

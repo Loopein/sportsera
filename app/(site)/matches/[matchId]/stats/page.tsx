@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { MatchTabs } from "@/app/(site)/matches/[matchId]/MatchTabs";
 import { UpcomingCountdown } from "@/components/match/UpcomingCountdown";
 import { WagonWheel } from "@/components/match/WagonWheel";
+import { AdSlot } from "@/components/shared/AdSlot";
 import { Card } from "@/components/ui/card";
 import { getMatches, getMatchStats, getMatchSummary, getTournamentPlayerStats } from "@/lib/api/read";
 import type { MatchSummary } from "@/types/match";
@@ -217,6 +218,8 @@ export default async function StatsPage({ params }: StatsPageProps): Promise<Rea
             </article>
           </div>
         </Card>
+
+        <AdSlot variant="leaderboard" label="Sponsored · Match Preview" />
       </div>
     );
   }
@@ -250,6 +253,7 @@ export default async function StatsPage({ params }: StatsPageProps): Promise<Rea
         </ul>
       </Card>
       <WagonWheel stats={stats} />
+      <AdSlot variant="leaderboard" label="Sponsored · Match Analytics Banner" />
     </div>
   );
 }
