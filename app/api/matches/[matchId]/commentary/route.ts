@@ -17,7 +17,7 @@ export async function GET(request: Request, { params }: CommentaryRouteProps): P
   const data = await getMatchCommentary(matchId);
   const etag = toEtagFromData(data);
   const headers = {
-    "Cache-Control": "public, s-maxage=6, stale-while-revalidate=12",
+    "Cache-Control": "public, s-maxage=6, stale-while-revalidate=24",
     ETag: etag
   };
 

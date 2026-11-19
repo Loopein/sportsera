@@ -1,23 +1,59 @@
 type CacheEntry = {
   value: unknown;
-  expiresAt: number;
+  freshUntil: number;
+  staleUntil: number;
 };
 
-const memoryStore = new Map<string, CacheEntry>();
+export type CachedLookup<T> = {
+  value: T;
+  isStale: boolean;
+};
 
-export async function getCached<T>(key: string): Promise<T | null> {
+const MAX_CACHE_ENTRIES = 500;
+
+const globalForCache = globalThis as unknown as {
+  __sportseraMemoryCache?: Map<string, CacheEntry>;
+};
+
+const memoryStore = globalForCache.__sportseraMemoryCache ?? new Map<string, CacheEntry>();
+globalForCache.__sportseraMemoryCache = memoryStore;
+
+export async function getCachedEntry<T>(key: string): Promise<CachedLookup<T> | null> {
   const found = memoryStore.get(key);
   if (!found) return null;
-  if (Date.now() > found.expiresAt) {
+  const now = Date.now();
+  if (now > found.staleUntil) {
     memoryStore.delete(key);
     return null;
   }
-  return found.value as T;
+  return {
+    value: found.value as T,
+    isStale: now > found.freshUntil
+  };
 }
 
-export async function setCached<T>(key: string, value: T, ttlSeconds: number): Promise<void> {
+export async function getCached<T>(key: string): Promise<T | null> {
+  const entry = await getCachedEntry<T>(key);
+  if (!entry || entry.isStale) return null;
+  return entry.value;
+}
+
+export async function setCached<T>(key: string, value: T, ttlSeconds: number, staleSeconds?: number): Promise<void> {
+  if (!memoryStore.has(key) && memoryStore.size >= MAX_CACHE_ENTRIES) {
+    const oldestKey = memoryStore.keys().next().value;
+    if (oldestKey !== undefined) {
+      memoryStore.delete(oldestKey);
+    }
+  }
+  const now = Date.now();
+  const effectiveStale = staleSeconds ?? Math.max(ttlSeconds * 6, 120);
   memoryStore.set(key, {
     value,
-    expiresAt: Date.now() + ttlSeconds * 1000
+    freshUntil: now + ttlSeconds * 1000,
+    staleUntil: now + effectiveStale * 1000
   });
+}
+
+export function clearCache(): void {
+  memoryStore.clear();
 }

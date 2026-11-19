@@ -18,6 +18,8 @@ import { Card } from "@/components/ui/card";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { getLiveMatches, getMatches, getNews } from "@/lib/api/read";
 
+export const revalidate = 10;
+
 export default async function HomePage(): Promise<React.ReactElement> {
   const [live, upcoming, results, news] = await Promise.all([
     getLiveMatches(),

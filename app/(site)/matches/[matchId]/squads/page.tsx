@@ -42,7 +42,11 @@ export default async function SquadsPage({ params, searchParams }: SquadsPagePro
   const selectedTeamKey = query.team === "b" ? "b" : "a";
   const requestedView = query.view === "xi" ? "xi" : query.view === "squad" ? "squad" : null;
 
-  const [teamA, teamB, players] = await Promise.all([getTeam(summary.teamA.id), getTeam(summary.teamB.id), getPlayers()]);
+  const [teamA, teamB, players] = await Promise.all([
+    getTeam(summary.teamA.id),
+    getTeam(summary.teamB.id),
+    summary.status === "upcoming" ? getPlayers() : Promise.resolve([])
+  ]);
   const playerById = new Map(players.map((player) => [player.id, player]));
 
   const startIso = summary.startAt ?? summary.lastUpdatedAt ?? new Date().toISOString();

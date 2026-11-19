@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { CommentaryFeed } from "@/components/match/CommentaryFeed";
 import { ErrorState } from "@/components/shared/ErrorState";
+import { usePolling } from "@/hooks/usePolling";
 import { API_ENDPOINTS } from "@/lib/api/endpoints";
 import { toEtagFromData } from "@/lib/utils/data-version";
 import { mergeStableListById } from "@/lib/utils/stable-update";
@@ -44,10 +45,7 @@ export function CommentaryLive({
     }
   }, [matchId]);
 
-  useEffect(() => {
-    const id = window.setInterval(() => void refresh(), 7_000);
-    return () => window.clearInterval(id);
-  }, [refresh]);
+  usePolling(refresh, 7_000, { leading: false });
 
   return (
     <div className="space-y-4">

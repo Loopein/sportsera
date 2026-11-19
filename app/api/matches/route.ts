@@ -11,6 +11,6 @@ export async function GET(request: RequestContext["request"]): Promise<NextRespo
   const data = await getMatches(status);
   return NextResponse.json(
     { data, meta: { generatedAt: new Date().toISOString() } },
-    { headers: { "Cache-Control": "public, s-maxage=20, stale-while-revalidate=40" } }
+    { headers: { "Cache-Control": "public, s-maxage=20, stale-while-revalidate=60" } }
   );
 }

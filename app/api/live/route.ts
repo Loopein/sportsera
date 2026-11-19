@@ -6,7 +6,7 @@ export async function GET(request: Request): Promise<NextResponse> {
   const data = await getLiveMatches();
   const etag = toEtagFromData(data);
   const headers = {
-    "Cache-Control": "public, s-maxage=10, stale-while-revalidate=20",
+    "Cache-Control": "public, s-maxage=10, stale-while-revalidate=30",
     ETag: etag
   };
 

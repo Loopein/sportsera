@@ -1,5 +1,5 @@
 import { cacheKeys } from "@/lib/cache/keys";
-import { getCached, setCached } from "@/lib/cache/redis";
+import { getCachedEntry, setCached } from "@/lib/cache/redis";
 import { revalidateTtl } from "@/lib/cache/revalidate";
 import { query } from "@/lib/db";
 import type { RankingEntry, SearchResult, StandingsSeason } from "@/types/api";
@@ -16,17 +16,31 @@ type SchemaInfo = {
   hasColumn: (table: string, column: string) => boolean;
 };
 
-const SCHEMA_TTL_MS = 60_000;
-let cachedSchema: { info: SchemaInfo; expiresAt: number } | null = null;
-let inFlightSchema: Promise<SchemaInfo> | null = null;
+const SCHEMA_TTL_MS = 15 * 60_000;
+
+const globalForRead = globalThis as unknown as {
+  __sportseraSchemaCache?: { info: SchemaInfo; expiresAt: number } | null;
+  __sportseraInFlightSchema?: Promise<SchemaInfo> | null;
+  __sportseraInFlightReads?: Map<string, Promise<unknown>>;
+};
+
+const inFlightReads = globalForRead.__sportseraInFlightReads ?? new Map<string, Promise<unknown>>();
+globalForRead.__sportseraInFlightReads = inFlightReads;
+
+export function resetReadCachesForTest(): void {
+  globalForRead.__sportseraSchemaCache = null;
+  globalForRead.__sportseraInFlightSchema = null;
+  inFlightReads.clear();
+}
 
 async function getSchemaInfo(): Promise<SchemaInfo> {
-  if (cachedSchema && Date.now() < cachedSchema.expiresAt) {
-    return cachedSchema.info;
+  const cached = globalForRead.__sportseraSchemaCache;
+  if (cached && Date.now() < cached.expiresAt) {
+    return cached.info;
   }
 
-  if (!inFlightSchema) {
-    inFlightSchema = query<{ table_name: string; column_name: string }>(
+  if (!globalForRead.__sportseraInFlightSchema) {
+    globalForRead.__sportseraInFlightSchema = query<{ table_name: string; column_name: string }>(
       `
       SELECT table_name, column_name
       FROM information_schema.columns
@@ -48,23 +62,43 @@ async function getSchemaInfo(): Promise<SchemaInfo> {
           hasTable: (table) => tables.has(table),
           hasColumn: (table, column) => tables.get(table)?.has(column) ?? false
         };
-        cachedSchema = { info, expiresAt: Date.now() + SCHEMA_TTL_MS };
+        globalForRead.__sportseraSchemaCache = { info, expiresAt: Date.now() + SCHEMA_TTL_MS };
         return info;
       })
       .finally(() => {
-        inFlightSchema = null;
+        globalForRead.__sportseraInFlightSchema = null;
       });
   }
 
-  return inFlightSchema;
+  return globalForRead.__sportseraInFlightSchema;
+}
+
+function runDeduped<T>(key: string, ttl: number, factory: () => Promise<T> | T): Promise<T> {
+  const existing = inFlightReads.get(key) as Promise<T> | undefined;
+  if (existing) return existing;
+
+  const task = Promise.resolve(factory())
+    .then(async (value) => {
+      await setCached(key, value, ttl);
+      return value;
+    })
+    .finally(() => {
+      inFlightReads.delete(key);
+    });
+
+  inFlightReads.set(key, task);
+  return task;
 }
 
 async function withCache<T>(key: string, ttl: number, factory: () => Promise<T> | T): Promise<T> {
-  const cached = await getCached<T>(key);
-  if (cached) return cached;
-  const value = await factory();
-  await setCached(key, value, ttl);
-  return value;
+  const entry = await getCachedEntry<T>(key);
+  if (entry) {
+    if (entry.isStale) {
+      void runDeduped(key, ttl, factory).catch(() => {});
+    }
+    return entry.value;
+  }
+  return runDeduped(key, ttl, factory);
 }
 
 function toIsoString(value: string | Date | null | undefined): string | undefined {
@@ -575,35 +609,26 @@ export function getLiveMatches(): Promise<LiveMatch[]> {
   });
 }
 
-export function getMatches(filter?: string): Promise<MatchSummary[]> {
-  const normalized = filter ?? "all";
-  return withCache(cacheKeys.matches(normalized), revalidateTtl.listings, async () => {
+function getAllMatches(): Promise<MatchSummary[]> {
+  return withCache(cacheKeys.matches("all"), revalidateTtl.listings, async () => {
     const schema = await getSchemaInfo();
     if (!schema.hasTable("matches") || !schema.hasTable("teams")) return [];
     const parts = buildMatchQueryParts(schema);
-
-    if (!filter || filter === "all") {
-      const rows = await query<MatchSummaryRow>(
-        `${parts.baseSelectList}
-         ORDER BY COALESCE(${parts.startAtExpr}, ${parts.lastUpdatedAtExpr}) DESC NULLS LAST`
-      );
-      return rows.map(mapMatchSummary);
-    }
-
-    const whereClause =
-      filter.toLowerCase() === "completed"
-        ? "WHERE LOWER(m.status) IN ('completed', 'finished', 'ended', 'result')"
-        : "WHERE LOWER(m.status) = LOWER($1)";
-    const params = filter.toLowerCase() === "completed" ? [] : [filter];
-
     const rows = await query<MatchSummaryRow>(
       `${parts.baseSelectList}
-       ${whereClause}
-       ORDER BY COALESCE(${parts.startAtExpr}, ${parts.lastUpdatedAtExpr}) DESC NULLS LAST`,
-      params
+       ORDER BY COALESCE(${parts.startAtExpr}, ${parts.lastUpdatedAtExpr}) DESC NULLS LAST`
     );
     return rows.map(mapMatchSummary);
   });
+}
+
+export async function getMatches(filter?: string): Promise<MatchSummary[]> {
+  const matches = await getAllMatches();
+  if (!filter || filter === "all") return matches;
+  const lower = filter.trim().toLowerCase();
+  const target =
+    lower === "finished" || lower === "ended" || lower === "result" ? "completed" : lower;
+  return matches.filter((match) => match.status === target);
 }
 
 export function getMatchSummary(matchId: string): Promise<MatchSummary | null> {
@@ -994,31 +1019,32 @@ export function getSeries(): Promise<SeriesSummary[]> {
 }
 
 export async function getSeriesById(seriesId: string): Promise<{ series: SeriesSummary; standings: SeriesStanding[] } | null> {
-  const [series, schema] = await Promise.all([getSeries(), getSchemaInfo()]);
+  const schema = await getSchemaInfo();
+  const [series, standingsRows] = await Promise.all([
+    getSeries(),
+    schema.hasTable("series_standings")
+      ? query<{
+          team_id: string | null;
+          team_name: string;
+          played: number;
+          won: number;
+          lost: number;
+          points: number;
+          net_run_rate: string | number;
+        }>(
+          `
+          SELECT team_id, team_name, played, won, lost, points, net_run_rate
+          FROM series_standings
+          WHERE series_id = $1
+          ORDER BY points DESC, net_run_rate DESC
+          `,
+          [seriesId]
+        )
+      : Promise.resolve([])
+  ]);
+
   const found = series.find((s) => s.id === seriesId);
   if (!found) return null;
-
-  if (!schema.hasTable("series_standings")) {
-    return { series: found, standings: [] };
-  }
-
-  const standingsRows = await query<{
-    team_id: string | null;
-    team_name: string;
-    played: number;
-    won: number;
-    lost: number;
-    points: number;
-    net_run_rate: string | number;
-  }>(
-    `
-    SELECT team_id, team_name, played, won, lost, points, net_run_rate
-    FROM series_standings
-    WHERE series_id = $1
-    ORDER BY points DESC, net_run_rate DESC
-    `,
-    [seriesId]
-  );
 
   return {
     series: found,
@@ -1062,36 +1088,37 @@ export function getTeam(teamId: string): Promise<TeamProfile | null> {
     const schema = await getSchemaInfo();
     if (!schema.hasTable("teams")) return null;
 
-    const teams = await query<TeamRow>(
-      `
-      SELECT ${buildTeamSelectColumns(schema)}
-      FROM teams
-      WHERE id = $1
-      LIMIT 1
-      `,
-      [teamId]
-    );
+    const [teams, squadRows] = await Promise.all([
+      query<TeamRow>(
+        `
+        SELECT ${buildTeamSelectColumns(schema)}
+        FROM teams
+        WHERE id = $1
+        LIMIT 1
+        `,
+        [teamId]
+      ),
+      schema.hasTable("team_squad_members")
+        ? query<{
+            player_id: string | null;
+            name: string;
+            role: string;
+            is_captain: boolean;
+            is_wicket_keeper: boolean;
+          }>(
+            `
+            SELECT player_id, name, role, is_captain, is_wicket_keeper
+            FROM team_squad_members
+            WHERE team_id = $1
+            ORDER BY id
+            `,
+            [teamId]
+          )
+        : Promise.resolve([])
+    ]);
 
     const team = teams[0];
     if (!team) return null;
-
-    const squadRows = schema.hasTable("team_squad_members")
-      ? await query<{
-          player_id: string | null;
-          name: string;
-          role: string;
-          is_captain: boolean;
-          is_wicket_keeper: boolean;
-        }>(
-          `
-          SELECT player_id, name, role, is_captain, is_wicket_keeper
-          FROM team_squad_members
-          WHERE team_id = $1
-          ORDER BY id
-          `,
-          [teamId]
-        )
-      : [];
 
     return mapTeamProfile(
       team,
@@ -1111,30 +1138,31 @@ export async function getTeams(): Promise<TeamProfile[]> {
     const schema = await getSchemaInfo();
     if (!schema.hasTable("teams")) return [];
 
-    const teams = await query<TeamRow>(
-      `
-      SELECT ${buildTeamSelectColumns(schema)}
-      FROM teams
-      ORDER BY name
-      `
-    );
-
-    const squads = schema.hasTable("team_squad_members")
-      ? await query<{
-          team_id: string;
-          player_id: string | null;
-          name: string;
-          role: string;
-          is_captain: boolean;
-          is_wicket_keeper: boolean;
-        }>(
-          `
-          SELECT team_id, player_id, name, role, is_captain, is_wicket_keeper
-          FROM team_squad_members
-          ORDER BY id
-          `
-        )
-      : [];
+    const [teams, squads] = await Promise.all([
+      query<TeamRow>(
+        `
+        SELECT ${buildTeamSelectColumns(schema)}
+        FROM teams
+        ORDER BY name
+        `
+      ),
+      schema.hasTable("team_squad_members")
+        ? query<{
+            team_id: string;
+            player_id: string | null;
+            name: string;
+            role: string;
+            is_captain: boolean;
+            is_wicket_keeper: boolean;
+          }>(
+            `
+            SELECT team_id, player_id, name, role, is_captain, is_wicket_keeper
+            FROM team_squad_members
+            ORDER BY id
+            `
+          )
+        : Promise.resolve([])
+    ]);
 
     const squadByTeam = new Map<string, TeamProfile["squad"]>();
     for (const member of squads) {
@@ -1207,42 +1235,42 @@ export function getPlayer(playerId: string): Promise<PlayerProfile | null> {
     const schema = await getSchemaInfo();
     if (!schema.hasTable("players")) return null;
 
-    const players = await query<PlayerRow>(
-      `
-      SELECT ${buildPlayerSelectColumns(schema)}
-      FROM players
-      WHERE id = $1
-      LIMIT 1
-      `,
-      [playerId]
-    );
+    const [players, careerRows, formRows] = await Promise.all([
+      query<PlayerRow>(
+        `
+        SELECT ${buildPlayerSelectColumns(schema)}
+        FROM players
+        WHERE id = $1
+        LIMIT 1
+        `,
+        [playerId]
+      ),
+      schema.hasTable("player_career_stats")
+        ? query<CareerRow>(
+            `
+            SELECT format, matches, runs, wickets, average, strike_rate
+            FROM player_career_stats
+            WHERE player_id = $1
+            ORDER BY id
+            `,
+            [playerId]
+          )
+        : Promise.resolve([]),
+      schema.hasTable("player_recent_form")
+        ? query<{ value: string }>(
+            `
+            SELECT value
+            FROM player_recent_form
+            WHERE player_id = $1
+            ORDER BY entry_order
+            `,
+            [playerId]
+          )
+        : Promise.resolve([])
+    ]);
 
     const player = players[0];
     if (!player) return null;
-
-    const careerRows = schema.hasTable("player_career_stats")
-      ? await query<CareerRow>(
-          `
-          SELECT format, matches, runs, wickets, average, strike_rate
-          FROM player_career_stats
-          WHERE player_id = $1
-          ORDER BY id
-          `,
-          [playerId]
-        )
-      : [];
-
-    const formRows = schema.hasTable("player_recent_form")
-      ? await query<{ value: string }>(
-          `
-          SELECT value
-          FROM player_recent_form
-          WHERE player_id = $1
-          ORDER BY entry_order
-          `,
-          [playerId]
-        )
-      : [];
 
     return mapPlayerProfile(
       player,
@@ -1258,33 +1286,33 @@ export function getPlayers(): Promise<PlayerProfile[]> {
     if (!schema.hasTable("players")) return [];
 
     const playerNameExpr = buildPlayerNameExpr(schema);
-    const players = await query<PlayerRow>(
-      `
-      SELECT ${buildPlayerSelectColumns(schema)}
-      FROM players
-      ORDER BY ${playerNameExpr}
-      `
-    );
-
-    const careerRows = schema.hasTable("player_career_stats")
-      ? await query<CareerRow & { player_id: string }>(
-          `
-          SELECT player_id, format, matches, runs, wickets, average, strike_rate
-          FROM player_career_stats
-          ORDER BY id
-          `
-        )
-      : [];
-
-    const formRows = schema.hasTable("player_recent_form")
-      ? await query<{ player_id: string; value: string }>(
-          `
-          SELECT player_id, value
-          FROM player_recent_form
-          ORDER BY entry_order
-          `
-        )
-      : [];
+    const [players, careerRows, formRows] = await Promise.all([
+      query<PlayerRow>(
+        `
+        SELECT ${buildPlayerSelectColumns(schema)}
+        FROM players
+        ORDER BY ${playerNameExpr}
+        `
+      ),
+      schema.hasTable("player_career_stats")
+        ? query<CareerRow & { player_id: string }>(
+            `
+            SELECT player_id, format, matches, runs, wickets, average, strike_rate
+            FROM player_career_stats
+            ORDER BY id
+            `
+          )
+        : Promise.resolve([]),
+      schema.hasTable("player_recent_form")
+        ? query<{ player_id: string; value: string }>(
+            `
+            SELECT player_id, value
+            FROM player_recent_form
+            ORDER BY entry_order
+            `
+          )
+        : Promise.resolve([])
+    ]);
 
     const careerByPlayer = new Map<string, PlayerProfile["career"]>();
     for (const row of careerRows) {
@@ -1351,73 +1379,71 @@ export function getStandingsSeasons(): Promise<StandingsSeason[]> {
       return [];
     }
 
-    const seasons = await query<{ season: string }>(
-      `
-      SELECT season
-      FROM standings_seasons
-      ORDER BY season DESC
-      `
-    );
-
-    const series = await query<{ season: string; id: string; label: string }>(
-      `
-      SELECT season, id, label
-      FROM standings_series
-      ORDER BY season DESC, id
-      `
-    );
-
-    const stages = await query<{
-      season: string;
-      series_id: string;
-      id: string;
-      label: string;
-      sort_order: number;
-    }>(
-      `
-      SELECT season, series_id, id, label, sort_order
-      FROM standings_stages
-      ORDER BY season DESC, series_id, sort_order
-      `
-    );
-
-    const groups = await query<{
-      season: string;
-      series_id: string;
-      stage_id: string;
-      id: string;
-      label: string;
-      sort_order: number;
-    }>(
-      `
-      SELECT season, series_id, stage_id, id, label, sort_order
-      FROM standings_groups
-      ORDER BY season DESC, series_id, stage_id, sort_order
-      `
-    );
-
-    const rows = await query<{
-      season: string;
-      series_id: string;
-      stage_id: string;
-      group_id: string;
-      team_id: string | null;
-      team_name: string;
-      short_code: string;
-      played: number;
-      won: number;
-      lost: number;
-      net_run_rate: string | number;
-      points: number;
-      highlight: boolean;
-      row_index: number;
-    }>(
-      `
-      SELECT season, series_id, stage_id, group_id, team_id, team_name, short_code, played, won, lost, net_run_rate, points, highlight, row_index
-      FROM standings_rows
-      ORDER BY season DESC, series_id, stage_id, group_id, row_index
-      `
-    );
+    const [seasons, series, stages, groups, rows] = await Promise.all([
+      query<{ season: string }>(
+        `
+        SELECT season
+        FROM standings_seasons
+        ORDER BY season DESC
+        `
+      ),
+      query<{ season: string; id: string; label: string }>(
+        `
+        SELECT season, id, label
+        FROM standings_series
+        ORDER BY season DESC, id
+        `
+      ),
+      query<{
+        season: string;
+        series_id: string;
+        id: string;
+        label: string;
+        sort_order: number;
+      }>(
+        `
+        SELECT season, series_id, id, label, sort_order
+        FROM standings_stages
+        ORDER BY season DESC, series_id, sort_order
+        `
+      ),
+      query<{
+        season: string;
+        series_id: string;
+        stage_id: string;
+        id: string;
+        label: string;
+        sort_order: number;
+      }>(
+        `
+        SELECT season, series_id, stage_id, id, label, sort_order
+        FROM standings_groups
+        ORDER BY season DESC, series_id, stage_id, sort_order
+        `
+      ),
+      query<{
+        season: string;
+        series_id: string;
+        stage_id: string;
+        group_id: string;
+        team_id: string | null;
+        team_name: string;
+        short_code: string;
+        played: number;
+        won: number;
+        lost: number;
+        net_run_rate: string | number;
+        points: number;
+        highlight: boolean;
+        row_index: number;
+      }>(
+        `
+        SELECT season, series_id, stage_id, group_id, team_id, team_name, short_code, played, won, lost, net_run_rate, points, highlight, row_index
+        FROM standings_rows
+        ORDER BY season DESC, series_id, stage_id, group_id, row_index
+        `
+      )
+    ]);
 
     const seasonMap = new Map<string, StandingsSeason>();
     for (const season of seasons) {
@@ -1478,9 +1504,10 @@ export function search(queryText: string): Promise<SearchResult[]> {
     const like = `%${q}%`;
     const schema = await getSchemaInfo();
 
-    const matchRows =
+    const playerNameExpr = buildPlayerNameExpr(schema);
+    const [matchRows, teamRows, playerRows, seriesRows] = await Promise.all([
       schema.hasTable("matches") && schema.hasTable("teams")
-        ? await (() => {
+        ? (() => {
             const parts = buildMatchQueryParts(schema);
             return query<{
               id: string;
@@ -1504,47 +1531,44 @@ export function search(queryText: string): Promise<SearchResult[]> {
               [like]
             );
           })()
-        : [];
-
-    const teamRows = schema.hasTable("teams")
-      ? await query<{ id: string; name: string; home_ground: string | null }>(
-          `
-          SELECT id, name, ${schema.hasColumn("teams", "home_ground") ? "home_ground" : "NULL::text AS home_ground"}
-          FROM teams
-          WHERE lower(name) LIKE $1
-          ORDER BY name
-          LIMIT 10
-          `,
-          [like]
-        )
-      : [];
-
-    const playerNameExpr = buildPlayerNameExpr(schema);
-    const playerRows = schema.hasTable("players")
-      ? await query<{ id: string; name: string; role: string }>(
-          `
-          SELECT id, ${playerNameExpr} AS name, role
-          FROM players
-          WHERE lower(${playerNameExpr}) LIKE $1
-          ORDER BY ${playerNameExpr}
-          LIMIT 10
-          `,
-          [like]
-        )
-      : [];
-
-    const seriesRows = schema.hasTable("series")
-      ? await query<{ id: string; name: string; season: string; format: string; status: string }>(
-          `
-          SELECT id, name, season, format, status
-          FROM series
-          WHERE lower(name) LIKE $1
-          ORDER BY start_date DESC
-          LIMIT 10
-          `,
-          [like]
-        )
-      : [];
+        : Promise.resolve([]),
+      schema.hasTable("teams")
+        ? query<{ id: string; name: string; home_ground: string | null }>(
+            `
+            SELECT id, name, ${schema.hasColumn("teams", "home_ground") ? "home_ground" : "NULL::text AS home_ground"}
+            FROM teams
+            WHERE lower(name) LIKE $1
+            ORDER BY name
+            LIMIT 10
+            `,
+            [like]
+          )
+        : Promise.resolve([]),
+      schema.hasTable("players")
+        ? query<{ id: string; name: string; role: string }>(
+            `
+            SELECT id, ${playerNameExpr} AS name, role
+            FROM players
+            WHERE lower(${playerNameExpr}) LIKE $1
+            ORDER BY ${playerNameExpr}
+            LIMIT 10
+            `,
+            [like]
+          )
+        : Promise.resolve([]),
+      schema.hasTable("series")
+        ? query<{ id: string; name: string; season: string; format: string; status: string }>(
+            `
+            SELECT id, name, season, format, status
+            FROM series
+            WHERE lower(name) LIKE $1
+            ORDER BY start_date DESC
+            LIMIT 10
+            `,
+            [like]
+          )
+        : Promise.resolve([])
+    ]);
 
     const matchResults: SearchResult[] = matchRows.map((row) => ({
       type: "match",

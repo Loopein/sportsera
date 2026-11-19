@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getTeams } from "@/lib/api/read";
 
+export const revalidate = 60;
+
 export default async function TeamsPage(): Promise<React.ReactElement> {
   const teams = await getTeams();
 

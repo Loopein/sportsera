@@ -1,8 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { clearCache } from "@/lib/cache/redis";
 
 describe("lib/api/read schema compatibility", () => {
   beforeEach(() => {
     vi.resetModules();
+    clearCache();
   });
 
   it("adapts when teams lack logo/captain/coach, players use full_name, and matches use home/away + snapshots", async () => {
@@ -146,6 +148,7 @@ describe("lib/api/read schema compatibility", () => {
     vi.doMock("@/lib/db", () => ({ query: queryMock }));
 
     const read = await import("@/lib/api/read");
+    read.resetReadCachesForTest();
     const live = await read.getLiveMatches();
     expect(live).toHaveLength(1);
     expect(live[0].teamA.score).toBe("221/4 (39.1)");
@@ -246,9 +249,79 @@ describe("lib/api/read schema compatibility", () => {
     vi.doMock("@/lib/db", () => ({ query: queryMock }));
 
     const read = await import("@/lib/api/read");
+    read.resetReadCachesForTest();
     const live = await read.getLiveMatches();
     expect(live).toHaveLength(1);
     expect(live[0].teamA.logo).toBe("/images/teams/eng.png");
     expect(live[0].teamA.score).toBe("176/7 (20)");
+  });
+
+  it("deduplicates concurrent requests and serves warm cache hits", async () => {
+    let matchesQueryCount = 0;
+    const queryMock = vi.fn(async (sql: string) => {
+      if (sql.includes("FROM information_schema.columns")) {
+        return [
+          { table_name: "teams", column_name: "id" },
+          { table_name: "teams", column_name: "name" },
+          { table_name: "teams", column_name: "short_name" },
+          { table_name: "matches", column_name: "id" },
+          { table_name: "matches", column_name: "status" },
+          { table_name: "matches", column_name: "venue" },
+          { table_name: "matches", column_name: "team_a_id" },
+          { table_name: "matches", column_name: "team_b_id" }
+        ];
+      }
+      if (sql.includes("FROM matches m")) {
+        matchesQueryCount++;
+        return [
+          {
+            id: "match-1",
+            slug: "match-1",
+            status: "upcoming",
+            format: "ODI",
+            series_name: "Cup",
+            venue: "Dhaka",
+            toss: null,
+            summary: null,
+            result_text: null,
+            start_at: null,
+            last_updated_at: null,
+            current_run_rate: null,
+            required_run_rate: null,
+            target: null,
+            overs: null,
+            team_a_score: null,
+            team_b_score: null,
+            team_a_id: "a",
+            team_a_name: "Team A",
+            team_a_short_name: "TA",
+            team_a_logo: null,
+            team_b_id: "b",
+            team_b_name: "Team B",
+            team_b_short_name: "TB",
+            team_b_logo: null,
+            snap_innings: null,
+            snap_runs: null,
+            snap_wickets: null,
+            snap_state: null
+          }
+        ];
+      }
+      return [];
+    });
+
+    vi.doMock("@/lib/db", () => ({ query: queryMock }));
+
+    const read = await import("@/lib/api/read");
+    read.resetReadCachesForTest();
+    const [all, upcoming, completed] = await Promise.all([
+      read.getMatches(),
+      read.getMatches("upcoming"),
+      read.getMatches("completed")
+    ]);
+    expect(all).toHaveLength(1);
+    expect(upcoming).toHaveLength(1);
+    expect(completed).toHaveLength(0);
+    expect(matchesQueryCount).toBe(1);
   });
 });

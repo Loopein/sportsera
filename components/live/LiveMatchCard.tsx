@@ -32,7 +32,11 @@ function LiveMatchCardComponent({ match }: { match: LiveMatch }): React.ReactEle
   const badgeLabel = isUpcoming ? "Upcoming" : undefined;
   const ctaLabel =
     isUpcoming ? "View Squads" : match.status === "completed" ? "View Result" : "View Match";
-  const ctaHref = isUpcoming ? `/matches/${match.id}/squads` : `/matches/${match.id}`;
+  const ctaHref = isUpcoming
+    ? `/matches/${match.id}/squads`
+    : isLive || match.status === "innings_break"
+      ? `/matches/${match.id}/scorecard`
+      : `/matches/${match.id}`;
 
   return (
     <Link

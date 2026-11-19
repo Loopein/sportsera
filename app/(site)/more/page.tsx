@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
+import { SITE_NAME, SITE_POWERED_BY } from "@/lib/constants/site";
 
 const moreLinks = [
   { href: "/live", label: "Live Center" },
@@ -15,7 +16,12 @@ export default function MorePage(): React.ReactElement {
   return (
     <div className="space-y-5">
       <Card as="section" variant="strong" className="p-6">
-        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">More</h1>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">More</h1>
+          <span className="inline-flex items-center rounded-full border border-[#cfd7ef] bg-[#edf2ff] px-3 py-1 text-xs font-bold uppercase tracking-wide text-[rgb(6,12,58)]">
+            {SITE_NAME} · Powered by {SITE_POWERED_BY}
+          </span>
+        </div>
         <p className="mt-2 text-sm text-slate-600">Explore additional cricket sections and tools.</p>
       </Card>
 

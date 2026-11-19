@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getMatches } from "@/lib/api/read";
 
+export const revalidate = 30;
+
 export default async function ResultsPage(): Promise<React.ReactElement> {
   const results = await getMatches("completed");
 

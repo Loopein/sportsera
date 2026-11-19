@@ -3,7 +3,7 @@ import Link from "next/link";
 import { MainNav } from "@/components/layout/MainNav";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { AutoCloseMenuDetails } from "@/components/layout/AutoCloseMenuDetails";
-import { SITE_ICON_PATH, SITE_NAME } from "@/lib/constants/site";
+import { SITE_ICON_PATH, SITE_NAME, SITE_POWERED_BY } from "@/lib/constants/site";
 
 export function Header(): React.ReactElement {
   return (
@@ -28,8 +28,8 @@ export function Header(): React.ReactElement {
               <span className="brand-wordmark-sports">Sports</span>
               <span className="brand-wordmark-era">Era</span>
             </span>
-            <span className="hidden truncate text-[11px] font-medium uppercase tracking-[0.11em] text-slate-500 sm:block">
-              Live Match Network
+            <span className="hidden truncate text-[11px] font-medium uppercase tracking-[0.09em] text-slate-500 sm:block">
+              Live Match Network · Powered by <span className="font-bold text-[rgb(6,12,58)]">{SITE_POWERED_BY}</span>
             </span>
           </span>
         </Link>

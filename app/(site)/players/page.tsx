@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getPlayers } from "@/lib/api/read";
 
+export const revalidate = 60;
+
 export default async function PlayersPage(): Promise<React.ReactElement> {
   const players = await getPlayers();
 

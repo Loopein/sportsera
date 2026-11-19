@@ -3,6 +3,8 @@ import { LivePageClient } from "@/app/(site)/live/LivePageClient";
 import { Card } from "@/components/ui/card";
 import { getLiveMatches } from "@/lib/api/read";
 
+export const revalidate = 10;
+
 export const metadata: Metadata = {
   title: "Live Matches",
   description: "All currently live cricket matches with fast score refresh."

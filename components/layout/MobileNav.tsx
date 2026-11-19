@@ -7,6 +7,7 @@ import { AiOutlineAlignRight } from "react-icons/ai";
 import { BiBroadcast } from "react-icons/bi";
 import { FiActivity, FiBarChart2, FiCalendar, FiCheckCircle, FiFileText, FiHome, FiLayers, FiSearch, FiUsers, FiVideo } from "react-icons/fi";
 import { MAIN_NAV, MORE_NAV } from "@/lib/constants/nav";
+import { SITE_POWERED_BY } from "@/lib/constants/site";
 import { cn } from "@/lib/utils/text";
 
 const primaryNavIcons: Record<string, IconType> = {
@@ -93,6 +94,11 @@ export function MobileNav(): React.ReactElement {
             );
           })}
         </nav>
+        <div className="mt-2.5 border-t border-slate-200 pt-2 text-center">
+          <span className="text-[11px] font-semibold text-slate-500">
+            Powered by <span className="font-bold text-[rgb(6,12,58)]">{SITE_POWERED_BY}</span>
+          </span>
+        </div>
       </div>
     </details>
   );

@@ -1,6 +1,8 @@
 import { NewsList } from "@/components/news/NewsList";
 import { getNews } from "@/lib/api/read";
 
+export const revalidate = 30;
+
 export default async function NewsPage(): Promise<React.ReactElement> {
   const news = await getNews();
 

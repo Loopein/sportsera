@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { IconType } from "react-icons";
 import { FaApple, FaFacebookF, FaGooglePlay, FaInstagram, FaPinterestP, FaTwitter } from "react-icons/fa";
 import { FiMail, FiMapPin, FiPhoneCall } from "react-icons/fi";
-import { SITE_ICON_PATH, SITE_NAME } from "@/lib/constants/site";
+import { SITE_ICON_PATH, SITE_NAME, SITE_POWERED_BY } from "@/lib/constants/site";
 
 type IconLink = {
   href: string;
@@ -67,19 +67,24 @@ export function Footer(): React.ReactElement {
               })}
             </div>
 
-            <Link href="/" className="inline-flex items-center gap-2.5 self-start lg:self-auto">
-              <Image
-                src={SITE_ICON_PATH}
-                alt={`${SITE_NAME} icon`}
-                width={64}
-                height={64}
-                className="h-9 w-9 shrink-0 rounded-xl border border-slate-300 bg-white object-cover sm:h-10 sm:w-10"
-              />
-              <span className="brand-wordmark text-[1.75rem] font-black tracking-tight sm:text-[2.2rem]">
-                <span className="brand-wordmark-sports">Sports</span>
-                <span className="brand-wordmark-era">Era</span>
+            <div className="flex flex-wrap items-center gap-3 self-start lg:self-auto">
+              <Link href="/" className="inline-flex items-center gap-2.5">
+                <Image
+                  src={SITE_ICON_PATH}
+                  alt={`${SITE_NAME} icon`}
+                  width={64}
+                  height={64}
+                  className="h-9 w-9 shrink-0 rounded-xl border border-slate-300 bg-white object-cover sm:h-10 sm:w-10"
+                />
+                <span className="brand-wordmark text-[1.75rem] font-black tracking-tight sm:text-[2.2rem]">
+                  <span className="brand-wordmark-sports">Sports</span>
+                  <span className="brand-wordmark-era">Era</span>
+                </span>
+              </Link>
+              <span className="inline-flex items-center gap-1 rounded-full border border-[#cfd7ef] bg-[#edf2ff] px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[rgb(6,12,58)]">
+                Powered by {SITE_POWERED_BY}
               </span>
-            </Link>
+            </div>
 
             <div className="flex flex-col gap-2">
               <p className="text-sm font-semibold uppercase tracking-[0.1em] text-slate-600">Download App</p>
@@ -126,10 +131,10 @@ export function Footer(): React.ReactElement {
             </section>
 
             <section className="min-w-0 w-full">
-              <h3 className="text-xl font-bold text-[rgb(6,12,58)] sm:text-2xl">About Our Team</h3>
+              <h3 className="text-xl font-bold text-[rgb(6,12,58)] sm:text-2xl">About SportsEra</h3>
               <p className="mt-4 text-sm leading-7 text-slate-700">
-                For those of you who are serious about having more, doing more, and being more, success is achievable with some
-                understanding of what to do serious about having more, doing more.
+                A {SITE_POWERED_BY} product built for fast, real-time cricket coverage—live scores, scorecards,
+                ball-by-ball commentary, fixtures, standings, and team insights.
               </p>
             </section>
 
@@ -173,7 +178,8 @@ export function Footer(): React.ReactElement {
               ))}
             </nav>
             <p className="font-semibold text-slate-700">
-              &copy; Copyright {year} {SITE_NAME} All Rights Reserved. Powered by Loopein.
+              &copy; Copyright {year} {SITE_NAME} All Rights Reserved. A {SITE_POWERED_BY} Product &middot; Powered by{" "}
+              {SITE_POWERED_BY}.
             </p>
           </div>
         </div>

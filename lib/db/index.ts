@@ -14,12 +14,14 @@ export const dbPool =
   globalForDb.__dbPool ??
   new Pool({
     connectionString,
-    ssl
+    ssl,
+    max: 10,
+    idleTimeoutMillis: 30_000,
+    connectionTimeoutMillis: 10_000,
+    keepAlive: true
   });
 
-if (process.env.NODE_ENV !== "production") {
-  globalForDb.__dbPool = dbPool;
-}
+globalForDb.__dbPool = dbPool;
 
 export async function query<T>(text: string, params: unknown[] = []): Promise<T[]> {
   const result = await dbPool.query(text, params);

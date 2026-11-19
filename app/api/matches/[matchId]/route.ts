@@ -21,7 +21,7 @@ export async function GET(_request: Request, { params }: MatchRouteProps): Promi
 
   const etag = toEtagFromData(data);
   const headers = {
-    "Cache-Control": "public, s-maxage=6, stale-while-revalidate=12",
+    "Cache-Control": "public, s-maxage=6, stale-while-revalidate=24",
     ETag: etag
   };
 
