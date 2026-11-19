@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getLiveMatches } from "@/lib/api/read";
 import { etagMatches, toEtagFromData } from "@/lib/utils/data-version";
 
-export async function GET(request: Request = new Request("http://localhost/api/live")): Promise<NextResponse> {
+export async function GET(request: Request): Promise<NextResponse> {
   const data = await getLiveMatches();
   const etag = toEtagFromData(data);
   const headers = {
