@@ -9,7 +9,7 @@ type SearchFormProps = {
 
 export function SearchForm({
   defaultValue = "",
-  placeholder = "Search matches, teams, players, series...",
+  placeholder = "Search sports, live matches, teams, athletes, leagues...",
   name = "q",
   action = "/search"
 }: SearchFormProps): React.ReactElement {

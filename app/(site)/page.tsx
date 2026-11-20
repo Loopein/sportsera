@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { IconType } from "react-icons";
 import { BiBroadcast } from "react-icons/bi";
 import {
   FiActivity,
@@ -7,6 +8,20 @@ import {
   FiCheckCircle,
   FiAward
 } from "react-icons/fi";
+import {
+  MdDirectionsRun,
+  MdSportsBaseball,
+  MdSportsBasketball,
+  MdSportsCricket,
+  MdSportsEsports,
+  MdSportsGolf,
+  MdSportsHockey,
+  MdSportsMma,
+  MdSportsMotorsports,
+  MdSportsRugby,
+  MdSportsSoccer,
+  MdSportsTennis
+} from "react-icons/md";
 import { LiveMatchList } from "@/components/live/LiveMatchList";
 import { NewsList } from "@/components/news/NewsList";
 import { AdSlot } from "@/components/shared/AdSlot";
@@ -14,8 +29,23 @@ import { PrefetchRoutes } from "@/components/shared/PrefetchRoutes";
 import { SearchForm } from "@/components/shared/SearchForm";
 import { Card } from "@/components/ui/card";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { LoopeinLogo } from "@/components/shared/LoopeinBranding";
 import { getLiveMatches, getMatches, getNews } from "@/lib/api/read";
-import { SITE_POWERED_BY } from "@/lib/constants/site";
+
+const SPORT_CATEGORIES: Array<{ label: string; icon: IconType }> = [
+  { label: "Football", icon: MdSportsSoccer },
+  { label: "Cricket", icon: MdSportsCricket },
+  { label: "Basketball", icon: MdSportsBasketball },
+  { label: "Tennis", icon: MdSportsTennis },
+  { label: "Baseball", icon: MdSportsBaseball },
+  { label: "Hockey", icon: MdSportsHockey },
+  { label: "Rugby", icon: MdSportsRugby },
+  { label: "Motorsports", icon: MdSportsMotorsports },
+  { label: "Esports", icon: MdSportsEsports },
+  { label: "MMA", icon: MdSportsMma },
+  { label: "Golf", icon: MdSportsGolf },
+  { label: "Athletics", icon: MdDirectionsRun }
+];
 
 export const revalidate = 10;
 
@@ -56,21 +86,33 @@ export default async function HomePage(): Promise<React.ReactElement> {
   return (
     <div className="space-y-10 md:space-y-12">
       <PrefetchRoutes />
-      <Card as="section" variant="strong" className="relative overflow-hidden p-5 sm:p-7 md:p-8">
-        <div className="glow-orb glow-orb-blue float-slow -left-12 -top-10 h-44 w-44" />
-        <div className="glow-orb glow-orb-cyan float-delay -right-10 top-8 h-40 w-40" />
-        <div className="hero-grid-overlay absolute inset-0 opacity-80" />
+      <Card as="section" className="relative p-5 sm:p-7 md:p-8">
         <div className="grid items-center gap-6 lg:grid-cols-[1.35fr_0.65fr]">
           <div className="relative z-10 min-w-0">
             <h1 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl md:text-4xl lg:leading-[1.15]">
-              Catch Every Ball Without Refreshing the Whole Page
+              Live Scores, Match Centers &amp; Analytics Across Every Sport
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-700 md:text-base">
-              Live matches, scorecards, ball-by-ball commentary, fixtures, results, rankings, teams, players, and
-              unified search in one fast public cricket center.
+              Follow real-time scores, play-by-play commentary, fixtures, results, standings, teams, and athletes across
+              football, cricket, basketball, tennis, motorsports, and every major sport in one fast public hub.
             </p>
             <div className="mt-5 max-w-2xl">
               <SearchForm action="/search" />
+            </div>
+            <div className="mt-4 flex flex-wrap items-center gap-1.5">
+              {SPORT_CATEGORIES.map((sport) => {
+                const SportIcon = sport.icon;
+                return (
+                  <Link
+                    key={sport.label}
+                    href={`/search?q=${encodeURIComponent(sport.label)}`}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-slate-50/80 px-2.5 py-1 text-xs font-bold text-slate-700 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700"
+                  >
+                    <SportIcon className="h-3.5 w-3.5 text-brand-600" aria-hidden="true" />
+                    <span>{sport.label}</span>
+                  </Link>
+                );
+              })}
             </div>
           </div>
 
@@ -78,7 +120,10 @@ export default async function HomePage(): Promise<React.ReactElement> {
             <Card className="p-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <p className="text-xs font-extrabold uppercase tracking-wider text-slate-500">Quick Access</p>
-                <span className="text-[11px] font-bold text-brand-700">{SITE_POWERED_BY} Sports</span>
+                <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-brand-700">
+                  <LoopeinLogo height={14} />
+                  <span>Sports</span>
+                </span>
               </div>
               <div className="mt-3 grid grid-cols-2 gap-2">
                 <Link
@@ -219,7 +264,7 @@ export default async function HomePage(): Promise<React.ReactElement> {
         <NewsList articles={news} />
       </section>
 
-      <AdSlot variant="leaderboard" label="Sponsored · Cricket Network" />
+      <AdSlot variant="leaderboard" label="Sponsored · Global Sports Network" />
     </div>
   );
 }

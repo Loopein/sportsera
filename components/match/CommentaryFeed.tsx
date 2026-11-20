@@ -32,7 +32,7 @@ function CommentaryFeedComponent({ items }: { items: CommentaryItem[] }): React.
   return (
     <Card as="section" className="p-5 sm:p-6">
       <div className="flex items-center justify-between gap-2">
-        <h2 className="text-lg font-extrabold text-slate-900">Ball-by-Ball Commentary</h2>
+        <h2 className="text-lg font-extrabold text-slate-900">Live Play-by-Play Commentary</h2>
         <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-bold text-slate-600">
           {items.length} updates
         </span>
@@ -45,7 +45,7 @@ function CommentaryFeedComponent({ items }: { items: CommentaryItem[] }): React.
         </ul>
       ) : (
         <p className="mt-4 rounded-xl border border-dashed border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-500">
-          Live ball-by-ball commentary will appear here once the match gets underway.
+          Live play-by-play commentary will appear here once the match gets underway.
         </p>
       )}
     </Card>

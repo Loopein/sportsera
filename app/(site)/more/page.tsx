@@ -13,19 +13,20 @@ import {
   FiUsers
 } from "react-icons/fi";
 import { AdSlot } from "@/components/shared/AdSlot";
+import { PoweredByLoopein } from "@/components/shared/LoopeinBranding";
 import { Card } from "@/components/ui/card";
-import { SITE_NAME, SITE_POWERED_BY } from "@/lib/constants/site";
+import { SITE_NAME } from "@/lib/constants/site";
 
 const moreLinks = [
-  { href: "/live", label: "Live Center", description: "Real-time ball-by-ball scores & active commentary", icon: BiBroadcast },
-  { href: "/fixtures", label: "Fixtures", description: "Upcoming international and tournament match schedules", icon: FiCalendar },
-  { href: "/results", label: "Results", description: "Completed matches, summaries, and full scorecards", icon: FiCheckCircle },
-  { href: "/series", label: "Series", description: "Bilateral tours, leagues, and ICC tournament hubs", icon: FiLayers },
-  { href: "/teams", label: "Teams", description: "International & league squads, fixtures, and rosters", icon: FiShield },
-  { href: "/players", label: "Players", description: "Career stats, batting/bowling averages, and form", icon: FiUsers },
-  { href: "/rankings", label: "Standings", description: "Tournament group tables, points, and net run rate", icon: FiAward },
-  { href: "/stats", label: "Stats", description: "Tournament leaders across runs, wickets, and economy", icon: FiBarChart2 },
-  { href: "/search", label: "Search", description: "Instant search across teams, players, series, and news", icon: FiSearch }
+  { href: "/live", label: "Live Center", description: "Real-time multi-sport scores & active play-by-play commentary", icon: BiBroadcast },
+  { href: "/fixtures", label: "Fixtures", description: "Upcoming international, league, and tournament match schedules", icon: FiCalendar },
+  { href: "/results", label: "Results", description: "Completed matches, final scores, summaries, and full box scores", icon: FiCheckCircle },
+  { href: "/series", label: "Series", description: "Global leagues, championships, tours, and tournament hubs", icon: FiLayers },
+  { href: "/teams", label: "Teams", description: "National & club squads, fixtures, rosters, and profiles", icon: FiShield },
+  { href: "/players", label: "Players", description: "Athlete profiles, career stats, performance averages, and form", icon: FiUsers },
+  { href: "/rankings", label: "Standings", description: "League tables, tournament group standings, points, and qualification", icon: FiAward },
+  { href: "/stats", label: "Stats", description: "Season & tournament leaders across scoring, defense, and efficiency", icon: FiBarChart2 },
+  { href: "/search", label: "Search", description: "Instant search across sports, teams, players, leagues, and news", icon: FiSearch }
 ];
 
 export default function MorePage(): React.ReactElement {
@@ -40,13 +41,11 @@ export default function MorePage(): React.ReactElement {
             <div>
               <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">More</h1>
               <p className="mt-1 text-sm text-slate-600">
-                Explore every cricket section, analytical leaderboard, and directory across {SITE_NAME}.
+                Explore every sport, live match center, analytical leaderboard, and directory across {SITE_NAME}.
               </p>
             </div>
           </div>
-          <span className="inline-flex items-center rounded-full border border-[#cfd7ef] bg-[#edf2ff] px-3 py-1 text-xs font-bold uppercase tracking-wide text-[rgb(6,12,58)]">
-            {SITE_NAME} · Powered by {SITE_POWERED_BY}
-          </span>
+          <PoweredByLoopein />
         </div>
       </Card>
 
@@ -77,7 +76,7 @@ export default function MorePage(): React.ReactElement {
         })}
       </div>
 
-      <AdSlot variant="native-card" label="Sponsored · Featured Cricket Destination" />
+      <AdSlot variant="native-card" label="Sponsored · Featured Sports Destination" />
 
       <AdSlot variant="leaderboard" label="Sponsored · SportsEra Network" />
     </div>

@@ -99,7 +99,7 @@ function formatStat(value: number | null | undefined, decimals = 2): string {
 
 export const metadata: Metadata = {
   title: "Stats",
-  description: "Tournament stats leaderboard for batting and bowling categories."
+  description: "Multi-sport tournament and season stats leaderboards."
 };
 
 export default async function StatsPage({ searchParams }: StatsPageProps): Promise<React.ReactElement> {
@@ -352,7 +352,7 @@ export default async function StatsPage({ searchParams }: StatsPageProps): Promi
         </div>
 
         <aside className="space-y-4">
-          <div className="rounded-2xl border border-[#14226b] bg-gradient-to-br from-[#060c3a] via-[#0d1b63] to-[#132cc2] p-5 text-white shadow-md">
+          <div className="rounded-2xl border border-brand-400/30 bg-gradient-to-br from-[#060c3a]/40 via-[#0d1b63]/35 to-[#132cc2]/40 p-5 text-white shadow-md backdrop-blur-md">
             <div className="flex items-center justify-between gap-2">
               <p className="text-xs font-extrabold uppercase tracking-wider text-brand-200">Top Performer</p>
               <FiAward className="h-4 w-4 text-amber-300" aria-hidden="true" />

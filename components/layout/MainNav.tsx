@@ -60,10 +60,10 @@ export function MainNav({ className, mode = "full" }: MainNavProps): React.React
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
                   "header-nav-link",
-                  isActive && "border-[#b8c5ed] bg-[#edf2ff] text-[rgb(6,12,58)] shadow-[0_10px_18px_rgba(6,12,58,0.16)]"
+                  isActive && "header-nav-link-active"
                 )}
               >
-                <NavIcon className={cn("header-nav-link-icon h-3.5 w-3.5", isActive && "text-[rgb(6,12,58)]")} aria-hidden="true" />
+                <NavIcon className="header-nav-link-icon h-3.5 w-3.5" aria-hidden="true" />
                 <span>{item.label}</span>
               </Link>
             );
@@ -78,7 +78,7 @@ export function MainNav({ className, mode = "full" }: MainNavProps): React.React
             <AiOutlineAlignRight className="menu-trigger-icon h-5 w-5" aria-hidden="true" />
             <span className="sr-only">More menu</span>
           </summary>
-          <div className="header-dropdown-panel absolute right-0 top-[calc(100%+0.5rem)] z-50 w-48 overflow-hidden rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg">
+          <div className="header-dropdown-panel absolute right-0 top-[calc(100%+0.5rem)] z-50 w-48 overflow-hidden rounded-xl border border-slate-200 bg-white p-1.5 shadow-2xl backdrop-blur-xl">
             {MORE_NAV.map((item) => {
               const isActive = isNavItemActive(pathname, item.href);
               const MenuIcon = moreNavIcons[item.label] ?? FiActivity;
@@ -87,9 +87,9 @@ export function MainNav({ className, mode = "full" }: MainNavProps): React.React
                   key={item.href}
                   href={item.href}
                   aria-current={isActive ? "page" : undefined}
-                  className={cn("header-menu-link", isActive && "bg-[#edf2ff] text-[rgb(6,12,58)]")}
+                  className={cn("header-menu-link", isActive && "header-menu-link-active")}
                 >
-                  <MenuIcon className={cn("header-menu-link-icon h-4 w-4", isActive && "text-[rgb(6,12,58)]")} aria-hidden="true" />
+                  <MenuIcon className="header-menu-link-icon h-4 w-4" aria-hidden="true" />
                   <span>{item.label}</span>
                 </Link>
               );

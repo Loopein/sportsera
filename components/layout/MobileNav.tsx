@@ -6,8 +6,8 @@ import type { IconType } from "react-icons";
 import { AiOutlineAlignRight } from "react-icons/ai";
 import { BiBroadcast } from "react-icons/bi";
 import { FiActivity, FiBarChart2, FiCalendar, FiCheckCircle, FiFileText, FiHome, FiLayers, FiSearch, FiUsers, FiVideo } from "react-icons/fi";
+import { PoweredByLoopein } from "@/components/shared/LoopeinBranding";
 import { MAIN_NAV, MORE_NAV } from "@/lib/constants/nav";
-import { SITE_POWERED_BY } from "@/lib/constants/site";
 import { cn } from "@/lib/utils/text";
 
 const primaryNavIcons: Record<string, IconType> = {
@@ -51,7 +51,7 @@ export function MobileNav(): React.ReactElement {
         <AiOutlineAlignRight className="menu-trigger-icon h-5 w-5" aria-hidden="true" />
         <span className="sr-only">Open menu</span>
       </summary>
-      <div className="header-dropdown-panel absolute right-0 top-[calc(100%+0.5rem)] z-50 w-[min(22rem,calc(100vw-1rem))] rounded-xl border border-slate-200 bg-white p-3 shadow-lg">
+      <div className="header-dropdown-panel absolute right-0 top-[calc(100%+0.5rem)] z-50 w-[min(22rem,calc(100vw-1rem))] rounded-xl border border-slate-200 bg-white p-3 shadow-2xl backdrop-blur-xl">
         <nav className="grid grid-cols-2 gap-2" aria-label="Primary navigation">
           {primaryNav.map((item) => {
             const isActive = isNavItemActive(pathname, item.href);
@@ -63,10 +63,10 @@ export function MobileNav(): React.ReactElement {
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
                   "header-menu-link rounded-lg bg-slate-50 px-2 py-2 text-left text-xs font-semibold",
-                  isActive && "bg-[#edf2ff] text-[rgb(6,12,58)]"
+                  isActive && "header-menu-link-active"
                 )}
               >
-                <NavIcon className={cn("header-menu-link-icon h-3.5 w-3.5 shrink-0", isActive && "text-[rgb(6,12,58)]")} aria-hidden="true" />
+                <NavIcon className="header-menu-link-icon h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="truncate">{item.label}</span>
               </Link>
             );
@@ -85,19 +85,17 @@ export function MobileNav(): React.ReactElement {
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
                   "header-menu-link rounded-lg bg-slate-50 px-2 py-2 text-left text-xs font-semibold",
-                  isActive && "bg-[#edf2ff] text-[rgb(6,12,58)]"
+                  isActive && "header-menu-link-active"
                 )}
               >
-                <MoreIcon className={cn("header-menu-link-icon h-3.5 w-3.5 shrink-0", isActive && "text-[rgb(6,12,58)]")} aria-hidden="true" />
+                <MoreIcon className="header-menu-link-icon h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="truncate">{item.label}</span>
               </Link>
             );
           })}
         </nav>
-        <div className="mt-2.5 border-t border-slate-200 pt-2 text-center">
-          <span className="text-[11px] font-semibold text-slate-500">
-            Powered by <span className="font-bold text-[rgb(6,12,58)]">{SITE_POWERED_BY}</span>
-          </span>
+        <div className="mt-2.5 flex justify-center border-t border-slate-200 pt-2.5">
+          <PoweredByLoopein logoHeight={13} />
         </div>
       </div>
     </details>

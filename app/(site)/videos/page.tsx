@@ -9,19 +9,19 @@ const highlightPreviews = [
     title: "Match Highlights Reel",
     duration: "04:15",
     category: "Highlights",
-    description: "Key boundaries, wickets, and turning-point overs curated right after every innings."
+    description: "Key goals, boundaries, clutch plays, and match-defining moments curated right after every game."
   },
   {
     title: "Post-Match Tactical Desk",
     duration: "06:40",
     category: "Analysis",
-    description: "Run-rate momentum breakdowns, phase-by-phase bowling spells, and winning partnerships."
+    description: "Momentum breakdowns, tactical formations, key matchups, and winning plays across every sport."
   },
   {
     title: "Press Box & Captain Reactions",
     duration: "03:10",
     category: "Press Box",
-    description: "Post-match briefings, player-of-the-match interviews, and upcoming pitch previews."
+    description: "Post-match briefings, MVP interviews, and upcoming arena previews."
   }
 ];
 
@@ -49,12 +49,12 @@ export default function VideosPage(): React.ReactElement {
         {highlightPreviews.map((item) => (
           <Card key={item.title} className="flex flex-col justify-between gap-4 p-4 sm:p-5">
             <div className="space-y-3">
-              <div className="relative flex aspect-video items-center justify-center overflow-hidden rounded-xl border border-slate-200/80 bg-gradient-to-br from-[#060c3a] via-[#101e6b] to-brand-700 text-white">
-                <FiPlayCircle className="h-10 w-10 text-white/85" aria-hidden="true" />
-                <span className="absolute bottom-2.5 right-2.5 rounded-md bg-black/55 px-2 py-0.5 text-[11px] font-bold tabular-nums text-white backdrop-blur-xs">
+              <div className="relative flex aspect-video items-center justify-center rounded-xl border border-slate-200/80 bg-slate-50/80 text-slate-800">
+                <FiPlayCircle className="h-10 w-10 text-brand-600" aria-hidden="true" />
+                <span className="absolute bottom-2.5 right-2.5 rounded-md border border-slate-200 bg-white px-2 py-0.5 text-[11px] font-bold tabular-nums text-slate-800">
                   {item.duration}
                 </span>
-                <span className="absolute left-2.5 top-2.5 rounded-full bg-white/15 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-white backdrop-blur-xs">
+                <span className="absolute left-2.5 top-2.5 rounded-full border border-slate-200 bg-white px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-brand-700">
                   {item.category}
                 </span>
               </div>
@@ -76,7 +76,7 @@ export default function VideosPage(): React.ReactElement {
         <div>
           <h2 className="text-base font-extrabold text-slate-900">Follow Live Action While Video Publishes</h2>
           <p className="mt-1 text-sm text-slate-600">
-            Track ball-by-ball commentary, live wickets, and complete innings scorecards in real time.
+            Track live play-by-play commentary, real-time scores, and complete match stats across every sport.
           </p>
         </div>
         <div className="flex flex-wrap gap-2.5">

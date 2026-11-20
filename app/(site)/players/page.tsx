@@ -28,11 +28,11 @@ export default async function PlayersPage(): Promise<React.ReactElement> {
           <div>
             <p className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-brand-700">
               <FiAward className="h-3.5 w-3.5" aria-hidden="true" />
-              Player Directory
+              All-Sports Athlete Directory
             </p>
             <h1 className="mt-1 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">Players</h1>
             <p className="mt-1 text-sm text-slate-600">
-              Player profiles, batting and bowling styles, career statistics, and recent form.
+              Athlete profiles, roles, playing styles, career statistics, and recent form across all sports.
             </p>
           </div>
           <span className="score-pill">{players.length} players</span>

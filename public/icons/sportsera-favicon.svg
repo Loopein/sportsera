@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect x="2" y="2" width="60" height="60" rx="15" fill="#0B1221" stroke="#FF4D00" stroke-opacity="0.35" stroke-width="1.5" />
+  <g transform="translate(32,32) scale(0.255) translate(-120,-120)">
+    <g transform="translate(120,120) skewX(-10) translate(-120,-120)">
+      <path d="M 63 72 L 113 72 L 113 92 L 71 92 L 71 110 L 101 110 L 113 122 L 113 156 L 101 168 L 51 168 L 51 148 L 93 148 L 93 130 L 63 130 L 51 118 L 51 84 Z" fill="#FFFFFF" />
+      <path d="M 127 72 L 189 72 L 189 92 L 147 92 L 147 148 L 189 148 L 189 168 L 127 168 Z" fill="#FFFFFF" />
+      <polygon points="155,102 189,120 155,138" fill="#FF4D00" />
+    </g>
+  </g>
+</svg>

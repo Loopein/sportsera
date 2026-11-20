@@ -46,7 +46,7 @@ function LiveMatchCardComponent({ match }: { match: LiveMatch }): React.ReactEle
       <Card
         as="article"
         variant="strong"
-        className="relative flex h-full w-full min-w-0 flex-col justify-between overflow-hidden p-4 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:border-brand-300 group-hover:shadow-lg sm:p-5"
+        className="relative flex h-full w-full min-w-0 flex-col justify-between p-4 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:border-brand-300 group-hover:shadow-lg sm:p-5"
       >
         <div>
           <div className="mb-3.5 flex items-center justify-between gap-2">

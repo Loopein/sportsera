@@ -1,28 +1,50 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap");
 
-:root {
+:root,
+html[data-theme="light"] {
   color-scheme: light;
-  --surface: #ffffff;
-  --surface-elevated: #ffffff;
-  --surface-muted: #f1f4ff;
-  --surface-strong: #e5ebff;
-  --text: rgb(6, 12, 58);
-  --text-muted: #42507a;
-  --border-soft: #d9e1f4;
-  --accent: rgb(6, 12, 58);
-  --accent-strong: #050a31;
+  --bg-page: #f4f7fb;
+  --surface: rgba(255, 255, 255, 0.2);
+  --surface-elevated: rgba(255, 255, 255, 0.22);
+  --surface-muted: rgba(241, 245, 249, 0.22);
+  --surface-strong: rgba(232, 238, 251, 0.26);
+  --text: #0b1221;
+  --text-muted: #475569;
+  --border-soft: rgba(148, 163, 184, 0.28);
+  --accent: #1d70f2;
+  --accent-strong: #0b1221;
   --accent-soft: #e8edff;
   --success-soft: #d7f7ea;
   --danger-soft: #ffe3e3;
   --radius-card: 18px;
   --radius-pill: 999px;
-  --shadow-soft: 0 10px 26px -16px rgba(6, 12, 58, 0.16), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
-  --shadow-pop: 0 20px 42px -18px rgba(6, 12, 58, 0.24), 0 4px 12px -2px rgba(15, 23, 42, 0.06);
+  --shadow-soft: 0 10px 26px -16px rgba(6, 12, 58, 0.14), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+  --shadow-pop: 0 20px 42px -18px rgba(6, 12, 58, 0.2), 0 4px 12px -2px rgba(15, 23, 42, 0.06);
+  --glass-blur: blur(8px) saturate(165%);
+  --glass-blur-strong: blur(8px) saturate(165%);
   --font-display: "Montserrat", "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-body: "Montserrat", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --dot-canvas: rgba(71, 85, 105, 0.24);
+  --logo-sports-color: #0b1221;
+}
 
-  --bg-radial-a: #e8eeff;
-  --bg-radial-b: #f1f5ff;
-  --bg-gradient-start: #f9fbff;
-  --bg-gradient-end: #f3f6fd;
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --bg-page: #070b16;
+  --surface: rgba(15, 23, 42, 0.22);
+  --surface-elevated: rgba(15, 23, 42, 0.24);
+  --surface-muted: rgba(19, 30, 54, 0.24);
+  --surface-strong: rgba(23, 37, 66, 0.28);
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-soft: rgba(148, 163, 184, 0.2);
+  --accent: #38bdf8;
+  --accent-strong: #4ed8a0;
+  --accent-soft: rgba(56, 189, 248, 0.16);
+  --success-soft: rgba(16, 185, 129, 0.18);
+  --danger-soft: rgba(239, 68, 68, 0.18);
+  --shadow-soft: 0 14px 32px -14px rgba(2, 6, 23, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --shadow-pop: 0 24px 48px -16px rgba(2, 6, 23, 0.68), 0 0 0 1px rgba(148, 163, 184, 0.14);
+  --dot-canvas: rgba(148, 163, 184, 0.25);
+  --logo-sports-color: #ffffff;
 }

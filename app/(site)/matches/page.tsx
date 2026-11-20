@@ -309,8 +309,8 @@ export default async function MatchesPage({ searchParams }: MatchesPageProps): P
       </Card>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="inline-flex max-w-full items-center gap-2 rounded-xl bg-[rgb(6,12,58)] px-4 py-2 text-xs font-extrabold uppercase tracking-wider text-white shadow-sm sm:text-sm">
-          <FiCalendar className="h-4 w-4 text-brand-200" aria-hidden="true" />
+        <div className="inline-flex max-w-full items-center gap-2 rounded-xl border border-[#4ed8a0]/35 bg-[#0b1221] px-4 py-2 text-xs font-extrabold uppercase tracking-wider text-white shadow-sm sm:text-sm">
+          <FiCalendar className="h-4 w-4 text-[#4ed8a0]" aria-hidden="true" />
           <span className="truncate">{sectionDate}</span>
         </div>
         {availableDays.length > 1 ? (

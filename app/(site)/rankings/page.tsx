@@ -63,7 +63,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps):
             <div>
               <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">Standings</h1>
               <p className="mt-1 text-sm text-slate-600">
-                Tournament group standings, net run rate, and qualification snapshot.
+                League tables, tournament group standings, points, and qualification snapshots across sports.
               </p>
             </div>
           </div>
@@ -90,7 +90,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps):
             <div>
               <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">Standings</h1>
               <p className="mt-1 text-sm text-slate-600">
-                Tournament group standings, net run rate, and qualification snapshot.
+                League tables, tournament group standings, points, and qualification snapshots across sports.
               </p>
             </div>
           </div>

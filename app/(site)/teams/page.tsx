@@ -17,11 +17,11 @@ export default async function TeamsPage(): Promise<React.ReactElement> {
           <div>
             <p className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-brand-700">
               <FiShield className="h-3.5 w-3.5" aria-hidden="true" />
-              International &amp; Franchise Sides
+              National Teams &amp; Global Clubs
             </p>
             <h1 className="mt-1 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">Teams</h1>
             <p className="mt-1 text-sm text-slate-600">
-              Explore team profiles, home grounds, squads, and upcoming fixtures.
+              Explore team profiles, home arenas, active squads, and upcoming fixtures across every sport.
             </p>
           </div>
           <span className="score-pill">{teams.length} teams</span>

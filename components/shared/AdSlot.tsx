@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { FiX } from "react-icons/fi";
+import { LoopeinLoopIcon } from "@/components/shared/LoopeinBranding";
 import { SITE_NAME, SITE_POWERED_BY } from "@/lib/constants/site";
 import { cn } from "@/lib/utils/text";
 
@@ -80,9 +81,9 @@ export function AdSlot({
     <aside
       aria-label="Advertisement"
       className={cn(
-        "relative overflow-hidden rounded-xl border border-slate-200/80 bg-white/85 shadow-[0_4px_14px_-8px_rgba(6,12,58,0.12)] backdrop-blur-sm",
-        variant === "rectangle" && "rounded-2xl bg-gradient-to-br from-white via-slate-50/70 to-brand-50/40",
-        variant === "native-card" && "rounded-2xl border-slate-200/90 bg-gradient-to-r from-white via-white to-brand-50/35",
+        "surface-card relative rounded-xl",
+        variant === "rectangle" && "rounded-2xl",
+        variant === "native-card" && "rounded-2xl",
         variantWrapperClass[variant],
         className
       )}
@@ -124,8 +125,11 @@ export function AdSlot({
           </div>
           <div className="my-auto rounded-xl border border-dashed border-slate-200/90 bg-white/80 px-3 py-3 text-center">
             <p className="text-xs font-extrabold text-slate-900">{label}</p>
-            <p className="mt-1 text-[11px] font-medium text-slate-500">
-              {SITE_NAME} Display Unit · {SITE_POWERED_BY} Ad Network
+            <p className="mt-1 inline-flex items-center justify-center gap-1.5 text-[11px] font-medium text-slate-500">
+              <LoopeinLoopIcon className="h-3.5 w-auto shrink-0" />
+              <span>
+                {SITE_NAME} Display Unit · {SITE_POWERED_BY} Ad Network
+              </span>
             </p>
           </div>
           <div className="flex items-center justify-between text-[10px] font-semibold text-slate-400">
@@ -141,8 +145,11 @@ export function AdSlot({
             </div>
             <div className="min-w-0">
               <p className="truncate text-xs font-extrabold text-slate-900 sm:text-sm">{label}</p>
-              <p className="mt-0.5 truncate text-[11px] font-medium text-slate-500">
-                {SITE_NAME} Native Partner Placement · Powered by {SITE_POWERED_BY}
+              <p className="mt-0.5 flex items-center gap-1.5 truncate text-[11px] font-medium text-slate-500">
+                <LoopeinLoopIcon className="h-3.5 w-auto shrink-0" />
+                <span className="truncate">
+                  {SITE_NAME} Native Partner Placement · Powered by {SITE_POWERED_BY}
+                </span>
               </p>
             </div>
           </div>
@@ -166,10 +173,11 @@ export function AdSlot({
             <span className="shrink-0 rounded bg-brand-50 px-1.5 py-0.5 text-[8px] font-extrabold uppercase tracking-wider text-brand-700 ring-1 ring-brand-200/80">
               Ad
             </span>
-            <p className="truncate text-[11px] font-semibold text-slate-700">
-              <span className="font-bold text-slate-900">{label}</span>
-              <span className="mx-1 text-slate-300">·</span>
-              <span className="text-slate-500">{SITE_POWERED_BY}</span>
+            <p className="flex min-w-0 items-center gap-1 truncate text-[11px] font-semibold text-slate-700">
+              <span className="truncate font-bold text-slate-900">{label}</span>
+              <span className="mx-0.5 text-slate-300">·</span>
+              <LoopeinLoopIcon className="h-3.5 w-auto shrink-0" />
+              <span className="shrink-0 text-slate-500">{SITE_POWERED_BY}</span>
             </p>
           </div>
           <div className="flex shrink-0 items-center gap-1">
@@ -204,10 +212,11 @@ export function AdSlot({
             >
               Sponsored
             </span>
-            <p className="truncate text-[11px] font-semibold text-slate-600 sm:text-xs">
-              <span className="font-bold text-slate-800">{label}</span>
-              <span className="mx-1.5 text-slate-300">·</span>
-              <span>
+            <p className="flex min-w-0 items-center gap-1.5 truncate text-[11px] font-semibold text-slate-600 sm:text-xs">
+              <span className="truncate font-bold text-slate-800">{label}</span>
+              <span className="text-slate-300">·</span>
+              <LoopeinLoopIcon className="h-3.5 w-auto shrink-0" />
+              <span className="truncate">
                 {SITE_NAME} Google Ads ({SITE_POWERED_BY})
               </span>
             </p>

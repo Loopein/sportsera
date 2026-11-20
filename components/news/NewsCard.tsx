@@ -13,23 +13,19 @@ export function NewsCard({ article }: { article: NewsArticle }): React.ReactElem
       <Card
         as="article"
         interactive
-        className="flex h-full flex-col justify-between overflow-hidden p-0 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:border-brand-300 group-hover:shadow-lg"
+        className="flex h-full flex-col justify-between p-0 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:border-brand-300 group-hover:shadow-lg"
       >
         <div>
-          <div className="relative h-28 overflow-hidden bg-gradient-to-br from-[rgb(6,12,58)] via-indigo-900 to-sky-700 p-4">
-            <div className="absolute -left-6 -top-4 h-20 w-20 rounded-full bg-white/10 blur-md" />
-            <div className="absolute right-4 top-2 h-16 w-16 rounded-full bg-sky-400/20 blur-md" />
-            <div className="relative flex h-full flex-col justify-between">
-              <div className="flex items-center justify-between gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-[rgb(6,12,58)] shadow-sm">
-                  <FiFileText className="h-3 w-3 text-red-600" aria-hidden="true" />
-                  Cricket Desk
-                </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-black/25 px-2.5 py-1 text-[11px] font-medium text-white/90 backdrop-blur-sm">
-                  <FiClock className="h-3 w-3" aria-hidden="true" />
-                  {formatTime(article.publishedAt)}
-                </span>
-              </div>
+          <div className="border-b border-slate-200/80 bg-slate-50/70 p-4">
+            <div className="flex items-center justify-between gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-800 shadow-sm">
+                <FiFileText className="h-3 w-3 text-red-600" aria-hidden="true" />
+                Sports Desk
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium text-slate-600">
+                <FiClock className="h-3 w-3" aria-hidden="true" />
+                {formatTime(article.publishedAt)}
+              </span>
             </div>
           </div>
           <div className="p-4 sm:p-5">

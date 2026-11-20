@@ -8,7 +8,7 @@ export const revalidate = 10;
 
 export const metadata: Metadata = {
   title: "Live Matches",
-  description: "All currently live cricket matches with fast score refresh."
+  description: "All currently live sports matches with fast real-time score refresh."
 };
 
 export default async function LivePage(): Promise<React.ReactElement> {
@@ -19,7 +19,7 @@ export default async function LivePage(): Promise<React.ReactElement> {
       <Card as="section" variant="strong" className="p-5 md:p-6">
         <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Live Matches</h1>
         <p className="mt-2 text-sm text-slate-600">
-          Compact match cards with controlled refresh so users can scan quickly without jitter.
+          Real-time live match cards across football, cricket, basketball, tennis, and global sports with zero page jitter.
         </p>
       </Card>
       <AdSlot variant="in-feed" label="Sponsored · Live Feed" />

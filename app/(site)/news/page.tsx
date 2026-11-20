@@ -20,7 +20,9 @@ export default async function NewsPage(): Promise<React.ReactElement> {
               Editorial Coverage
             </p>
             <h1 className="mt-1 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">News</h1>
-            <p className="mt-1 text-sm text-slate-600">Cricket headlines, match reports, and tournament analysis.</p>
+            <p className="mt-1 text-sm text-slate-600">
+              Breaking sports headlines, match reports, transfer updates, and tournament analysis across every sport.
+            </p>
           </div>
           <span className="score-pill">{news.length} stories</span>
         </div>
@@ -29,7 +31,7 @@ export default async function NewsPage(): Promise<React.ReactElement> {
       {news.length ? (
         <NewsList articles={news} />
       ) : (
-        <EmptyState title="No articles published yet" description="Latest cricket stories will appear here." />
+        <EmptyState title="No articles published yet" description="Latest sports stories will appear here." />
       )}
       <AdSlot variant="leaderboard" label="Sponsored · Editorial Desk Banner" />
     </div>

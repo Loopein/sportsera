@@ -23,11 +23,11 @@ export default async function SeriesPage(): Promise<React.ReactElement> {
           <div>
             <p className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-brand-700">
               <FiLayers className="h-3.5 w-3.5" aria-hidden="true" />
-              Tournaments &amp; Tours
+              Leagues, Championships &amp; Tours
             </p>
             <h1 className="mt-1 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">Series</h1>
             <p className="mt-1 text-sm text-slate-600">
-              Browse international tours, franchise leagues, points tables, and series schedules.
+              Browse global leagues, international championships, points tables, and tournament schedules across every sport.
             </p>
           </div>
           <span className="score-pill">{series.length} series</span>
@@ -80,7 +80,7 @@ export default async function SeriesPage(): Promise<React.ReactElement> {
       ) : (
         <EmptyState title="No series found" description="Tournaments and series will appear here once scheduled." />
       )}
-      <AdSlot variant="leaderboard" label="Sponsored · Cricket Tours" />
+      <AdSlot variant="leaderboard" label="Sponsored · Global Leagues & Tours" />
     </div>
   );
 }

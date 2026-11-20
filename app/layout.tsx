@@ -1,8 +1,15 @@
 import type { Metadata } from "next";
+import { AnimatedScoreBackground } from "@/components/layout/AnimatedScoreBackground";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { GoogleAdSenseScript } from "@/components/shared/GoogleAdSenseScript";
-import { SITE_DESCRIPTION, SITE_NAME, SITE_POWERED_BY } from "@/lib/constants/site";
+import {
+  SITE_DESCRIPTION,
+  SITE_ICON_PATH,
+  SITE_NAME,
+  SITE_POWERED_BY,
+  SPORTSERA_FAVICON_DATA_URI
+} from "@/lib/constants/site";
 import "@/styles/tokens.css";
 import "@/app/globals.css";
 
@@ -24,20 +31,33 @@ export const metadata: Metadata = {
   creator: SITE_POWERED_BY,
   publisher: SITE_POWERED_BY,
   icons: {
-    icon: [{ url: "/favicon.ico", type: "image/x-icon" }],
-    shortcut: [{ url: "/favicon.ico", type: "image/x-icon" }],
+    icon: [
+      { url: SPORTSERA_FAVICON_DATA_URI, type: "image/svg+xml" },
+      { url: SITE_ICON_PATH, type: "image/svg+xml" }
+    ],
+    shortcut: [
+      { url: SPORTSERA_FAVICON_DATA_URI, type: "image/svg+xml" },
+      { url: SITE_ICON_PATH, type: "image/svg+xml" }
+    ],
     apple: [{ url: "/apple-icon.png", type: "image/png" }]
   }
 };
 
+const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem("sportsera-theme");if(t==="light"||t==="dark"){document.documentElement.dataset.theme=t;}}catch(e){}})();`;
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>): React.ReactElement {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="dark" suppressHydrationWarning>
+      <head>
+        <link rel="icon" type="image/svg+xml" href={SPORTSERA_FAVICON_DATA_URI} />
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body className="min-h-screen antialiased">
         <GoogleAdSenseScript />
-        <div className="flex min-h-screen flex-col">
+        <AnimatedScoreBackground />
+        <div className="relative z-10 flex min-h-screen flex-col">
           <Header />
-          <main className="flex-1">{children}</main>
+          <main className="relative z-10 flex-1">{children}</main>
           <Footer />
         </div>
       </body>
