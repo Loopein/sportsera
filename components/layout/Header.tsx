@@ -2,6 +2,7 @@ import Link from "next/link";
 import { MainNav } from "@/components/layout/MainNav";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { AutoCloseMenuDetails } from "@/components/layout/AutoCloseMenuDetails";
+import { NavbarSearch } from "@/components/layout/NavbarSearch";
 import { SportsEraLogo } from "@/components/layout/SportsEraLogo";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
@@ -23,6 +24,7 @@ export function Header(): React.ReactElement {
         </div>
 
         <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
+          <NavbarSearch />
           <ThemeToggle />
           <div className="hidden items-center lg:flex">
             <MainNav mode="menu" />

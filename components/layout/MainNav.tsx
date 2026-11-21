@@ -6,6 +6,7 @@ import type { IconType } from "react-icons";
 import { AiOutlineAlignRight } from "react-icons/ai";
 import { BiBroadcast } from "react-icons/bi";
 import { FiActivity, FiBarChart2, FiCalendar, FiCheckCircle, FiFileText, FiHome, FiLayers, FiSearch, FiUsers, FiVideo } from "react-icons/fi";
+import { PoweredByLoopein } from "@/components/shared/LoopeinBranding";
 import { MAIN_NAV, MORE_NAV } from "@/lib/constants/nav";
 import { cn } from "@/lib/utils/text";
 
@@ -78,7 +79,7 @@ export function MainNav({ className, mode = "full" }: MainNavProps): React.React
             <AiOutlineAlignRight className="menu-trigger-icon h-5 w-5" aria-hidden="true" />
             <span className="sr-only">More menu</span>
           </summary>
-          <div className="header-dropdown-panel absolute right-0 top-[calc(100%+0.5rem)] z-50 w-48 overflow-hidden rounded-xl border border-slate-200 bg-white p-1.5 shadow-2xl backdrop-blur-xl">
+          <div className="header-dropdown-panel absolute right-0 top-[calc(100%+0.5rem)] z-50 w-56 overflow-hidden rounded-xl border border-slate-200 bg-white p-1.5 shadow-2xl">
             {MORE_NAV.map((item) => {
               const isActive = isNavItemActive(pathname, item.href);
               const MenuIcon = moreNavIcons[item.label] ?? FiActivity;
@@ -94,6 +95,9 @@ export function MainNav({ className, mode = "full" }: MainNavProps): React.React
                 </Link>
               );
             })}
+            <div className="mt-1.5 flex justify-center border-t border-slate-200 px-1 pt-2 pb-1">
+              <PoweredByLoopein logoHeight={13} />
+            </div>
           </div>
         </details>
       ) : null}

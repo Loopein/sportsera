@@ -51,7 +51,7 @@ export function MobileNav(): React.ReactElement {
         <AiOutlineAlignRight className="menu-trigger-icon h-5 w-5" aria-hidden="true" />
         <span className="sr-only">Open menu</span>
       </summary>
-      <div className="header-dropdown-panel absolute right-0 top-[calc(100%+0.5rem)] z-50 w-[min(22rem,calc(100vw-1rem))] rounded-xl border border-slate-200 bg-white p-3 shadow-2xl backdrop-blur-xl">
+      <div className="header-dropdown-panel absolute right-0 top-[calc(100%+0.5rem)] z-50 w-[min(22rem,calc(100vw-1rem))] rounded-xl border border-slate-200 bg-white p-3 shadow-2xl">
         <nav className="grid grid-cols-2 gap-2" aria-label="Primary navigation">
           {primaryNav.map((item) => {
             const isActive = isNavItemActive(pathname, item.href);
