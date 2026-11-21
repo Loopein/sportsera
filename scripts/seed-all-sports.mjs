@@ -918,6 +918,81 @@ const NEWS_ARTICLES = [
   }
 ];
 
+const VIDEO_POSTS = [
+  {
+    id: "video-1001",
+    title: "India vs Australia · Asia Cup 2026 Live Stream & Matchday Highlights",
+    description: "Top wicket moments, boundary streaks, and live innings highlights from Dhaka.",
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?auto=format&fit=crop&w=900&q=80",
+    minutesAgo: -5
+  },
+  {
+    id: "video-1003",
+    title: "England vs India & Premier League T20 Powerplay Blitz",
+    description: "Catch explosive T20 boundaries and middle-over breakthroughs across Cricket fixtures.",
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=900&q=80",
+    minutesAgo: -12
+  },
+  {
+    id: "video-fb-2001",
+    title: "Real Madrid vs FC Barcelona · UEFA Champions League Extended Highlights",
+    description: "Bernabeu El Clasico goals, tactical counters, and Vinicius Jr match footage.",
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=900&q=80",
+    minutesAgo: -8
+  },
+  {
+    id: "video-fb-2002",
+    title: "Arsenal FC vs Manchester City · English Premier League Title Clash",
+    description: "Emirates Stadium pitchside goals, Saka vs Haaland battle, and tactical breakdowns.",
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoy.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=900&q=80",
+    minutesAgo: -15
+  },
+  {
+    id: "video-fb-2003",
+    title: "Liverpool FC vs Bayern Munich · Anfield Champions League Goals & Replay",
+    description: "Salah brace and late Anfield thriller across UEFA Champions League, Serie A & Bundesliga.",
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1508098682722-e99c643e7481?auto=format&fit=crop&w=900&q=80",
+    minutesAgo: -22
+  },
+  {
+    id: "video-bb-3001",
+    title: "LA Lakers vs Boston Celtics · NBA Finals Fourth-Quarter Action",
+    description: "Basketball crunch-time possessions, clutch three-pointers, and finals highlight reel.",
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=900&q=80",
+    minutesAgo: -30
+  },
+  {
+    id: "video-ten-3002",
+    title: "Carlos Alcaraz vs Novak Djokovic · Wimbledon Centre Court Rally",
+    description: "Grass-court tennis winners, tiebreak drama, and ATP match preview clips.",
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&w=900&q=80",
+    minutesAgo: -38
+  },
+  {
+    id: "video-mot-3006",
+    title: "Formula 1 Monaco Grand Prix · Red Bull Racing vs Scuderia Ferrari",
+    description: "Onboard street-circuit battle, pit lane strategy, and race telemetry highlights.",
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=900&q=80",
+    minutesAgo: -45
+  },
+  {
+    id: "video-other-3003",
+    title: "MLB Baseball, NHL Hockey, Rugby & UFC Multi-Sport Match Reels",
+    description: "Live-day highlights across Yankees vs Dodgers, Maple Leafs vs Canadiens, All Blacks, VCT & MMA.",
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=900&q=80",
+    minutesAgo: -55
+  }
+];
+
 async function main() {
   const { rows: nowRows } = await pool.query("SELECT NOW() AS now");
   const nowMs = new Date(nowRows[0].now).getTime();
@@ -1064,6 +1139,23 @@ async function main() {
           published_at = EXCLUDED.published_at
         `,
         [n.slug, n.title, n.summary, n.content, publishedAt]
+      );
+    }
+
+    for (const v of VIDEO_POSTS) {
+      const createdAt = new Date(nowMs + v.minutesAgo * 60_000).toISOString();
+      await client.query(
+        `
+        INSERT INTO video_posts (id, title, description, video_url, thumbnail_url, created_by_id, created_at, updated_at)
+        VALUES ($1, $2, $3, $4, $5, 'creator-1', $6, $6)
+        ON CONFLICT (id) DO UPDATE SET
+          title = EXCLUDED.title,
+          description = EXCLUDED.description,
+          video_url = EXCLUDED.video_url,
+          thumbnail_url = EXCLUDED.thumbnail_url,
+          updated_at = EXCLUDED.updated_at
+        `,
+        [v.id, v.title, v.description, v.videoUrl, v.thumbnailUrl, createdAt]
       );
     }
 

@@ -10,6 +10,7 @@ type UpcomingCountdownProps = {
   fallbackValue?: string;
   prefix?: string;
   showPrefixOnFallback?: boolean;
+  compact?: boolean;
 };
 
 export function UpcomingCountdown({
@@ -18,11 +19,12 @@ export function UpcomingCountdown({
   valueClassName = "",
   fallbackValue = "Upcoming",
   prefix = "Starts in",
-  showPrefixOnFallback = false
+  showPrefixOnFallback = false,
+  compact = false
 }: UpcomingCountdownProps): React.ReactElement {
   const [nowMs, setNowMs] = useState<number | null>(null);
   const { value, shouldTick } =
-    nowMs === null ? { value: null, shouldTick: false } : startsInValueStaticOrLive(startAt, nowMs);
+    nowMs === null ? { value: null, shouldTick: false } : startsInValueStaticOrLive(startAt, nowMs, compact);
 
   useEffect(() => {
     setNowMs(Date.now());
@@ -45,7 +47,7 @@ export function UpcomingCountdown({
       }
     };
   }, [shouldTick]);
-  const shouldShowPrefix = value !== null || showPrefixOnFallback;
+  const shouldShowPrefix = Boolean(prefix) && (value !== null || showPrefixOnFallback);
 
   return (
     <span className={className}>

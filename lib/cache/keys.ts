@@ -10,5 +10,6 @@ export const cacheKeys = {
   player: (playerId: string) => `player:${playerId}`,
   rankings: "rankings:list",
   standings: "standings:list",
+  videos: "videos:list",
   search: (query: string) => `search:${query}`
 } as const;

@@ -19,24 +19,27 @@ export function MatchTabs({ matchId, currentPath, status }: MatchTabsProps): Rea
         : currentPath;
   const tabs = isUpcoming
     ? [
+        { href: `${base}/watch`, label: "Watch", isActive: activePath === `${base}/watch` },
         { href: `${base}/squads`, label: "Squads", isActive: activePath === `${base}/squads` },
         { href: `${base}/commentary`, label: "Commentary", isActive: activePath === `${base}/commentary` },
         { href: `${base}/stats`, label: "Stats", isActive: activePath === `${base}/stats` }
       ]
     : isLiveOrBreak
       ? [
+          { href: `${base}/watch`, label: "Watch", isActive: activePath === `${base}/watch` },
           { href: `${base}/scorecard`, label: "Scorecard", isActive: activePath === `${base}/scorecard` },
           { href: `${base}/commentary`, label: "Commentary", isActive: activePath === `${base}/commentary` },
           { href: `${base}/squads`, label: "Squads", isActive: activePath === `${base}/squads` },
           { href: `${base}/stats`, label: "Stats", isActive: activePath === `${base}/stats` }
         ]
       : [
-        { href: base, label: "Summary", isActive: activePath === base },
-        { href: `${base}/scorecard`, label: "Scorecard", isActive: activePath === `${base}/scorecard` },
-        { href: `${base}/commentary`, label: "Commentary", isActive: activePath === `${base}/commentary` },
-        { href: `${base}/squads`, label: "Squads", isActive: activePath === `${base}/squads` },
-        { href: `${base}/stats`, label: "Stats", isActive: activePath === `${base}/stats` }
-      ];
+          { href: base, label: "Summary", isActive: activePath === base },
+          { href: `${base}/watch`, label: "Watch", isActive: activePath === `${base}/watch` },
+          { href: `${base}/scorecard`, label: "Scorecard", isActive: activePath === `${base}/scorecard` },
+          { href: `${base}/commentary`, label: "Commentary", isActive: activePath === `${base}/commentary` },
+          { href: `${base}/squads`, label: "Squads", isActive: activePath === `${base}/squads` },
+          { href: `${base}/stats`, label: "Stats", isActive: activePath === `${base}/stats` }
+        ];
 
   return <Tabs tabs={tabs} align="center" />;
 }

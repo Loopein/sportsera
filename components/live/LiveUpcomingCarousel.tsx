@@ -10,18 +10,20 @@ import {
   FiChevronRight,
   FiClock,
   FiInfo,
-  FiPlay,
   FiPlus
 } from "react-icons/fi";
 import type { LiveMatch } from "@/types/match";
+import { SportsEraPlayIcon } from "@/components/layout/SportsEraLogo";
 import { MatchStatusBadge } from "@/components/live/MatchStatusBadge";
 import { UpcomingCountdown } from "@/components/match/UpcomingCountdown";
 import { formatTime, relativeTime } from "@/lib/utils/date";
+import { formatTournamentShortName } from "@/lib/utils/text";
 
 type LiveUpcomingCarouselProps = {
   matches: LiveMatch[];
   emptyCount?: number;
   emptyLabel?: string;
+  showGameNameOnHover?: boolean;
 };
 
 function parseRuns(score?: string): number {
@@ -29,10 +31,22 @@ function parseRuns(score?: string): number {
   return found ? Number(found[0]) : 0;
 }
 
+const CAROUSEL_CARD_BASE_CLASS =
+  "surface-card carousel-card-size relative flex shrink-0 cursor-pointer flex-col overflow-hidden rounded-2xl transition-[width,border-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]";
+
+function getCarouselCardClass(isActive: boolean): string {
+  return `${CAROUSEL_CARD_BASE_CLASS} ${
+    isActive
+      ? "border-brand-400/70 p-2.5 sm:p-3 shadow-lg"
+      : "p-2.5 sm:p-3 xl:p-3.5 hover:border-brand-300"
+  }`;
+}
+
 export function LiveUpcomingCarousel({
   matches,
   emptyCount = 6,
-  emptyLabel = "No live or upcoming matches"
+  emptyLabel = "No live or upcoming matches",
+  showGameNameOnHover = false
 }: LiveUpcomingCarouselProps): React.ReactElement {
   const isEmpty = matches.length === 0;
   const totalItems = isEmpty ? emptyCount : matches.length;
@@ -80,20 +94,17 @@ export function LiveUpcomingCarousel({
         onMouseLeave={() => setActiveIndex(null)}
         className="overflow-x-auto scroll-smooth py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
-        <div className="mx-auto flex w-max items-stretch gap-3.5">
+        <div className="mx-auto flex w-max items-stretch gap-3 sm:gap-3.5">
         {isEmpty
           ? Array.from({ length: emptyCount }).map((_, index) => {
               const isActive = activeIndex === index;
               return (
                 <article
                   key={`empty-carousel-${index}`}
+                  data-active={isActive ? "true" : "false"}
                   onMouseEnter={() => setActiveIndex(index)}
                   onMouseLeave={() => setActiveIndex((prev) => (prev === index ? null : prev))}
-                  className={`surface-card relative flex h-[330px] sm:h-[350px] shrink-0 cursor-pointer flex-col justify-between overflow-hidden rounded-2xl transition-[width,border-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                    isActive
-                      ? "w-[330px] sm:w-[480px] md:w-[540px] border-brand-400/70 p-5 sm:p-6 shadow-lg"
-                      : "w-[190px] sm:w-[215px] p-4 hover:border-brand-300"
-                  }`}
+                  className={getCarouselCardClass(isActive)}
                 >
                   <Link
                     href="/matches"
@@ -127,10 +138,18 @@ export function LiveUpcomingCarousel({
               const isCompleted = match.status === "completed";
               const SeriesIcon = isLive ? BiBroadcast : isUpcoming ? FiClock : isCompleted ? FiCheckCircle : FiActivity;
               const SummaryIcon = isLive ? BiBroadcast : FiActivity;
-              const footerLabel = isUpcoming
-                ? `Starts ${formatTime(startAt)}`
-                : `Updated ${relativeTime(match.lastUpdatedAt)}`;
-              const badgeLabel = isUpcoming ? "Upcoming" : undefined;
+              const footerLabel = `Updated ${relativeTime(match.lastUpdatedAt)}`;
+              const tournamentShortName = formatTournamentShortName(match.seriesName);
+              const badgeLabel = isUpcoming ? (
+                <UpcomingCountdown
+                  startAt={startAt}
+                  prefix=""
+                  compact={!isActive}
+                  fallbackValue={isActive ? formatTime(startAt) : "Soon"}
+                  className="normal-case tabular-nums"
+                  valueClassName="tabular-nums"
+                />
+              ) : undefined;
               const ctaHref = isUpcoming
                 ? `/matches/${match.id}/squads`
                 : isLive || match.status === "innings_break"
@@ -140,13 +159,10 @@ export function LiveUpcomingCarousel({
               return (
                 <article
                   key={match.id}
+                  data-active={isActive ? "true" : "false"}
                   onMouseEnter={() => setActiveIndex(index)}
                   onMouseLeave={() => setActiveIndex((prev) => (prev === index ? null : prev))}
-                  className={`surface-card relative flex h-[330px] sm:h-[350px] shrink-0 cursor-pointer flex-col justify-between overflow-hidden rounded-2xl transition-[width,border-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                    isActive
-                      ? "w-[330px] sm:w-[480px] md:w-[540px] border-brand-400/70 p-5 sm:p-6 shadow-lg"
-                      : "w-[190px] sm:w-[215px] p-4 hover:border-brand-300"
-                  }`}
+                  className={getCarouselCardClass(isActive)}
                 >
                   <Link
                     href={ctaHref}
@@ -156,6 +172,7 @@ export function LiveUpcomingCarousel({
                   {isActive ? (
                     <>
                       <div className="flex items-center justify-between gap-2">
+                        <MatchStatusBadge status={match.status} label={badgeLabel} hideIcon={isUpcoming} />
                         <div className="flex min-w-0 items-center gap-1.5">
                           <SeriesIcon
                             className={`h-3.5 w-3.5 shrink-0 ${
@@ -172,52 +189,51 @@ export function LiveUpcomingCarousel({
                           <span className="truncate text-xs font-bold uppercase tracking-wider text-slate-600">
                             {match.seriesName}
                           </span>
-                          {match.format ? (
+                          {showGameNameOnHover && match.format ? (
                             <span className="shrink-0 rounded-md border border-slate-200 bg-slate-50/80 px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-700">
                               {match.format}
                             </span>
                           ) : null}
                         </div>
-                        <MatchStatusBadge status={match.status} label={badgeLabel} />
                       </div>
 
-                      <div className="space-y-2.5">
-                        <div className="space-y-2.5 rounded-xl border border-slate-200/80 bg-white/90 p-3.5">
-                          <div className="grid grid-cols-2 items-center gap-3">
-                            <div className="flex min-w-0 items-center justify-between gap-2 pr-2 border-r border-slate-200/80">
-                              <div className="flex min-w-0 items-center gap-2">
-                                <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-brand-200 bg-brand-50 text-xs font-black text-brand-700">
+                      <div className="mt-1.5 space-y-1.5">
+                        <div className="space-y-1.5 rounded-xl border border-slate-200/80 bg-white/90 p-2 sm:p-2.5">
+                          <div className="grid grid-cols-2 items-center gap-2">
+                            <div className="flex min-w-0 items-center justify-between gap-1.5 border-r border-slate-200/80 pr-1.5">
+                              <div className="flex min-w-0 items-center gap-1.5">
+                                <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-brand-200 bg-brand-50 text-[10px] font-black text-brand-700">
                                   {match.teamA.shortName.slice(0, 3)}
                                 </span>
                                 <div className="min-w-0">
-                                  <p className="truncate text-sm font-extrabold text-slate-900">
+                                  <p className="truncate text-xs font-extrabold text-slate-900">
                                     {match.teamA.shortName}
                                   </p>
-                                  <p className="truncate text-[11px] font-medium text-slate-500">
+                                  <p className="truncate text-[10px] font-medium text-slate-500">
                                     {match.teamA.name}
                                   </p>
                                 </div>
                               </div>
-                              <span className="shrink-0 text-right text-sm font-black tabular-nums text-slate-900 sm:text-base">
+                              <span className="shrink-0 text-right text-xs font-black tabular-nums text-slate-900">
                                 {match.teamA.score || "-"}
                               </span>
                             </div>
 
-                            <div className="flex min-w-0 items-center justify-between gap-2 pl-1">
-                              <div className="flex min-w-0 items-center gap-2">
-                                <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-indigo-200 bg-indigo-50 text-xs font-black text-indigo-800">
+                            <div className="flex min-w-0 items-center justify-between gap-1.5 pl-0.5">
+                              <div className="flex min-w-0 items-center gap-1.5">
+                                <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-indigo-200 bg-indigo-50 text-[10px] font-black text-indigo-800">
                                   {match.teamB.shortName.slice(0, 3)}
                                 </span>
                                 <div className="min-w-0">
-                                  <p className="truncate text-sm font-extrabold text-slate-900">
+                                  <p className="truncate text-xs font-extrabold text-slate-900">
                                     {match.teamB.shortName}
                                   </p>
-                                  <p className="truncate text-[11px] font-medium text-slate-500">
+                                  <p className="truncate text-[10px] font-medium text-slate-500">
                                     {match.teamB.name}
                                   </p>
                                 </div>
                               </div>
-                              <span className="shrink-0 text-right text-sm font-black tabular-nums text-slate-900 sm:text-base">
+                              <span className="shrink-0 text-right text-xs font-black tabular-nums text-slate-900">
                                 {match.teamB.score || "-"}
                               </span>
                             </div>
@@ -235,94 +251,92 @@ export function LiveUpcomingCarousel({
                           </div>
                         </div>
 
-                        <div className="flex min-h-[2.15rem] w-full items-center gap-2 rounded-xl border border-brand-100 bg-brand-50/80 px-3 py-1.5 text-xs font-semibold text-brand-900">
-                          {isUpcoming ? (
-                            <>
-                              <FiClock className="h-3.5 w-3.5 shrink-0 text-brand-700" aria-hidden="true" />
-                              <UpcomingCountdown
-                                startAt={startAt}
-                                fallbackValue="Upcoming fixture"
-                                valueClassName="text-brand-800"
-                              />
-                            </>
-                          ) : (
-                            <>
-                              <SummaryIcon
-                                className={`h-3.5 w-3.5 shrink-0 ${isLive ? "text-red-600" : "text-brand-700"}`}
-                                aria-hidden="true"
-                              />
-                              <span className="truncate">{match.summary || "Live match in progress"}</span>
-                            </>
-                          )}
+                        <div className="flex items-center gap-1.5 rounded-xl border border-brand-100 bg-brand-50/80 px-2 py-1 text-[10px] font-semibold text-brand-900 sm:text-[11px]">
+                          <SummaryIcon
+                            className={`h-3 w-3 shrink-0 ${isLive ? "text-red-600" : "text-brand-700"}`}
+                            aria-hidden="true"
+                          />
+                          <span className="truncate">
+                            {match.summary || (isUpcoming ? "Upcoming fixture" : "Live match in progress")}
+                          </span>
                         </div>
                       </div>
 
-                      <div>
-                        <div className="relative z-20 flex items-center gap-2">
+                      <div className="mt-auto pt-1.5">
+                        <div className="relative z-20 flex items-center gap-1.5">
                           <Link
-                            href={ctaHref}
-                            aria-label={`Open ${match.teamA.shortName} vs ${match.teamB.shortName}`}
-                            className="inline-flex h-9 w-11 items-center justify-center rounded-lg bg-rose-600 text-white shadow-sm transition hover:bg-rose-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
+                            href={`/matches/${match.id}/watch`}
+                            aria-label={`Watch ${match.teamA.shortName} vs ${match.teamB.shortName} on SportsEra Player`}
+                            title="Open SportsEra Player"
+                            className="inline-flex h-7 w-9 items-center justify-center rounded-lg border border-slate-200/80 bg-slate-50/80 shadow-sm transition hover:scale-105 hover:border-[#FF4D00]/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D00]"
                           >
-                            <FiPlay className="h-4 w-4 fill-current" aria-hidden="true" />
+                            <SportsEraPlayIcon className="h-3.5 w-3.5" />
                           </Link>
                           <Link
                             href={`/matches/${match.id}/squads`}
                             aria-label="View squads"
                             title="View squads"
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200/80 bg-slate-50/80 text-slate-700 transition hover:border-brand-300 hover:text-brand-700"
+                            className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200/80 bg-slate-50/80 text-slate-700 transition hover:border-brand-300 hover:text-brand-700"
                           >
-                            <FiPlus className="h-4 w-4" aria-hidden="true" />
+                            <FiPlus className="h-3.5 w-3.5" aria-hidden="true" />
                           </Link>
                           <Link
                             href={`/matches/${match.id}/scorecard`}
                             aria-label="View scorecard"
                             title="View scorecard"
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200/80 bg-slate-50/80 text-slate-700 transition hover:border-brand-300 hover:text-brand-700"
+                            className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200/80 bg-slate-50/80 text-slate-700 transition hover:border-brand-300 hover:text-brand-700"
                           >
-                            <FiActivity className="h-4 w-4" aria-hidden="true" />
+                            <FiActivity className="h-3.5 w-3.5" aria-hidden="true" />
                           </Link>
                           <Link
                             href={`/matches/${match.id}`}
                             aria-label="Match info"
                             title="Match info"
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200/80 bg-slate-50/80 text-slate-700 transition hover:border-brand-300 hover:text-brand-700"
+                            className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200/80 bg-slate-50/80 text-slate-700 transition hover:border-brand-300 hover:text-brand-700"
                           >
-                            <FiInfo className="h-4 w-4" aria-hidden="true" />
+                            <FiInfo className="h-3.5 w-3.5" aria-hidden="true" />
                           </Link>
                         </div>
 
-                        <h3 className="mt-2.5 truncate text-base font-black tracking-tight text-slate-900 sm:text-lg">
+                        <h3 className="mt-1 truncate text-[13px] font-black tracking-tight text-slate-900 sm:text-sm">
                           {match.teamA.name} vs {match.teamB.name}
                         </h3>
-                        <div className="mt-1 flex flex-wrap items-center gap-1.5 text-xs font-medium text-slate-600">
-                          <span className="truncate max-w-[140px] sm:max-w-[180px]">{match.seriesName}</span>
+                        <div className="mt-0.5 flex items-center gap-1.5 overflow-hidden whitespace-nowrap text-[10px] font-medium text-slate-600 sm:text-[11px]">
+                          <span className="truncate max-w-[110px] sm:max-w-[140px]">{match.seriesName}</span>
+                          {showGameNameOnHover && match.format ? (
+                            <>
+                              <span aria-hidden="true">•</span>
+                              <span className="shrink-0 rounded border border-slate-200/80 bg-slate-50/80 px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-700">
+                                {match.format}
+                              </span>
+                            </>
+                          ) : null}
                           <span aria-hidden="true">•</span>
-                          <span className="rounded border border-slate-200/80 bg-slate-50/80 px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-700">
-                            {match.format || "MATCH"}
-                          </span>
-                          <span aria-hidden="true">•</span>
-                          <span className="truncate max-w-[140px]">{match.venue}</span>
-                          <span aria-hidden="true">•</span>
-                          <span className="shrink-0">{footerLabel}</span>
+                          <span className="truncate">{match.venue}</span>
+                          {!isUpcoming ? (
+                            <>
+                              <span aria-hidden="true">•</span>
+                              <span className="shrink-0">{footerLabel}</span>
+                            </>
+                          ) : null}
                         </div>
                       </div>
                     </>
                   ) : (
                     <>
                       <div className="flex items-center justify-between gap-1.5">
-                        <MatchStatusBadge status={match.status} label={badgeLabel} />
-                        {match.format ? (
-                          <span className="shrink-0 rounded-md border border-slate-200 bg-slate-50/80 px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-700">
-                            {match.format}
+                        <MatchStatusBadge status={match.status} label={badgeLabel} hideIcon={isUpcoming} />
+                        {tournamentShortName ? (
+                          <span className="min-w-0 truncate max-w-[76px] rounded-md border border-slate-200 bg-slate-50/80 px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-700">
+                            {tournamentShortName}
                           </span>
                         ) : null}
                       </div>
 
-                      <div className="space-y-2 rounded-xl border border-slate-200/80 bg-white/90 p-3">
+                      <div className="mt-1.5 space-y-1.5 rounded-xl border border-slate-200/80 bg-white/90 p-2.5">
                         <div className="flex items-center justify-between gap-2">
-                          <div className="flex min-w-0 items-center gap-2">
-                            <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-brand-200 bg-brand-50 text-[11px] font-black text-brand-700">
+                          <div className="flex min-w-0 items-center gap-1.5">
+                            <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-brand-200 bg-brand-50 text-[10px] font-black text-brand-700">
                               {match.teamA.shortName.slice(0, 3)}
                             </span>
                             <span className="truncate text-xs font-extrabold text-slate-900">
@@ -336,15 +350,15 @@ export function LiveUpcomingCarousel({
 
                         <div className="flex items-center gap-2">
                           <div className="h-px flex-1 bg-slate-200/80" />
-                          <span className="rounded-full border border-slate-200/80 bg-slate-50/80 px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-widest text-slate-500">
+                          <span className="rounded-full border border-slate-200/80 bg-slate-50/80 px-1.5 py-0.5 text-[8px] font-extrabold uppercase tracking-widest text-slate-500">
                             VS
                           </span>
                           <div className="h-px flex-1 bg-slate-200/80" />
                         </div>
 
                         <div className="flex items-center justify-between gap-2">
-                          <div className="flex min-w-0 items-center gap-2">
-                            <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-indigo-200 bg-indigo-50 text-[11px] font-black text-indigo-800">
+                          <div className="flex min-w-0 items-center gap-1.5">
+                            <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-indigo-200 bg-indigo-50 text-[10px] font-black text-indigo-800">
                               {match.teamB.shortName.slice(0, 3)}
                             </span>
                             <span className="truncate text-xs font-extrabold text-slate-900">
@@ -357,15 +371,19 @@ export function LiveUpcomingCarousel({
                         </div>
                       </div>
 
-                      <div>
-                        <p className="truncate font-display text-lg font-black uppercase tracking-tight text-slate-900">
+                      <div className="mt-auto pt-1.5">
+                        <p className="truncate font-display text-base font-black uppercase tracking-tight text-slate-900">
                           {match.teamA.shortName} <span className="text-brand-600">vs</span> {match.teamB.shortName}
                         </p>
                         <p className="mt-0.5 truncate text-[11px] font-semibold text-slate-500">
                           {match.seriesName}
                         </p>
-                        <p className="mt-1 truncate text-[11px] font-bold text-brand-700">
-                          {isUpcoming ? footerLabel : match.summary || "View match"}
+                        <p
+                          className={`mt-0.5 truncate text-[11px] font-bold ${
+                            isUpcoming ? "text-slate-500" : "text-brand-700"
+                          }`}
+                        >
+                          {isUpcoming ? match.venue : match.summary || "View match"}
                         </p>
                       </div>
                     </>

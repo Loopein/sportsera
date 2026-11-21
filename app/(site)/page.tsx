@@ -1,5 +1,4 @@
 import Link from "next/link";
-import type { IconType } from "react-icons";
 import { BiBroadcast } from "react-icons/bi";
 import {
   FiActivity,
@@ -8,30 +7,16 @@ import {
   FiCheckCircle,
   FiAward
 } from "react-icons/fi";
-import {
-  MdDirectionsRun,
-  MdSportsBaseball,
-  MdSportsBasketball,
-  MdSportsCricket,
-  MdSportsEsports,
-  MdSportsGolf,
-  MdSportsHockey,
-  MdSportsMma,
-  MdSportsMotorsports,
-  MdSportsRugby,
-  MdSportsSoccer,
-  MdSportsTennis
-} from "react-icons/md";
+import { MdSportsCricket, MdSportsSoccer } from "react-icons/md";
+import { HeroSpotlightCarousel } from "@/components/home/HeroSpotlightCarousel";
 import { LiveMatchList } from "@/components/live/LiveMatchList";
 import { LiveUpcomingCarousel } from "@/components/live/LiveUpcomingCarousel";
 import { NewsList } from "@/components/news/NewsList";
 import { AdSlot } from "@/components/shared/AdSlot";
 import { PrefetchRoutes } from "@/components/shared/PrefetchRoutes";
-import { SearchForm } from "@/components/shared/SearchForm";
-import { Card } from "@/components/ui/card";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { LoopeinLogo } from "@/components/shared/LoopeinBranding";
 import { getLiveMatches, getMatches, getNews } from "@/lib/api/read";
+import { buildHeroSpotlightSlides } from "@/lib/utils/hero-spotlight";
 import type { LiveMatch } from "@/types/match";
 
 function detectMatchSport(match: LiveMatch): "cricket" | "football" | "other" {
@@ -64,21 +49,6 @@ function detectMatchSport(match: LiveMatch): "cricket" | "football" | "other" {
 
   return "other";
 }
-
-const SPORT_CATEGORIES: Array<{ label: string; icon: IconType }> = [
-  { label: "Football", icon: MdSportsSoccer },
-  { label: "Cricket", icon: MdSportsCricket },
-  { label: "Basketball", icon: MdSportsBasketball },
-  { label: "Tennis", icon: MdSportsTennis },
-  { label: "Baseball", icon: MdSportsBaseball },
-  { label: "Hockey", icon: MdSportsHockey },
-  { label: "Rugby", icon: MdSportsRugby },
-  { label: "Motorsports", icon: MdSportsMotorsports },
-  { label: "Esports", icon: MdSportsEsports },
-  { label: "MMA", icon: MdSportsMma },
-  { label: "Golf", icon: MdSportsGolf },
-  { label: "Athletics", icon: MdDirectionsRun }
-];
 
 export const revalidate = 10;
 
@@ -128,130 +98,14 @@ export default async function HomePage(): Promise<React.ReactElement> {
   const footballUpcoming = upcomingBySport.football.slice(0, 10);
   const otherSportsLive = liveBySport.other.slice(0, 12);
   const otherSportsUpcoming = upcomingBySport.other.slice(0, 12);
+  const heroSlides = buildHeroSpotlightSlides(upcomingFixtures);
 
   return (
-    <div className="space-y-10 md:space-y-12">
+    <div className="space-y-5 md:space-y-6">
       <PrefetchRoutes />
-      <Card as="section" className="relative p-5 sm:p-7 md:p-8">
-        <div className="grid items-center gap-6 lg:grid-cols-[1.35fr_0.65fr]">
-          <div className="relative z-10 min-w-0">
-            <h1 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl md:text-4xl lg:leading-[1.15]">
-              Live Scores, Match Centers &amp; Analytics Across Every Sport
-            </h1>
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-700 md:text-base">
-              Follow real-time scores, play-by-play commentary, fixtures, results, standings, teams, and athletes across
-              football, cricket, basketball, tennis, motorsports, and every major sport in one fast public hub.
-            </p>
-            <div className="mt-5 max-w-2xl">
-              <SearchForm action="/search" />
-            </div>
-            <div className="mt-4 flex flex-wrap items-center gap-1.5">
-              {SPORT_CATEGORIES.map((sport) => {
-                const SportIcon = sport.icon;
-                return (
-                  <Link
-                    key={sport.label}
-                    href={`/search?q=${encodeURIComponent(sport.label)}`}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-slate-50/80 px-2.5 py-1 text-xs font-bold text-slate-700 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700"
-                  >
-                    <SportIcon className="h-3.5 w-3.5 text-brand-600" aria-hidden="true" />
-                    <span>{sport.label}</span>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-
-          <aside className="relative z-10 min-w-0 space-y-3">
-            <Card className="p-4 shadow-sm">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-extrabold uppercase tracking-wider text-slate-500">Quick Access</p>
-                <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-brand-700">
-                  <LoopeinLogo height={14} />
-                  <span>Sports</span>
-                </span>
-              </div>
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                <Link
-                  href="/live"
-                  className="group inline-flex items-center justify-between rounded-xl bg-brand-600 px-3.5 py-2.5 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:bg-brand-700 hover:shadow"
-                >
-                  <span className="inline-flex items-center gap-1.5">
-                    <BiBroadcast className="h-3.5 w-3.5" aria-hidden="true" />
-                    Live
-                  </span>
-                  <FiArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
-                </Link>
-                <Link
-                  href="/matches"
-                  className="group inline-flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm font-bold text-slate-800 transition-all duration-200 hover:border-brand-200 hover:bg-brand-50"
-                >
-                  <span className="inline-flex items-center gap-1.5">
-                    <FiActivity className="h-3.5 w-3.5 text-brand-600" aria-hidden="true" />
-                    Matches
-                  </span>
-                  <FiArrowRight className="h-3.5 w-3.5 text-slate-500 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
-                </Link>
-                <Link
-                  href="/fixtures"
-                  className="group inline-flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm font-bold text-slate-800 transition-all duration-200 hover:border-brand-200 hover:bg-brand-50"
-                >
-                  <span className="inline-flex items-center gap-1.5">
-                    <FiCalendar className="h-3.5 w-3.5 text-brand-600" aria-hidden="true" />
-                    Fixtures
-                  </span>
-                  <FiArrowRight className="h-3.5 w-3.5 text-slate-500 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
-                </Link>
-                <Link
-                  href="/rankings"
-                  className="group inline-flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm font-bold text-slate-800 transition-all duration-200 hover:border-brand-200 hover:bg-brand-50"
-                >
-                  <span className="inline-flex items-center gap-1.5">
-                    <FiAward className="h-3.5 w-3.5 text-brand-600" aria-hidden="true" />
-                    Standings
-                  </span>
-                  <FiArrowRight className="h-3.5 w-3.5 text-slate-500 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
-                </Link>
-              </div>
-            </Card>
-
-            <Card className="p-4 shadow-sm">
-              <div className="flex items-center justify-between">
-                <p className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-slate-500">
-                  <BiBroadcast className="h-3.5 w-3.5 text-red-600 animate-pulse-soft" aria-hidden="true" />
-                  Match Center Pulse
-                </p>
-                <span className="score-pill">{live.length} live</span>
-              </div>
-              <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-                <div className="rounded-xl border border-red-100 bg-red-50/60 px-2 py-2.5">
-                  <p className="mb-1 inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider text-red-600">
-                    <BiBroadcast className="h-3 w-3" aria-hidden="true" />
-                    Live
-                  </p>
-                  <p className="text-lg font-black tabular-nums text-slate-900">{live.length}</p>
-                </div>
-                <div className="rounded-xl border border-brand-100 bg-brand-50/60 px-2 py-2.5">
-                  <p className="mb-1 inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider text-brand-700">
-                    <FiCalendar className="h-3 w-3" aria-hidden="true" />
-                    Upcoming
-                  </p>
-                  <p className="text-lg font-black tabular-nums text-slate-900">{upcoming.length}</p>
-                </div>
-                <div className="rounded-xl border border-emerald-100 bg-emerald-50/60 px-2 py-2.5">
-                  <p className="mb-1 inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider text-emerald-700">
-                    <FiCheckCircle className="h-3 w-3" aria-hidden="true" />
-                    Results
-                  </p>
-                  <p className="text-lg font-black tabular-nums text-slate-900">{results.length}</p>
-                </div>
-              </div>
-            </Card>
-
-            <AdSlot variant="banner-compact" label="Sponsored · Hero Spotlight" />
-          </aside>
-        </div>
-      </Card>
+      <section className="relative w-full">
+        <HeroSpotlightCarousel slides={heroSlides} />
+      </section>
 
       {[
         {
@@ -262,7 +116,8 @@ export default async function HomePage(): Promise<React.ReactElement> {
           liveMatches: cricketLive,
           upcomingMatches: cricketUpcoming,
           emptyLiveLabel: "No live cricket matches right now",
-          emptyUpcomingLabel: "No upcoming cricket matches scheduled"
+          emptyUpcomingLabel: "No upcoming cricket matches scheduled",
+          adLabel: "Sponsored · Cricket Desk"
         },
         {
           key: "football",
@@ -272,7 +127,8 @@ export default async function HomePage(): Promise<React.ReactElement> {
           liveMatches: footballLive,
           upcomingMatches: footballUpcoming,
           emptyLiveLabel: "No live football matches right now",
-          emptyUpcomingLabel: "No upcoming football matches scheduled"
+          emptyUpcomingLabel: "No upcoming football matches scheduled",
+          adLabel: "Sponsored · Football Desk"
         },
         {
           key: "other-sports",
@@ -282,10 +138,11 @@ export default async function HomePage(): Promise<React.ReactElement> {
           liveMatches: otherSportsLive,
           upcomingMatches: otherSportsUpcoming,
           emptyLiveLabel: "No live other sports matches right now",
-          emptyUpcomingLabel: "No upcoming other sports matches scheduled"
+          emptyUpcomingLabel: "No upcoming other sports matches scheduled",
+          adLabel: "Sponsored · Match Center"
         }
       ].map((section) => (
-        <section key={section.key} className="space-y-5">
+        <section key={section.key} className="space-y-3">
           <SectionHeading
             title={section.title}
             icon={section.icon}
@@ -300,7 +157,7 @@ export default async function HomePage(): Promise<React.ReactElement> {
             }
           />
 
-          <div className="space-y-3">
+          <div className="space-y-1.5">
             <div className="flex items-center justify-between gap-2">
               <div className="inline-flex items-center gap-2">
                 <BiBroadcast className="h-4 w-4 text-red-600 animate-pulse-soft" aria-hidden="true" />
@@ -314,10 +171,11 @@ export default async function HomePage(): Promise<React.ReactElement> {
               matches={section.liveMatches}
               emptyCount={6}
               emptyLabel={section.emptyLiveLabel}
+              showGameNameOnHover={section.key === "other-sports"}
             />
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-1.5">
             <div className="flex items-center justify-between gap-2">
               <div className="inline-flex items-center gap-2">
                 <FiCalendar className="h-4 w-4 text-brand-600" aria-hidden="true" />
@@ -331,12 +189,15 @@ export default async function HomePage(): Promise<React.ReactElement> {
               matches={section.upcomingMatches}
               emptyCount={6}
               emptyLabel={section.emptyUpcomingLabel}
+              showGameNameOnHover={section.key === "other-sports"}
             />
+          </div>
+
+          <div className="pt-1">
+            <AdSlot variant="in-feed" label={section.adLabel} />
           </div>
         </section>
       ))}
-
-      <AdSlot variant="in-feed" label="Sponsored · Match Center" />
 
       <section className="space-y-4 animate-reveal-up" style={{ animationDelay: "120ms" }}>
         <SectionHeading

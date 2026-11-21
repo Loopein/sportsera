@@ -142,6 +142,59 @@
     background: rgba(17, 28, 52, 0.24);
   }
 
+  .carousel-card-size {
+    height: 244px;
+    width: clamp(164px, calc((100vw - 28px) / 2), 235px);
+  }
+
+  .carousel-card-size[data-active="true"] {
+    width: clamp(276px, calc(100vw - 40px), 328px);
+  }
+
+  @media (min-width: 640px) {
+    .carousel-card-size {
+      height: 254px;
+      width: clamp(192px, calc((100vw - 52px) / 3), 245px);
+    }
+
+    .carousel-card-size[data-active="true"] {
+      width: clamp(320px, 46vw, 368px);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .carousel-card-size {
+      height: 262px;
+      width: clamp(188px, calc((100vw - 74px) / 4), 245px);
+    }
+
+    .carousel-card-size[data-active="true"] {
+      width: clamp(332px, 40vw, 384px);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .carousel-card-size {
+      height: 268px;
+      width: clamp(192px, calc((100vw - 88px) / 5), 248px);
+    }
+
+    .carousel-card-size[data-active="true"] {
+      width: clamp(344px, 31vw, 396px);
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .carousel-card-size {
+      height: 274px;
+      width: clamp(196px, calc((100vw - 102px) / 6), 296px);
+    }
+
+    .carousel-card-size[data-active="true"] {
+      width: clamp(356px, 26vw, 412px);
+    }
+  }
+
   .brand-wordmark {
     display: inline-flex;
     align-items: center;

@@ -20,7 +20,7 @@ export function SportsEraFaviconIcon({ className }: SportsEraFaviconIconProps): 
       width={64}
       height={64}
       aria-hidden="true"
-      className={cn("h-10 w-10 shrink-0 sm:h-11 sm:w-11", className)}
+      className={cn(className || "h-10 w-10 sm:h-11 sm:w-11", "shrink-0")}
     >
       <rect
         x={2}
@@ -44,6 +44,23 @@ export function SportsEraFaviconIcon({ className }: SportsEraFaviconIconProps): 
           />
           <polygon points="155,102 189,120 155,138" className="fill-[#FF4D00]" />
         </g>
+      </g>
+    </svg>
+  );
+}
+
+export function SportsEraPlayIcon({ className }: SportsEraFaviconIconProps): React.ReactElement {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width={24}
+      height={24}
+      aria-hidden="true"
+      className={cn(className || "h-4 w-4", "shrink-0")}
+    >
+      <g transform="translate(12,12) skewX(-10) translate(-12,-12)">
+        <polygon points="3.5,3 20.5,12 3.5,21" className="fill-[#FF4D00]" />
       </g>
     </svg>
   );

@@ -9,6 +9,7 @@ import type { PlayerProfile } from "@/types/player";
 import type { SeriesStanding, SeriesSummary } from "@/types/series";
 import type { TournamentPlayerStat } from "@/types/stats";
 import type { TeamProfile } from "@/types/team";
+import type { VideoPost } from "@/types/video";
 
 type SchemaInfo = {
   tables: Map<string, Set<string>>;
@@ -1691,4 +1692,47 @@ export function getTournamentPlayerStats(): Promise<TournamentPlayerStat[]> {
 export async function getNewsArticle(slug: string): Promise<NewsArticle | null> {
   const articles = await getNews();
   return articles.find((article) => article.slug === slug) ?? null;
+}
+
+export function getVideoPosts(): Promise<VideoPost[]> {
+  return withCache(cacheKeys.videos, revalidateTtl.listings, async () => {
+    const schema = await getSchemaInfo();
+    if (!schema.hasTable("video_posts")) return [];
+
+    const hasThumbnail = schema.hasColumn("video_posts", "thumbnail_url");
+    const hasDescription = schema.hasColumn("video_posts", "description");
+
+    const rows = await query<{
+      id: string;
+      title: string;
+      description: string | null;
+      video_url: string;
+      thumbnail_url: string | null;
+      created_at: string | Date;
+      updated_at: string | Date;
+    }>(
+      `
+      SELECT
+        id,
+        title,
+        ${hasDescription ? "description" : "NULL::text AS description"},
+        video_url,
+        ${hasThumbnail ? "thumbnail_url" : "NULL::text AS thumbnail_url"},
+        created_at,
+        updated_at
+      FROM video_posts
+      ORDER BY updated_at DESC, created_at DESC
+      `
+    );
+
+    return rows.map((row) => ({
+      id: row.id,
+      title: row.title,
+      description: row.description ?? "",
+      videoUrl: row.video_url,
+      thumbnailUrl: row.thumbnail_url ?? undefined,
+      createdAt: toIsoString(row.created_at) ?? new Date().toISOString(),
+      updatedAt: toIsoString(row.updated_at) ?? new Date().toISOString()
+    }));
+  });
 }
