@@ -13,7 +13,7 @@ export function Header(): React.ReactElement {
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[#1d70f2]/25 to-transparent"
       />
-      <div className="relative mx-auto flex w-full max-w-[1600px] items-center justify-between gap-2 px-3 py-2.5 sm:gap-4 sm:px-4 sm:py-3">
+      <div className="relative flex w-full items-center justify-between gap-2 px-2 py-2.5 sm:gap-4 sm:px-3 sm:py-3 md:px-4">
         <Link href="/" aria-label="SportsEra Home" className="inline-flex shrink-0 items-center">
           <SportsEraLogo />
         </Link>

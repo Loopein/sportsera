@@ -42,7 +42,7 @@ export function Footer(): React.ReactElement {
   return (
     <footer className="glass-footer relative z-10 mt-14 border-t border-slate-200/80">
       <div className="relative text-slate-900">
-        <div className="relative mx-auto w-full max-w-[1600px] px-4 py-8 sm:px-6 md:py-10">
+        <div className="relative w-full px-2 py-8 sm:px-3 md:px-4 md:py-10">
           {/* Tier 1: Multi-Line Brand, Social & App Bar */}
           <div className="grid gap-6 border-b border-slate-200/80 pb-6 md:grid-cols-2 lg:grid-cols-[1.2fr_auto_auto] lg:items-center">
             <div className="min-w-0 space-y-2 md:col-span-2 lg:col-span-1">
