@@ -193,7 +193,9 @@ export default async function HomePage(): Promise<React.ReactElement> {
             />
           </div>
 
-          <AdSlot variant="in-feed" label={section.adLabel} />
+          <div className="pt-1">
+            <AdSlot variant="in-feed" label={section.adLabel} />
+          </div>
         </section>
       ))}
 
