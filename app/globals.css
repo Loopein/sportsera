@@ -437,35 +437,35 @@
   }
 
   .particle-tone-orange {
-    color: rgba(234, 88, 12, 0.24);
+    color: rgba(234, 88, 12, 0.12);
   }
 
   .particle-tone-mint {
-    color: rgba(5, 150, 105, 0.24);
+    color: rgba(5, 150, 105, 0.12);
   }
 
   .particle-tone-sky {
-    color: rgba(29, 112, 242, 0.2);
+    color: rgba(29, 112, 242, 0.1);
   }
 
   .particle-tone-slate {
-    color: rgba(51, 65, 85, 0.16);
+    color: rgba(51, 65, 85, 0.08);
   }
 
   html[data-theme="dark"] .particle-tone-orange {
-    color: rgba(255, 77, 0, 0.28);
+    color: rgba(255, 77, 0, 0.13);
   }
 
   html[data-theme="dark"] .particle-tone-mint {
-    color: rgba(78, 216, 160, 0.28);
+    color: rgba(78, 216, 160, 0.13);
   }
 
   html[data-theme="dark"] .particle-tone-sky {
-    color: rgba(125, 211, 252, 0.2);
+    color: rgba(125, 211, 252, 0.1);
   }
 
   html[data-theme="dark"] .particle-tone-slate {
-    color: rgba(203, 213, 225, 0.15);
+    color: rgba(203, 213, 225, 0.08);
   }
 }
 

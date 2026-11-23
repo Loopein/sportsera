@@ -24,7 +24,7 @@ html[data-theme="light"] {
   --glass-blur-strong: blur(8px) saturate(165%);
   --font-display: "Montserrat", "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-body: "Montserrat", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --dot-canvas: rgba(71, 85, 105, 0.24);
+  --dot-canvas: rgba(71, 85, 105, 0.09);
   --logo-sports-color: #0b1221;
 }
 
@@ -45,6 +45,6 @@ html[data-theme="dark"] {
   --danger-soft: rgba(239, 68, 68, 0.18);
   --shadow-soft: 0 14px 32px -14px rgba(2, 6, 23, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.08);
   --shadow-pop: 0 24px 48px -16px rgba(2, 6, 23, 0.68), 0 0 0 1px rgba(148, 163, 184, 0.14);
-  --dot-canvas: rgba(148, 163, 184, 0.25);
+  --dot-canvas: rgba(148, 163, 184, 0.09);
   --logo-sports-color: #ffffff;
 }

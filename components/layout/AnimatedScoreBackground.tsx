@@ -113,31 +113,31 @@ type CanvasPalette = {
 };
 
 const MOVING_TONES: readonly ParticleTone[] = ["orange", "mint", "sky"];
-const CELL_STEP = 54;
+const CELL_STEP = 74;
 const INTERACTION_RADIUS = 135;
 const MAX_PUSH = 24;
 const SPRING_STIFFNESS = 0.14;
 const SPRING_DAMPING = 0.78;
-const MOVING_ICON_COUNT = 48;
+const MOVING_ICON_COUNT = 24;
 const ATTRACT_RADIUS = 26;
 const ATTRACT_RADIUS_SQ = ATTRACT_RADIUS * ATTRACT_RADIUS;
 const CONNECT_RADIUS = 12;
 const CONNECT_RADIUS_SQ = CONNECT_RADIUS * CONNECT_RADIUS;
 
 const LIGHT_DEFAULT_PALETTE: CanvasPalette = {
-  fixed: "rgba(71, 85, 105, 0.22)",
-  orange: "rgba(234, 88, 12, 0.46)",
-  mint: "rgba(5, 150, 105, 0.44)",
-  sky: "rgba(29, 112, 242, 0.44)",
-  slate: "rgba(51, 65, 85, 0.22)"
+  fixed: "rgba(71, 85, 105, 0.09)",
+  orange: "rgba(234, 88, 12, 0.20)",
+  mint: "rgba(5, 150, 105, 0.19)",
+  sky: "rgba(29, 112, 242, 0.19)",
+  slate: "rgba(51, 65, 85, 0.09)"
 };
 
 const DARK_DEFAULT_PALETTE: CanvasPalette = {
-  fixed: "rgba(148, 163, 184, 0.22)",
-  orange: "rgba(255, 92, 26, 0.52)",
-  mint: "rgba(78, 216, 160, 0.50)",
-  sky: "rgba(56, 189, 248, 0.48)",
-  slate: "rgba(203, 213, 225, 0.22)"
+  fixed: "rgba(148, 163, 184, 0.09)",
+  orange: "rgba(255, 92, 26, 0.22)",
+  mint: "rgba(78, 216, 160, 0.21)",
+  sky: "rgba(56, 189, 248, 0.20)",
+  slate: "rgba(203, 213, 225, 0.09)"
 };
 
 // Normalized 24x24 vector SVG paths covering every sport, compiled lazily via Path2D in useEffect
@@ -261,7 +261,7 @@ export function AnimatedScoreBackground(): React.ReactElement {
       for (let row = -1; row < rows; row += 1) {
         const staggerX = (row & 1) * 14;
         for (let col = -1; col < cols; col += 1) {
-          if (hash2D(col, row, 3) < 0.14) continue;
+          if (hash2D(col, row, 3) < 0.22) continue;
 
           const jitterX = (hash2D(col, row, 1) - 0.5) * 40;
           const jitterY = (hash2D(col, row, 2) - 0.5) * 40;
@@ -286,7 +286,7 @@ export function AnimatedScoreBackground(): React.ReactElement {
             flashTone: "orange"
           });
 
-          if (hash2D(col, row, 4) > 0.82) {
+          if (hash2D(col, row, 4) > 0.9) {
             const angle = hash2D(col, row, 6) * Math.PI * 2;
             const dist = 18 + hash2D(col, row, 7) * 10;
             const satX = ox + Math.cos(angle) * dist;
