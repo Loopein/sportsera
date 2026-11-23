@@ -51,11 +51,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" data-theme="dark" suppressHydrationWarning>
       <head>
         <meta name="google-adsense-account" content={GOOGLE_ADSENSE_CLIENT_ID} />
+        <GoogleAdSenseScript />
         <link rel="icon" type="image/svg+xml" href={SPORTSERA_FAVICON_DATA_URI} />
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body className="min-h-screen antialiased">
-        <GoogleAdSenseScript />
         <AnimatedScoreBackground />
         <div className="relative z-10 flex min-h-screen flex-col">
           <Header />
