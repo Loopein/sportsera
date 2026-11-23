@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FiX } from "react-icons/fi";
 import { LoopeinLoopIcon } from "@/components/shared/LoopeinBranding";
-import { SITE_NAME, SITE_POWERED_BY } from "@/lib/constants/site";
+import { GOOGLE_ADSENSE_CLIENT_ID, SITE_NAME, SITE_POWERED_BY } from "@/lib/constants/site";
 import { cn } from "@/lib/utils/text";
 
 export type AdSlotVariant = "leaderboard" | "in-feed" | "rectangle" | "banner-compact" | "native-card";
@@ -61,7 +61,7 @@ export function AdSlot({
 }: AdSlotProps): React.ReactElement | null {
   const [dismissed, setDismissed] = useState(false);
   const pushedRef = useRef(false);
-  const clientId = process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_ID?.trim() ?? "";
+  const clientId = GOOGLE_ADSENSE_CLIENT_ID;
   const resolvedSlot = slot?.trim() || process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_DEFAULT_SLOT?.trim() || "";
   const isLiveAdConfig = Boolean(clientId && resolvedSlot);
 

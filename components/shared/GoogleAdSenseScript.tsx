@@ -1,7 +1,8 @@
 import Script from "next/script";
+import { GOOGLE_ADSENSE_CLIENT_ID } from "@/lib/constants/site";
 
 export function GoogleAdSenseScript(): React.ReactElement | null {
-  const clientId = process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_ID?.trim();
+  const clientId = GOOGLE_ADSENSE_CLIENT_ID;
   if (!clientId) return null;
 
   return (
