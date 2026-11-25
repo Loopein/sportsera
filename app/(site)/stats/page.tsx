@@ -114,7 +114,7 @@ export default async function StatsPage({ searchParams }: StatsPageProps): Promi
   const selectedTeam = teams.some((team) => team.id === params?.team) ? (params?.team as string) : "all";
   const teamLabel = selectedTeam === "all" ? "All Teams" : teams.find((team) => team.id === selectedTeam)?.name ?? "All Teams";
   const filterTriggerClass =
-    "group inline-flex min-w-[180px] items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-[#3142b0] hover:bg-[#eff2ff] data-[state=open]:border-[#08104a] data-[state=open]:bg-[#edf0ff] data-[state=open]:text-[#08104a]";
+    "group inline-flex w-full items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-[#3142b0] hover:bg-[#eff2ff] data-[state=open]:border-[#08104a] data-[state=open]:bg-[#edf0ff] data-[state=open]:text-[#08104a] sm:w-auto sm:min-w-[200px]";
 
   const filtered = selectedTeam === "all" ? stats : stats.filter((row) => row.teamId === selectedTeam);
   const rankedRows = sortRows(filtered, category);
@@ -130,7 +130,7 @@ export default async function StatsPage({ searchParams }: StatsPageProps): Promi
 
   return (
     <div className="space-y-6">
-      <Card as="section" variant="strong" className="p-5 sm:p-6">
+      <Card as="section" variant="strong" className="page-hero-card p-4 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-3">
             <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700 ring-1 ring-brand-200/80">
@@ -138,7 +138,7 @@ export default async function StatsPage({ searchParams }: StatsPageProps): Promi
             </span>
             <div>
               <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-brand-700">
-                ICC Men&apos;s T20 World Cup 2026
+                Season &amp; Tournament Leaderboards
               </p>
               <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">Tournament Stats</h1>
             </div>
@@ -153,14 +153,14 @@ export default async function StatsPage({ searchParams }: StatsPageProps): Promi
           </div>
         </div>
 
-        <div className="-mx-1 mt-5 overflow-x-auto pb-1">
-          <div className="inline-flex min-w-max flex-wrap gap-2 px-1">
+        <div className="-mx-1 mt-5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="inline-flex min-w-max gap-1.5 whitespace-nowrap px-1">
             {categoryItems.map((item) => (
               <Link
                 key={item.key}
                 href={buildHref({ category: item.key })}
                 className={cn(
-                  "rounded-xl px-3.5 py-2 text-xs font-extrabold uppercase tracking-wide transition sm:text-sm",
+                  "shrink-0 rounded-xl px-3.5 py-2 text-xs font-extrabold uppercase tracking-wide transition sm:text-sm",
                   category === item.key
                     ? "bg-[rgb(6,12,58)] text-white shadow-sm"
                     : "border border-slate-200 bg-white/90 text-slate-700 hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700"
@@ -173,8 +173,8 @@ export default async function StatsPage({ searchParams }: StatsPageProps): Promi
         </div>
       </Card>
 
-      <section className="grid gap-5 xl:grid-cols-[1fr_310px]">
-        <div className="space-y-4">
+      <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_310px]">
+        <div className="min-w-0 space-y-4">
           <Card className="space-y-3 p-3.5 sm:p-4">
             <div className="flex flex-wrap items-center justify-between gap-2.5">
               <DropdownMenu>
@@ -224,30 +224,30 @@ export default async function StatsPage({ searchParams }: StatsPageProps): Promi
           </Card>
 
           <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-sm">
-            <table className="min-w-full text-left text-sm">
+            <table className="min-w-[600px] w-full whitespace-nowrap text-left text-xs sm:text-sm">
               <thead className="bg-slate-50/90 text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
                 <tr className="border-b border-slate-200">
-                  <th className="px-3.5 py-3 tabular-nums">#</th>
-                  <th className="px-3.5 py-3">Player</th>
-                  <th className="px-3.5 py-3">Team</th>
-                  <th className="px-3 py-3 text-right tabular-nums">Mat</th>
-                  <th className="px-3 py-3 text-right tabular-nums">Inns</th>
+                  <th className="px-2.5 py-2.5 tabular-nums sm:px-3.5 sm:py-3">#</th>
+                  <th className="px-2.5 py-2.5 sm:px-3.5 sm:py-3">Player</th>
+                  <th className="px-2.5 py-2.5 sm:px-3.5 sm:py-3">Team</th>
+                  <th className="px-2.5 py-2.5 text-right tabular-nums sm:px-3 sm:py-3">Mat</th>
+                  <th className="px-2.5 py-2.5 text-right tabular-nums sm:px-3 sm:py-3">Inns</th>
                   {category === "most-runs" || category === "best-strike-rate" || category === "most-sixes" ? (
                     <>
-                      <th className="px-3.5 py-3 text-right tabular-nums">Runs</th>
-                      <th className="px-3 py-3 text-right tabular-nums">HS</th>
-                      <th className="px-3.5 py-3 text-right tabular-nums">Avg</th>
-                      <th className="px-3.5 py-3 text-right tabular-nums">SR</th>
-                      <th className="px-3.5 py-3 text-right tabular-nums">4s</th>
-                      <th className="px-3.5 py-3 text-right tabular-nums">6s</th>
+                      <th className="px-2.5 py-2.5 text-right tabular-nums sm:px-3.5 sm:py-3">Runs</th>
+                      <th className="px-2.5 py-2.5 text-right tabular-nums sm:px-3 sm:py-3">HS</th>
+                      <th className="px-2.5 py-2.5 text-right tabular-nums sm:px-3.5 sm:py-3">Avg</th>
+                      <th className="px-2.5 py-2.5 text-right tabular-nums sm:px-3.5 sm:py-3">SR</th>
+                      <th className="px-2.5 py-2.5 text-right tabular-nums sm:px-3.5 sm:py-3">4s</th>
+                      <th className="px-2.5 py-2.5 text-right tabular-nums sm:px-3.5 sm:py-3">6s</th>
                     </>
                   ) : (
                     <>
-                      <th className="px-3.5 py-3 text-right tabular-nums">Wkts</th>
-                      <th className="px-3.5 py-3 text-right tabular-nums">BBI</th>
-                      <th className="px-3.5 py-3 text-right tabular-nums">Avg</th>
-                      <th className="px-3.5 py-3 text-right tabular-nums">Econ</th>
-                      <th className="px-3.5 py-3 text-right tabular-nums">Overs</th>
+                      <th className="px-2.5 py-2.5 text-right tabular-nums sm:px-3.5 sm:py-3">Wkts</th>
+                      <th className="px-2.5 py-2.5 text-right tabular-nums sm:px-3.5 sm:py-3">BBI</th>
+                      <th className="px-2.5 py-2.5 text-right tabular-nums sm:px-3.5 sm:py-3">Avg</th>
+                      <th className="px-2.5 py-2.5 text-right tabular-nums sm:px-3.5 sm:py-3">Econ</th>
+                      <th className="px-2.5 py-2.5 text-right tabular-nums sm:px-3.5 sm:py-3">Overs</th>
                     </>
                   )}
                 </tr>
@@ -269,7 +269,7 @@ export default async function StatsPage({ searchParams }: StatsPageProps): Promi
                         key={`${row.playerId}-${row.teamId}-${row.matches}-${index}`}
                         className="border-t border-slate-100 transition-colors hover:bg-brand-50/35"
                       >
-                        <td className="px-3.5 py-3">
+                        <td className="px-2.5 py-2.5 sm:px-3.5 sm:py-3">
                           <span
                             className={cn(
                               "inline-flex h-6 w-6 items-center justify-center rounded-md text-xs font-extrabold tabular-nums",
@@ -279,34 +279,34 @@ export default async function StatsPage({ searchParams }: StatsPageProps): Promi
                             {index + 1}
                           </span>
                         </td>
-                        <td className="px-3.5 py-3 font-bold text-slate-900">{row.playerName}</td>
-                        <td className="px-3.5 py-3 font-medium text-slate-600">{row.teamName}</td>
-                        <td className="px-3.5 py-3 text-right tabular-nums text-slate-700">{row.matches}</td>
-                        <td className="px-3.5 py-3 text-right tabular-nums text-slate-700">{row.innings}</td>
+                        <td className="px-2.5 py-2.5 font-bold text-slate-900 sm:px-3.5 sm:py-3">{row.playerName}</td>
+                        <td className="px-2.5 py-2.5 font-medium text-slate-600 sm:px-3.5 sm:py-3">{row.teamName}</td>
+                        <td className="px-2.5 py-2.5 text-right tabular-nums text-slate-700 sm:px-3.5 sm:py-3">{row.matches}</td>
+                        <td className="px-2.5 py-2.5 text-right tabular-nums text-slate-700 sm:px-3.5 sm:py-3">{row.innings}</td>
                         {category === "most-runs" || category === "best-strike-rate" || category === "most-sixes" ? (
                           <>
                             <td
                               className={cn(
-                                "px-3.5 py-3 text-right tabular-nums",
+                                "px-2.5 py-2.5 text-right tabular-nums sm:px-3.5 sm:py-3",
                                 category === "most-runs" ? "font-extrabold text-brand-700" : "font-semibold text-slate-900"
                               )}
                             >
                               {row.runs}
                             </td>
-                            <td className="px-3.5 py-3 text-right tabular-nums text-slate-700">{row.highestScore ?? "-"}</td>
-                            <td className="px-3.5 py-3 text-right tabular-nums text-slate-700">{formatStat(row.battingAverage, 2)}</td>
+                            <td className="px-2.5 py-2.5 text-right tabular-nums text-slate-700 sm:px-3.5 sm:py-3">{row.highestScore ?? "-"}</td>
+                            <td className="px-2.5 py-2.5 text-right tabular-nums text-slate-700 sm:px-3.5 sm:py-3">{formatStat(row.battingAverage, 2)}</td>
                             <td
                               className={cn(
-                                "px-3.5 py-3 text-right tabular-nums",
+                                "px-2.5 py-2.5 text-right tabular-nums sm:px-3.5 sm:py-3",
                                 category === "best-strike-rate" ? "font-extrabold text-brand-700" : "text-slate-700"
                               )}
                             >
                               {formatStat(row.strikeRate, 2)}
                             </td>
-                            <td className="px-3.5 py-3 text-right tabular-nums text-slate-700">{row.fours}</td>
+                            <td className="px-2.5 py-2.5 text-right tabular-nums text-slate-700 sm:px-3.5 sm:py-3">{row.fours}</td>
                             <td
                               className={cn(
-                                "px-3.5 py-3 text-right tabular-nums",
+                                "px-2.5 py-2.5 text-right tabular-nums sm:px-3.5 sm:py-3",
                                 category === "most-sixes" ? "font-extrabold text-brand-700" : "font-semibold text-slate-900"
                               )}
                             >
@@ -317,23 +317,23 @@ export default async function StatsPage({ searchParams }: StatsPageProps): Promi
                           <>
                             <td
                               className={cn(
-                                "px-3.5 py-3 text-right tabular-nums",
+                                "px-2.5 py-2.5 text-right tabular-nums sm:px-3.5 sm:py-3",
                                 category === "most-wickets" ? "font-extrabold text-brand-700" : "font-semibold text-slate-900"
                               )}
                             >
                               {row.wickets}
                             </td>
-                            <td className="px-3.5 py-3 text-right tabular-nums text-slate-700">{row.bestBowling ?? "-"}</td>
-                            <td className="px-3.5 py-3 text-right tabular-nums text-slate-700">{formatStat(row.bowlingAverage, 2)}</td>
+                            <td className="px-2.5 py-2.5 text-right tabular-nums text-slate-700 sm:px-3.5 sm:py-3">{row.bestBowling ?? "-"}</td>
+                            <td className="px-2.5 py-2.5 text-right tabular-nums text-slate-700 sm:px-3.5 sm:py-3">{formatStat(row.bowlingAverage, 2)}</td>
                             <td
                               className={cn(
-                                "px-3.5 py-3 text-right tabular-nums",
+                                "px-2.5 py-2.5 text-right tabular-nums sm:px-3.5 sm:py-3",
                                 category === "best-economy" ? "font-extrabold text-brand-700" : "text-slate-700"
                               )}
                             >
                               {formatStat(row.economy, 2)}
                             </td>
-                            <td className="px-3.5 py-3 text-right tabular-nums text-slate-700">{formatStat(row.overs, 1)}</td>
+                            <td className="px-2.5 py-2.5 text-right tabular-nums text-slate-700 sm:px-3.5 sm:py-3">{formatStat(row.overs, 1)}</td>
                           </>
                         )}
                       </tr>
@@ -351,8 +351,8 @@ export default async function StatsPage({ searchParams }: StatsPageProps): Promi
           </div>
         </div>
 
-        <aside className="space-y-4">
-          <div className="rounded-2xl border border-brand-400/30 bg-gradient-to-br from-[#060c3a]/40 via-[#0d1b63]/35 to-[#132cc2]/40 p-5 text-white shadow-md backdrop-blur-md">
+        <aside className="min-w-0 space-y-4 md:grid md:grid-cols-2 md:gap-4 md:space-y-0 xl:block xl:space-y-4">
+          <div className="rounded-2xl border border-brand-400/30 bg-gradient-to-br from-[#060c3a]/40 via-[#0d1b63]/35 to-[#132cc2]/40 p-5 text-white shadow-md backdrop-blur-md md:col-span-2 xl:col-span-1">
             <div className="flex items-center justify-between gap-2">
               <p className="text-xs font-extrabold uppercase tracking-wider text-brand-200">Top Performer</p>
               <FiAward className="h-4 w-4 text-amber-300" aria-hidden="true" />

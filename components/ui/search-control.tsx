@@ -39,7 +39,7 @@ export function SearchControl({
         className
       )}
     >
-      <span className="pl-3 text-slate-400" aria-hidden="true">
+      <span className="shrink-0 pl-2.5 text-slate-400 sm:pl-3" aria-hidden="true">
         {icon ?? <FiSearch className="h-5 w-5" />}
       </span>
       <input
@@ -51,7 +51,7 @@ export function SearchControl({
         onChange={onChange}
         placeholder={placeholder}
         className={cn(
-          "w-full rounded-xl border-0 bg-transparent px-1 py-3 text-sm text-slate-900 outline-none ring-brand-300 placeholder:text-slate-400 focus:ring-0",
+          "min-w-0 flex-1 rounded-xl border-0 bg-transparent px-1 py-2.5 text-sm text-slate-900 outline-none ring-brand-300 placeholder:text-slate-400 focus:ring-0 sm:py-3",
           inputClassName
         )}
         autoComplete="off"
@@ -59,7 +59,7 @@ export function SearchControl({
       <button
         type="submit"
         className={cn(
-          "rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-white transition hover:from-brand-700 hover:to-brand-600",
+          "shrink-0 rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 px-3.5 py-2.5 text-xs font-semibold uppercase tracking-wide text-white transition hover:from-brand-700 hover:to-brand-600 sm:px-4",
           submitClassName
         )}
         aria-label={submitAriaLabel}

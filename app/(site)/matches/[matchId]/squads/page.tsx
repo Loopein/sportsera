@@ -4,6 +4,7 @@ import { MatchTabs } from "@/app/(site)/matches/[matchId]/MatchTabs";
 import { UpcomingCountdown } from "@/components/match/UpcomingCountdown";
 import { AdSlot } from "@/components/shared/AdSlot";
 import { TeamSquad } from "@/components/team/TeamSquad";
+import { Card } from "@/components/ui/card";
 import { getMatchSummary, getPlayers, getTeam } from "@/lib/api/read";
 
 type SquadsPageProps = {
@@ -71,18 +72,18 @@ export default async function SquadsPage({ params, searchParams }: SquadsPagePro
     return (
       <div className="space-y-4">
         <MatchTabs matchId={summary.id} currentPath={`/matches/${summary.id}/squads`} status={summary.status} />
-        <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-sm">
-          <div className="px-6 py-5">
+        <Card as="section" variant="strong" className="page-hero-card overflow-hidden p-0 text-slate-900">
+          <div className="px-4 py-4 sm:px-6 sm:py-5">
             <p className="text-sm text-slate-600">
               {summary.seriesName}
               <span className="text-brand-700"> - {kickoffLabel}</span>
             </p>
-            <div className="mt-5 grid grid-cols-[1fr_auto_1fr] items-center gap-2 text-center sm:gap-4">
+            <div className="mt-5 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 text-center sm:gap-4">
               <div className="min-w-0">
                 <span className="mx-auto inline-flex h-11 w-11 items-center justify-center rounded-xl border border-brand-200 bg-brand-50 text-sm font-extrabold text-brand-700 sm:h-12 sm:w-12">
                   {summary.teamA.shortName.slice(0, 3)}
                 </span>
-                <p className="mt-2 truncate text-lg font-black tracking-tight text-slate-900 sm:text-2xl md:text-3xl">
+                <p className="mt-2 truncate text-base font-black tracking-tight text-slate-900 sm:text-2xl md:text-3xl">
                   {summary.teamA.name}
                 </p>
               </div>
@@ -91,7 +92,7 @@ export default async function SquadsPage({ params, searchParams }: SquadsPagePro
                 <span className="mx-auto inline-flex h-11 w-11 items-center justify-center rounded-xl border border-brand-200 bg-brand-50 text-sm font-extrabold text-brand-700 sm:h-12 sm:w-12">
                   {summary.teamB.shortName.slice(0, 3)}
                 </span>
-                <p className="mt-2 truncate text-lg font-black tracking-tight text-slate-900 sm:text-2xl md:text-3xl">
+                <p className="mt-2 truncate text-base font-black tracking-tight text-slate-900 sm:text-2xl md:text-3xl">
                   {summary.teamB.name}
                 </p>
               </div>
@@ -110,7 +111,7 @@ export default async function SquadsPage({ params, searchParams }: SquadsPagePro
           <div className="grid grid-cols-2 gap-2 border-t border-slate-200 px-4 py-2 sm:px-6">
             <Link
               href={buildHref("a", selectedView)}
-              className={`rounded-full px-4 py-2 text-center text-base font-semibold transition sm:text-lg ${
+              className={`truncate rounded-full px-3 py-2 text-center text-xs font-bold transition sm:px-4 sm:text-base ${
                 selectedTeamKey === "a"
                   ? "bg-brand-600 text-white shadow-sm"
                   : "bg-slate-100 text-slate-700 hover:bg-slate-200"
@@ -120,7 +121,7 @@ export default async function SquadsPage({ params, searchParams }: SquadsPagePro
             </Link>
             <Link
               href={buildHref("b", selectedView)}
-              className={`rounded-full px-4 py-2 text-center text-base font-semibold transition sm:text-lg ${
+              className={`truncate rounded-full px-3 py-2 text-center text-xs font-bold transition sm:px-4 sm:text-base ${
                 selectedTeamKey === "b"
                   ? "bg-brand-600 text-white shadow-sm"
                   : "bg-slate-100 text-slate-700 hover:bg-slate-200"
@@ -151,12 +152,12 @@ export default async function SquadsPage({ params, searchParams }: SquadsPagePro
             </Link>
           </div>
 
-          <div className="border-t border-slate-200 px-4 py-5 sm:px-6">
-            <h2 className="text-xl font-semibold text-slate-900">
+          <div className="border-t border-slate-200 px-4 py-4 sm:px-6 sm:py-5">
+            <h2 className="text-base font-bold text-slate-900 sm:text-xl">
               {selectedTeam.name} {selectedView === "xi" ? "Playing XI" : "Squad"}
             </h2>
             {shownMembers.length ? (
-              <ul className="mt-4 divide-y divide-slate-200">
+              <ul className="mt-4 divide-y divide-slate-200 sm:grid sm:grid-cols-2 sm:gap-3 sm:divide-y-0 lg:grid-cols-3">
                 {shownMembers.map((member) => {
                   const player = playerById.get(member.playerId);
                   const details = [player?.battingStyle, player?.bowlingStyle].filter(Boolean).join(" | ") || member.role;
@@ -166,20 +167,35 @@ export default async function SquadsPage({ params, searchParams }: SquadsPagePro
                     .slice(0, 2)
                     .map((part) => part[0]?.toUpperCase())
                     .join("");
-                  const suffix = `${member.isWicketKeeper ? " (WK)" : ""}${member.isCaptain ? " (C)" : ""}`;
 
                   return (
-                    <li key={member.playerId} className="flex items-start gap-3 py-3">
-                      <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-300 bg-slate-100 text-sm font-bold text-slate-700">
-                        {initials}
-                      </span>
-                      <div className="min-w-0">
-                        <p className="truncate text-2xl font-medium tracking-tight text-slate-900">
-                          {member.name}
-                          {suffix}
-                        </p>
-                        <p className="text-base text-slate-600">{details}</p>
-                      </div>
+                    <li key={member.playerId} className="min-w-0">
+                      <Link
+                        href={`/players/${member.playerId}`}
+                        className="group flex min-w-0 items-center gap-3 py-2.5 transition sm:rounded-xl sm:border sm:border-slate-200 sm:bg-slate-50/70 sm:p-3 sm:hover:border-brand-300 sm:hover:bg-brand-50/40"
+                      >
+                        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-300 bg-slate-100 text-xs font-bold text-slate-700 sm:h-10 sm:w-10 sm:text-sm">
+                          {initials}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <p className="truncate text-sm font-bold tracking-tight text-slate-900 group-hover:text-brand-700 sm:text-base">
+                              {member.name}
+                            </p>
+                            {member.isCaptain ? (
+                              <span className="rounded-md bg-brand-50 px-1.5 py-0.5 text-[10px] font-extrabold uppercase text-brand-700">
+                                C
+                              </span>
+                            ) : null}
+                            {member.isWicketKeeper ? (
+                              <span className="rounded-md bg-indigo-50 px-1.5 py-0.5 text-[10px] font-extrabold uppercase text-indigo-800">
+                                WK
+                              </span>
+                            ) : null}
+                          </div>
+                          <p className="truncate text-xs text-slate-600 sm:text-sm">{details}</p>
+                        </div>
+                      </Link>
                     </li>
                   );
                 })}
@@ -190,7 +206,7 @@ export default async function SquadsPage({ params, searchParams }: SquadsPagePro
               </p>
             )}
           </div>
-        </section>
+        </Card>
 
         <AdSlot variant="leaderboard" label="Sponsored · Playing XI & Squads" />
       </div>
@@ -202,12 +218,22 @@ export default async function SquadsPage({ params, searchParams }: SquadsPagePro
       <MatchTabs matchId={summary.id} currentPath={`/matches/${summary.id}/squads`} status={summary.status} />
       <AdSlot variant="in-feed" label="Sponsored · Match Squads" />
       <div className="grid gap-4 lg:grid-cols-2">
-        <section className="space-y-3">
-          <h2 className="text-xl font-semibold text-slate-900">{summary.teamA.name}</h2>
+        <section className="min-w-0 space-y-3">
+          <div className="flex items-center gap-2.5">
+            <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-xs font-black text-brand-700">
+              {summary.teamA.shortName.slice(0, 3)}
+            </span>
+            <h2 className="truncate text-xl font-extrabold text-slate-900">{summary.teamA.name}</h2>
+          </div>
           <TeamSquad members={teamA?.squad ?? []} />
         </section>
-        <section className="space-y-3">
-          <h2 className="text-xl font-semibold text-slate-900">{summary.teamB.name}</h2>
+        <section className="min-w-0 space-y-3">
+          <div className="flex items-center gap-2.5">
+            <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-xs font-black text-indigo-800">
+              {summary.teamB.shortName.slice(0, 3)}
+            </span>
+            <h2 className="truncate text-xl font-extrabold text-slate-900">{summary.teamB.name}</h2>
+          </div>
           <TeamSquad members={teamB?.squad ?? []} />
         </section>
       </div>

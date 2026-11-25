@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { BiBroadcast } from "react-icons/bi";
 import {
@@ -13,6 +13,7 @@ import {
   FiPlus
 } from "react-icons/fi";
 import type { LiveMatch } from "@/types/match";
+import { ensureGsapRegistered, gsap, prefersReducedMotion } from "@/lib/gsap/client";
 import { SportsEraPlayIcon } from "@/components/layout/SportsEraLogo";
 import { MatchStatusBadge } from "@/components/live/MatchStatusBadge";
 import { UpcomingCountdown } from "@/components/match/UpcomingCountdown";
@@ -54,8 +55,40 @@ export function LiveUpcomingCarousel({
   const trackRef = useRef<HTMLDivElement | null>(null);
 
   const scrollTrack = useCallback((direction: -1 | 1) => {
-    trackRef.current?.scrollBy({ left: direction * 440, behavior: "smooth" });
+    const track = trackRef.current;
+    if (!track) return;
+    ensureGsapRegistered();
+    const step = Math.max(260, Math.round(track.clientWidth * 0.78));
+    const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
+    const targetX = Math.max(0, Math.min(maxScroll, track.scrollLeft + direction * step));
+    if (prefersReducedMotion()) {
+      track.scrollLeft = targetX;
+      return;
+    }
+    gsap.to(track, {
+      scrollTo: { x: targetX, autoKill: true },
+      duration: 0.68,
+      ease: "power3.out",
+      overwrite: "auto"
+    });
   }, []);
+
+  useEffect(() => {
+    if (activeIndex === null || !trackRef.current || prefersReducedMotion()) return;
+    ensureGsapRegistered();
+    const activeBody = trackRef.current.querySelectorAll<HTMLElement>(
+      `[data-carousel-index="${activeIndex}"] [data-carousel-active-body]`
+    );
+    if (!activeBody.length) return;
+    const tween = gsap.fromTo(
+      activeBody,
+      { opacity: 0.65, y: 4 },
+      { opacity: 1, y: 0, duration: 0.28, ease: "power2.out", clearProps: "transform,opacity" }
+    );
+    return () => {
+      tween.kill();
+    };
+  }, [activeIndex]);
 
   const handlePrev = useCallback(() => {
     scrollTrack(-1);
@@ -73,18 +106,18 @@ export function LiveUpcomingCarousel({
             type="button"
             onClick={handlePrev}
             aria-label="Previous match card"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200/80 bg-slate-900/75 text-white shadow-lg transition-all duration-200 hover:scale-105 hover:bg-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 absolute left-2 top-1/2 z-20 -translate-y-1/2"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-slate-200/80 bg-slate-900/75 text-white shadow-lg transition-all duration-200 hover:scale-105 hover:bg-brand-600 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 sm:h-10 sm:w-10 absolute left-2 top-1/2 z-20 -translate-y-1/2"
           >
-            <FiChevronLeft className="h-5 w-5" aria-hidden="true" />
+            <FiChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
           </button>
 
           <button
             type="button"
             onClick={handleNext}
             aria-label="Next match card"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200/80 bg-slate-900/75 text-white shadow-lg transition-all duration-200 hover:scale-105 hover:bg-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 absolute right-2 top-1/2 z-20 -translate-y-1/2"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-slate-200/80 bg-slate-900/75 text-white shadow-lg transition-all duration-200 hover:scale-105 hover:bg-brand-600 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 sm:h-10 sm:w-10 absolute right-2 top-1/2 z-20 -translate-y-1/2"
           >
-            <FiChevronRight className="h-5 w-5" aria-hidden="true" />
+            <FiChevronRight className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
           </button>
         </>
       ) : null}
@@ -92,7 +125,7 @@ export function LiveUpcomingCarousel({
       <div
         ref={trackRef}
         onMouseLeave={() => setActiveIndex(null)}
-        className="overflow-x-auto scroll-smooth py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="overflow-x-auto py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         <div className="mx-auto flex w-max items-stretch gap-3 sm:gap-3.5">
         {isEmpty
@@ -159,18 +192,31 @@ export function LiveUpcomingCarousel({
               return (
                 <article
                   key={match.id}
+                  data-carousel-index={index}
                   data-active={isActive ? "true" : "false"}
                   onMouseEnter={() => setActiveIndex(index)}
                   onMouseLeave={() => setActiveIndex((prev) => (prev === index ? null : prev))}
                   className={getCarouselCardClass(isActive)}
                 >
+                  <span
+                    aria-hidden="true"
+                    className={`pointer-events-none absolute inset-x-0 top-0 h-0.5 rounded-t-2xl ${
+                      isLive
+                        ? "bg-gradient-to-r from-red-500 via-rose-400 to-orange-400"
+                        : isUpcoming
+                          ? "bg-gradient-to-r from-brand-500 via-sky-400 to-indigo-500"
+                          : isCompleted
+                            ? "bg-gradient-to-r from-emerald-500 to-teal-400"
+                            : "bg-gradient-to-r from-amber-500 to-orange-400"
+                    }`}
+                  />
                   <Link
                     href={ctaHref}
                     aria-label={`Open ${match.teamA.shortName} vs ${match.teamB.shortName}`}
                     className="absolute inset-0 z-10 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
                   />
                   {isActive ? (
-                    <>
+                    <div data-carousel-active-body className="flex flex-1 flex-col justify-between">
                       <div className="flex items-center justify-between gap-2">
                         <MatchStatusBadge status={match.status} label={badgeLabel} hideIcon={isUpcoming} />
                         <div className="flex min-w-0 items-center gap-1.5">
@@ -321,7 +367,7 @@ export function LiveUpcomingCarousel({
                           ) : null}
                         </div>
                       </div>
-                    </>
+                    </div>
                   ) : (
                     <>
                       <div className="flex items-center justify-between gap-1.5">

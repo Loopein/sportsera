@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MatchTabs } from "@/app/(site)/matches/[matchId]/MatchTabs";
 import { UpcomingCountdown } from "@/components/match/UpcomingCountdown";
@@ -95,28 +96,32 @@ export default async function StatsPage({ params }: StatsPageProps): Promise<Rea
       <div className="space-y-4">
         <MatchTabs matchId={summary.id} currentPath={`/matches/${summary.id}/stats`} status={summary.status} />
 
-        <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-sm">
-          <div className="px-6 py-5">
+        <Card as="section" variant="strong" className="page-hero-card overflow-hidden p-0 text-slate-900">
+          <div className="px-4 py-4 sm:px-6 sm:py-5">
             <p className="text-sm text-slate-600">
               {summary.seriesName}
               <span className="text-brand-700"> - {kickoffLabel}</span>
             </p>
 
-            <div className="mt-5 grid grid-cols-[1fr_auto_1fr] items-center gap-3 text-center">
-              <div>
-                <span className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-lg border border-brand-200 bg-brand-50 text-sm font-extrabold text-brand-700">
+            <div className="mt-5 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 text-center sm:gap-3">
+              <div className="min-w-0">
+                <span className="mx-auto inline-flex h-10 w-10 items-center justify-center rounded-lg border border-brand-200 bg-brand-50 text-xs font-extrabold text-brand-700 sm:h-12 sm:w-12 sm:text-sm">
                   {summary.teamA.shortName.slice(0, 2)}
                 </span>
-                <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">{summary.teamA.name}</p>
+                <p className="mt-2 truncate text-base font-bold tracking-tight text-slate-900 sm:text-xl md:text-2xl">
+                  {summary.teamA.name}
+                </p>
               </div>
 
-              <span className="text-xl font-semibold text-slate-500">vs</span>
+              <span className="text-sm font-semibold text-slate-500 sm:text-xl">vs</span>
 
-              <div>
-                <span className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-lg border border-brand-200 bg-brand-50 text-sm font-extrabold text-brand-700">
+              <div className="min-w-0">
+                <span className="mx-auto inline-flex h-10 w-10 items-center justify-center rounded-lg border border-brand-200 bg-brand-50 text-xs font-extrabold text-brand-700 sm:h-12 sm:w-12 sm:text-sm">
                   {summary.teamB.shortName.slice(0, 2)}
                 </span>
-                <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">{summary.teamB.name}</p>
+                <p className="mt-2 truncate text-base font-bold tracking-tight text-slate-900 sm:text-xl md:text-2xl">
+                  {summary.teamB.name}
+                </p>
               </div>
             </div>
             <div className="mt-3 text-center">
@@ -132,11 +137,11 @@ export default async function StatsPage({ params }: StatsPageProps): Promise<Rea
               {shortMeta}
             </p>
           </div>
-        </section>
+        </Card>
 
-        <Card as="section" className="space-y-4 p-5">
+        <Card as="section" className="space-y-4 p-4 sm:p-5">
           <h2 className="text-xl font-semibold text-slate-900">Head to Head</h2>
-          <div className="grid gap-3 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
             <div className="rounded-lg bg-slate-50 p-3 text-center">
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{summary.teamA.shortName}</p>
               <p className="mt-1 text-2xl font-extrabold text-slate-900">{teamAWins}</p>
@@ -161,14 +166,19 @@ export default async function StatsPage({ params }: StatsPageProps): Promise<Rea
           {h2hMatches.length ? (
             <ul className="space-y-2">
               {h2hMatches.slice(0, 5).map((match) => (
-                <li key={match.id} className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    {formatResultDate(match.lastUpdatedAt)} - {match.seriesName}
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-slate-900">
-                    {match.teamA.shortName} vs {match.teamB.shortName}
-                  </p>
-                  <p className="mt-1 text-sm text-slate-700">{match.resultText ?? "Result details unavailable"}</p>
+                <li key={match.id}>
+                  <Link
+                    href={`/matches/${match.id}`}
+                    className="block rounded-xl border border-slate-200 bg-slate-50/80 p-3 transition hover:border-brand-300 hover:bg-brand-50/40"
+                  >
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                      {formatResultDate(match.lastUpdatedAt)} - {match.seriesName}
+                    </p>
+                    <p className="mt-1 text-sm font-extrabold text-slate-900">
+                      {match.teamA.shortName} vs {match.teamB.shortName}
+                    </p>
+                    <p className="mt-1 text-sm text-slate-700">{match.resultText ?? "Result details unavailable"}</p>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -179,7 +189,7 @@ export default async function StatsPage({ params }: StatsPageProps): Promise<Rea
           )}
         </Card>
 
-        <Card as="section" className="space-y-4 p-5">
+        <Card as="section" className="space-y-4 p-4 sm:p-5">
           <h2 className="text-xl font-semibold text-slate-900">Player Summary</h2>
           <div className="grid gap-4 lg:grid-cols-2">
             <article className="rounded-xl border border-slate-200 bg-slate-50 p-4">
@@ -226,30 +236,62 @@ export default async function StatsPage({ params }: StatsPageProps): Promise<Rea
 
   const stats = await getMatchStats(matchId);
   if (!stats) notFound();
+  const maxPartnershipRuns = Math.max(...stats.partnerships.map((p) => p.runs), 1);
 
   return (
     <div className="space-y-4">
       <MatchTabs matchId={summary.id} currentPath={`/matches/${summary.id}/stats`} status={summary.status} />
-      <Card as="section" className="p-5">
-        <h2 className="text-base font-semibold text-slate-900">Matchup Stats</h2>
-        <p className="mt-2 text-sm text-slate-700">Run Rate: {stats.runRate.toFixed(2)}</p>
-        <p className="text-sm text-slate-700">Required Run Rate: {stats.requiredRunRate?.toFixed(2) ?? "-"}</p>
-        <ul className="mt-3 space-y-2 text-sm text-slate-700">
-          {stats.matchupNotes.map((note) => (
-            <li key={note} className="rounded-md bg-slate-50 px-3 py-2">
-              {note}
-            </li>
-          ))}
-        </ul>
+      <Card as="section" variant="strong" className="page-hero-card p-4 sm:p-5">
+        <h2 className="text-base font-extrabold text-slate-900">Matchup Stats</h2>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <div className="rounded-xl border border-slate-200/80 bg-slate-50/90 p-3.5">
+            <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Run Rate</p>
+            <p className="mt-1 text-2xl font-black tabular-nums text-brand-700">{stats.runRate.toFixed(2)}</p>
+          </div>
+          <div className="rounded-xl border border-slate-200/80 bg-slate-50/90 p-3.5">
+            <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Required Run Rate</p>
+            <p className="mt-1 text-2xl font-black tabular-nums text-slate-900">
+              {stats.requiredRunRate?.toFixed(2) ?? "-"}
+            </p>
+          </div>
+        </div>
+        {stats.matchupNotes.length ? (
+          <ul className="mt-3 space-y-2 text-sm text-slate-700">
+            {stats.matchupNotes.map((note) => (
+              <li key={note} className="rounded-xl bg-slate-50/80 px-3.5 py-2.5 font-medium">
+                {note}
+              </li>
+            ))}
+          </ul>
+        ) : null}
       </Card>
-      <Card as="section" className="p-5">
-        <h2 className="text-base font-semibold text-slate-900">Partnerships</h2>
-        <ul className="mt-3 space-y-2 text-sm text-slate-700">
-          {stats.partnerships.map((partnership) => (
-            <li key={partnership.wickets} className="rounded-md bg-slate-50 px-3 py-2">
-              {partnership.wickets}: {partnership.runs} runs ({partnership.balls} balls)
-            </li>
-          ))}
+      <Card as="section" className="p-4 sm:p-5">
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="text-base font-extrabold text-slate-900">Partnerships</h2>
+          <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-bold text-slate-600">
+            {stats.partnerships.length} stands
+          </span>
+        </div>
+        <ul className="mt-3 space-y-2.5 text-sm text-slate-700">
+          {stats.partnerships.map((partnership) => {
+            const widthPct = Math.max(8, Math.round((partnership.runs / maxPartnershipRuns) * 100));
+            return (
+              <li key={partnership.wickets} className="rounded-xl bg-slate-50/80 px-3.5 py-3">
+                <div className="flex items-center justify-between gap-2 font-semibold">
+                  <span className="text-slate-900">{partnership.wickets}</span>
+                  <span className="tabular-nums text-brand-700">
+                    {partnership.runs} runs ({partnership.balls} balls)
+                  </span>
+                </div>
+                <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-brand-500 to-sky-400"
+                    style={{ width: `${widthPct}%` }}
+                  />
+                </div>
+              </li>
+            );
+          })}
         </ul>
       </Card>
       <WagonWheel stats={stats} />

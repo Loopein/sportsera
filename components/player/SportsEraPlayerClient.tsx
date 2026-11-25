@@ -62,11 +62,15 @@ export function SportsEraPlayerClient({
   const startAt = match.startAt ?? match.lastUpdatedAt ?? new Date().toISOString();
   const otherLiveStreams = liveStreams.filter((item) => item.id !== match.id).slice(0, 8);
 
+  const isEmbeddedMedia =
+    stageMode === "video" &&
+    Boolean(activeVideo && playableSource && (playableSource.kind === "youtube" || playableSource.kind === "native"));
+
   return (
     <div className="space-y-5">
-      <div className="grid gap-5 xl:grid-cols-[1.65fr_0.95fr]">
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.65fr)_minmax(0,0.95fr)] xl:gap-5">
         {/* Main SportsEra Theater Player */}
-        <Card as="section" variant="strong" className="overflow-hidden p-3.5 sm:p-5">
+        <Card as="section" variant="strong" className="min-w-0 overflow-hidden p-3.5 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-200/80">
             <div className="flex min-w-0 items-center gap-2.5">
               <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-slate-200/80 bg-slate-50/80">
@@ -85,11 +89,11 @@ export function SportsEraPlayerClient({
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-1.5">
+            <div className="flex w-full flex-wrap items-center gap-1.5 sm:w-auto">
               <button
                 type="button"
                 onClick={() => setStageMode("stream")}
-                className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-bold transition ${
+                className={`inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-bold transition sm:flex-initial ${
                   stageMode === "stream"
                     ? "border-brand-500 bg-brand-600 text-white"
                     : "border-slate-200/80 bg-slate-50/80 text-slate-700 hover:border-brand-300"
@@ -102,7 +106,7 @@ export function SportsEraPlayerClient({
                 <button
                   type="button"
                   onClick={() => setStageMode("video")}
-                  className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-bold transition ${
+                  className={`inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-bold transition sm:flex-initial ${
                     stageMode === "video"
                       ? "border-[#FF4D00] bg-[#FF4D00] text-white"
                       : "border-slate-200/80 bg-slate-50/80 text-slate-700 hover:border-[#FF4D00]/60"
@@ -116,7 +120,11 @@ export function SportsEraPlayerClient({
           </div>
 
           {/* 16:9 Viewport */}
-          <div className="mt-3 relative aspect-video w-full overflow-hidden rounded-xl border border-slate-200/80 bg-[#070b16] text-white shadow-inner">
+          <div
+            className={`relative mt-3 w-full overflow-hidden rounded-xl border border-slate-200/80 bg-[#070b16] text-white shadow-inner ${
+              isEmbeddedMedia ? "aspect-video" : "min-h-[220px] sm:aspect-video"
+            }`}
+          >
             {stageMode === "video" && activeVideo && playableSource ? (
               playableSource.kind === "youtube" ? (
                 <iframe
@@ -153,7 +161,7 @@ export function SportsEraPlayerClient({
               )
             ) : (
               /* Interactive SportsEra Live Stream Broadcast Studio */
-              <div className="flex h-full flex-col justify-between bg-[radial-gradient(circle_at_top_right,rgba(255,77,0,0.22),transparent_48%),linear-gradient(135deg,#070b16_0%,#0f172a_55%,#131f3b_100%)] p-4 sm:p-6">
+              <div className="flex h-full flex-col justify-between gap-3 bg-[radial-gradient(circle_at_top_right,rgba(255,77,0,0.22),transparent_48%),linear-gradient(135deg,#070b16_0%,#0f172a_55%,#131f3b_100%)] p-3 sm:p-6">
                 <div className="flex items-center justify-between gap-2">
                   <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-white">
                     <FiRadio
@@ -169,32 +177,32 @@ export function SportsEraPlayerClient({
                   </span>
                 </div>
 
-                <div className="my-auto grid gap-4 py-2 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
-                  <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 sm:flex-col sm:items-start sm:gap-1">
+                <div className="my-auto grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 py-1 sm:gap-4 sm:py-2">
+                  <div className="flex min-w-0 flex-col items-start gap-0.5 rounded-xl border border-white/10 bg-white/5 px-2.5 py-2 sm:gap-1 sm:px-4 sm:py-3">
                     <span className="text-xs font-extrabold uppercase tracking-wider text-sky-300">
                       {match.teamA.shortName}
                     </span>
-                    <p className="text-sm font-bold text-slate-200 truncate">{match.teamA.name}</p>
-                    <p className="text-xl font-black tabular-nums text-white sm:text-2xl">
+                    <p className="w-full truncate text-xs font-bold text-slate-200 sm:text-sm">{match.teamA.name}</p>
+                    <p className="text-base font-black tabular-nums text-white sm:text-2xl">
                       {match.teamA.score || (isUpcoming ? "TBD" : "-")}
                     </p>
                   </div>
 
                   <div className="mx-auto flex flex-col items-center gap-1 text-center">
-                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#FF4D00]/50 bg-[#FF4D00]/15">
-                      <SportsEraPlayIcon className="h-5 w-5" />
+                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#FF4D00]/50 bg-[#FF4D00]/15 sm:h-10 sm:w-10">
+                      <SportsEraPlayIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                     </span>
                     <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-300">
                       {isUpcoming ? "KICKOFF" : "LIVE"}
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 sm:flex-col sm:items-end sm:gap-1 sm:text-right">
+                  <div className="flex min-w-0 flex-col items-end gap-0.5 rounded-xl border border-white/10 bg-white/5 px-2.5 py-2 text-right sm:gap-1 sm:px-4 sm:py-3">
                     <span className="text-xs font-extrabold uppercase tracking-wider text-indigo-300">
                       {match.teamB.shortName}
                     </span>
-                    <p className="text-sm font-bold text-slate-200 truncate">{match.teamB.name}</p>
-                    <p className="text-xl font-black tabular-nums text-white sm:text-2xl">
+                    <p className="w-full truncate text-xs font-bold text-slate-200 sm:text-sm">{match.teamB.name}</p>
+                    <p className="text-base font-black tabular-nums text-white sm:text-2xl">
                       {match.teamB.score || (isUpcoming ? "TBD" : "-")}
                     </p>
                   </div>
@@ -304,7 +312,7 @@ export function SportsEraPlayerClient({
         </Card>
 
         {/* Right Column: Match Related Videos & Playlist */}
-        <Card as="aside" variant="strong" className="flex flex-col p-3.5 sm:p-5">
+        <Card as="aside" variant="strong" className="flex min-w-0 flex-col p-3.5 sm:p-5">
           <div className="flex items-center justify-between gap-2 pb-3 border-b border-slate-200/80">
             <div className="inline-flex items-center gap-2">
               <FiFilm className="h-4 w-4 text-[#FF4D00]" aria-hidden="true" />
@@ -316,7 +324,7 @@ export function SportsEraPlayerClient({
           </div>
 
           {orderedVideos.length > 0 ? (
-            <div className="mt-3 space-y-2.5 overflow-y-auto pr-0.5 max-h-[540px]">
+            <div className="mt-3 grid max-h-[540px] gap-2.5 overflow-y-auto pr-0.5 md:grid-cols-2 xl:block xl:space-y-2.5">
               {orderedVideos.map((video, index) => {
                 const isSelected = activeVideo?.id === video.id && stageMode === "video";
                 const isDirectMatch = index < matchRelated.length;
@@ -334,7 +342,7 @@ export function SportsEraPlayerClient({
                         : "border-slate-200/80 bg-white/90 hover:border-brand-300"
                     }`}
                   >
-                    <div className="relative flex h-16 w-28 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-200/80 bg-slate-900">
+                    <div className="relative flex h-14 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-200/80 bg-slate-900 sm:h-16 sm:w-28">
                       {video.thumbnailUrl ? (
                         <img
                           src={video.thumbnailUrl}

@@ -28,7 +28,8 @@ export function Card({
     <Component
       className={cn(
         variantClass[variant],
-        interactive && "transition-shadow duration-300 hover:shadow-md",
+        interactive &&
+          "transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:border-brand-300/80 hover:shadow-xl active:translate-y-0 active:scale-[0.995]",
         className
       )}
       {...props}

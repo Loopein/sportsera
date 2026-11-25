@@ -10,15 +10,15 @@ function teamMonogram(shortName: string | undefined, name: string): string {
 
 function MatchHeaderComponent({ match }: { match: MatchSummary }): React.ReactElement {
   return (
-    <Card as="header" variant="strong" className="p-5 sm:p-6">
+    <Card as="header" variant="strong" className="page-hero-card p-4 sm:p-6">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <span className="inline-flex items-center rounded-full border border-slate-200 bg-white/90 px-3 py-1 text-xs font-extrabold uppercase tracking-wide text-slate-700 shadow-xs">
+        <span className="inline-flex max-w-full items-center truncate rounded-full border border-slate-200 bg-white/90 px-3 py-1 text-xs font-extrabold uppercase tracking-wide text-slate-700 shadow-xs">
           {match.seriesName} · {match.format}
         </span>
         <MatchStatusBadge status={match.status} />
       </div>
       <div className="grid gap-3.5 md:grid-cols-2">
-        <div className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-white/90 p-4 shadow-sm">
+        <div className="flex min-w-0 items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-white/90 p-3 shadow-sm sm:p-4">
           <div className="flex min-w-0 items-center gap-3">
             <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-brand-200/80 bg-brand-50 text-xs font-black tracking-wider text-brand-700">
               {teamMonogram(match.teamA.shortName, match.teamA.name)}
@@ -28,12 +28,12 @@ function MatchHeaderComponent({ match }: { match: MatchSummary }): React.ReactEl
               <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">{match.teamA.shortName}</p>
             </div>
           </div>
-          <p className="shrink-0 rounded-xl bg-slate-100/90 px-3 py-1.5 text-lg font-black tabular-nums text-slate-900 sm:text-xl">
+          <p className="shrink-0 rounded-xl bg-slate-100/90 px-2.5 py-1 text-base font-black tabular-nums text-slate-900 sm:px-3 sm:py-1.5 sm:text-xl">
             {match.teamA.score ?? "-"}
           </p>
         </div>
 
-        <div className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-white/90 p-4 shadow-sm">
+        <div className="flex min-w-0 items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-white/90 p-3 shadow-sm sm:p-4">
           <div className="flex min-w-0 items-center gap-3">
             <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-slate-100 text-xs font-black tracking-wider text-slate-700">
               {teamMonogram(match.teamB.shortName, match.teamB.name)}
@@ -43,7 +43,7 @@ function MatchHeaderComponent({ match }: { match: MatchSummary }): React.ReactEl
               <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">{match.teamB.shortName}</p>
             </div>
           </div>
-          <p className="shrink-0 rounded-xl bg-slate-100/90 px-3 py-1.5 text-lg font-black tabular-nums text-slate-900 sm:text-xl">
+          <p className="shrink-0 rounded-xl bg-slate-100/90 px-2.5 py-1 text-base font-black tabular-nums text-slate-900 sm:px-3 sm:py-1.5 sm:text-xl">
             {match.teamB.score ?? "-"}
           </p>
         </div>

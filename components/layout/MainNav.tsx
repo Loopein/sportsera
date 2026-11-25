@@ -7,6 +7,7 @@ import { AiOutlineAlignRight } from "react-icons/ai";
 import { BiBroadcast } from "react-icons/bi";
 import { FiActivity, FiBarChart2, FiCalendar, FiCheckCircle, FiFileText, FiHome, FiLayers, FiSearch, FiUsers, FiVideo } from "react-icons/fi";
 import { PoweredByLoopein } from "@/components/shared/LoopeinBranding";
+import { ensureGsapRegistered, gsap, prefersReducedMotion } from "@/lib/gsap/client";
 import { MAIN_NAV, MORE_NAV } from "@/lib/constants/nav";
 import { cn } from "@/lib/utils/text";
 
@@ -49,7 +50,7 @@ export function MainNav({ className, mode = "full" }: MainNavProps): React.React
   const showMenu = mode === "full" || mode === "menu";
 
   return (
-    <nav className={cn("hidden items-center gap-2 lg:flex", className)} aria-label="Main navigation">
+    <nav className={cn("hidden items-center gap-1.5 lg:flex xl:gap-2", className)} aria-label="Main navigation">
       {showLinks
         ? primaryNav.map((item) => {
             const isActive = isNavItemActive(pathname, item.href);
@@ -71,10 +72,34 @@ export function MainNav({ className, mode = "full" }: MainNavProps): React.React
           })
         : null}
       {showMenu ? (
-        <details data-menu-dropdown className="group relative">
+        <details
+          data-menu-dropdown
+          className="group relative"
+          onToggle={(event) => {
+            const detailsEl = event.currentTarget;
+            if (!detailsEl.open || prefersReducedMotion()) return;
+            ensureGsapRegistered();
+            const panel = detailsEl.querySelector<HTMLElement>(".header-dropdown-panel");
+            const links = detailsEl.querySelectorAll<HTMLElement>(".header-menu-link");
+            if (panel) {
+              gsap.fromTo(
+                panel,
+                { y: -6, scale: 0.98 },
+                { y: 0, scale: 1, duration: 0.24, ease: "power3.out", clearProps: "transform" }
+              );
+            }
+            if (links.length) {
+              gsap.fromTo(
+                links,
+                { opacity: 0, x: -5 },
+                { opacity: 1, x: 0, duration: 0.2, stagger: 0.016, ease: "power2.out", clearProps: "transform,opacity" }
+              );
+            }
+          }}
+        >
           <summary
             aria-label="Open more menu"
-            className="menu-trigger list-none inline-flex h-10 w-11 items-center justify-center [&::-webkit-details-marker]:hidden"
+            className="menu-trigger list-none inline-flex h-9 w-10 items-center justify-center sm:h-10 sm:w-11 [&::-webkit-details-marker]:hidden"
           >
             <AiOutlineAlignRight className="menu-trigger-icon h-5 w-5" aria-hidden="true" />
             <span className="sr-only">More menu</span>

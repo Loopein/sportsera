@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils/text";
 import { LiveMatchList } from "@/components/live/LiveMatchList";
 import { AdSlot } from "@/components/shared/AdSlot";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { Tabs } from "@/components/shared/Tabs";
 import { Card } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
@@ -83,7 +84,7 @@ export default async function MatchesPage({ searchParams }: MatchesPageProps): P
   const teamLabel = selectedTeam === "all" ? "All Teams" : teams.find((team) => team.id === selectedTeam)?.name ?? "All Teams";
   const venueLabel = selectedVenue === "all" ? "All Venues" : selectedVenue;
   const filterTriggerClass =
-    "group inline-flex w-full sm:w-[220px] items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-brand-300 hover:bg-brand-50/40 data-[state=open]:border-brand-500 data-[state=open]:bg-brand-50 data-[state=open]:text-brand-700";
+    "group inline-flex w-full min-w-0 items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-brand-300 hover:bg-brand-50/40 data-[state=open]:border-brand-500 data-[state=open]:bg-brand-50 data-[state=open]:text-brand-700 sm:w-[210px]";
 
   const buildHref = (overrides: Partial<{ tab: string; day: string; series: string; team: string; venue: string }>): string => {
     const query = new URLSearchParams();
@@ -125,7 +126,7 @@ export default async function MatchesPage({ searchParams }: MatchesPageProps): P
 
   return (
     <div className="space-y-6">
-      <Card as="section" variant="strong" className="p-5 sm:p-6">
+      <Card as="section" variant="strong" className="page-hero-card p-4 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-3">
             <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700 ring-1 ring-brand-200/80">
@@ -141,51 +142,36 @@ export default async function MatchesPage({ searchParams }: MatchesPageProps): P
           <span className="score-pill">{matches.length} matches</span>
         </div>
 
-        <div className="-mx-1 mt-5 overflow-x-auto pb-1">
-          <div className="inline-flex min-w-max items-center gap-1.5 rounded-2xl border border-slate-200/80 bg-slate-50/90 p-1.5">
-            <Link
-              href="/matches?tab=live-upcoming"
-              className={cn(
-                "inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-extrabold uppercase tracking-wide transition sm:text-sm",
-                tab === "live-upcoming"
-                  ? "bg-[rgb(6,12,58)] text-white shadow-sm"
-                  : "text-slate-600 hover:bg-white hover:text-slate-900"
-              )}
-            >
-              <BiBroadcast className="h-3.5 w-3.5" aria-hidden="true" />
-              Live &amp; Upcoming
-            </Link>
-            <Link
-              href="/matches?tab=results"
-              className={cn(
-                "inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-extrabold uppercase tracking-wide transition sm:text-sm",
-                tab === "results"
-                  ? "bg-[rgb(6,12,58)] text-white shadow-sm"
-                  : "text-slate-600 hover:bg-white hover:text-slate-900"
-              )}
-            >
-              <FiCheckCircle className="h-3.5 w-3.5" aria-hidden="true" />
-              Results
-            </Link>
-            <Link
-              href="/matches?tab=fixtures"
-              className={cn(
-                "inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-extrabold uppercase tracking-wide transition sm:text-sm",
-                tab === "fixtures"
-                  ? "bg-[rgb(6,12,58)] text-white shadow-sm"
-                  : "text-slate-600 hover:bg-white hover:text-slate-900"
-              )}
-            >
-              <FiCalendar className="h-3.5 w-3.5" aria-hidden="true" />
-              Fixtures
-            </Link>
-          </div>
+        <div className="mt-5">
+          <Tabs
+            groupId="matches-main-tabs"
+            tabs={[
+              {
+                href: "/matches?tab=live-upcoming",
+                label: "Live & Upcoming",
+                icon: <BiBroadcast className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />,
+                isActive: tab === "live-upcoming"
+              },
+              {
+                href: "/matches?tab=results",
+                label: "Results",
+                icon: <FiCheckCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />,
+                isActive: tab === "results"
+              },
+              {
+                href: "/matches?tab=fixtures",
+                label: "Fixtures",
+                icon: <FiCalendar className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />,
+                isActive: tab === "fixtures"
+              }
+            ]}
+          />
         </div>
       </Card>
 
       <Card as="section" className="space-y-3 p-3.5 sm:p-4">
         <div className="flex flex-wrap items-center justify-between gap-2.5">
-          <div className="flex flex-wrap gap-2">
+          <div className="grid w-full gap-2 sm:flex sm:w-auto sm:flex-wrap">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button type="button" className={filterTriggerClass}>
@@ -303,6 +289,14 @@ export default async function MatchesPage({ searchParams }: MatchesPageProps): P
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+          {selectedSeries !== "all" || selectedTeam !== "all" || selectedVenue !== "all" ? (
+            <Link
+              href={buildHref({ series: "all", team: "all", venue: "all" })}
+              className="inline-flex items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold uppercase tracking-wider text-slate-700 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700"
+            >
+              Reset Filters
+            </Link>
+          ) : null}
         </div>
 
         <AdSlot variant="banner-compact" label="Sponsored · Match Filter Desk" />
@@ -314,7 +308,7 @@ export default async function MatchesPage({ searchParams }: MatchesPageProps): P
           <span className="truncate">{sectionDate}</span>
         </div>
         {availableDays.length > 1 ? (
-          <div className="flex max-w-full items-center gap-1.5 overflow-x-auto pb-1">
+          <div className="flex max-w-full items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {availableDays.slice(0, 6).map((day) => (
               <Link
                 key={day}

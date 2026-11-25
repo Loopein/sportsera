@@ -38,14 +38,14 @@ export function ScorecardTable({
       <div className="px-4 py-4 sm:px-5">
         {innings.batters.length ? (
           <div className="overflow-x-auto">
-            <table className="min-w-[660px] w-full table-fixed border-collapse">
+            <table className="min-w-[520px] sm:min-w-[640px] w-full table-fixed border-collapse">
               <colgroup>
                 <col />
-                <col className="w-12" />
-                <col className="w-12" />
-                <col className="w-12" />
-                <col className="w-12" />
-                <col className="w-16" />
+                <col className="w-10 sm:w-12" />
+                <col className="w-10 sm:w-12" />
+                <col className="w-10 sm:w-12" />
+                <col className="w-10 sm:w-12" />
+                <col className="w-14 sm:w-16" />
               </colgroup>
               <thead>
                 <tr className="border-b border-slate-200 text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
@@ -77,7 +77,7 @@ export function ScorecardTable({
                   >
                     <td className="py-3 pr-2">
                       <div className="flex min-w-0 items-start gap-3">
-                        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-brand-200/80 bg-brand-50 text-[11px] font-extrabold text-brand-700">
+                        <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-brand-200/80 bg-brand-50 text-[10px] font-extrabold text-brand-700 sm:h-9 sm:w-9 sm:text-[11px]">
                           {getInitials(batter.name)}
                         </span>
                         <div className="min-w-0">
@@ -129,14 +129,14 @@ export function ScorecardTable({
       <div className="border-t border-slate-200/80 px-4 py-4 sm:px-5">
         {innings.bowlers.length ? (
           <div className="overflow-x-auto">
-            <table className="min-w-[660px] w-full table-fixed border-collapse">
+            <table className="min-w-[520px] sm:min-w-[640px] w-full table-fixed border-collapse">
               <colgroup>
                 <col />
-                <col className="w-12" />
-                <col className="w-12" />
-                <col className="w-12" />
-                <col className="w-12" />
-                <col className="w-16" />
+                <col className="w-10 sm:w-12" />
+                <col className="w-10 sm:w-12" />
+                <col className="w-10 sm:w-12" />
+                <col className="w-10 sm:w-12" />
+                <col className="w-14 sm:w-16" />
               </colgroup>
               <thead>
                 <tr className="border-b border-slate-200 text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
@@ -168,7 +168,7 @@ export function ScorecardTable({
                   >
                     <td className="py-3 pr-2">
                       <div className="flex min-w-0 items-center gap-3">
-                        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-300 bg-slate-100 text-[11px] font-extrabold text-slate-700">
+                        <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-slate-300 bg-slate-100 text-[10px] font-extrabold text-slate-700 sm:h-9 sm:w-9 sm:text-[11px]">
                           {getInitials(bowler.name)}
                         </span>
                         <p className="truncate text-sm font-bold text-slate-900">{bowler.name}</p>

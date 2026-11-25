@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 
 export function PlayerStats({ career }: { career: PlayerCareerStat[] }): React.ReactElement {
   return (
-    <Card as="section" className="p-5 sm:p-6">
+    <Card as="section" className="p-4 sm:p-6">
       <div className="flex items-center justify-between gap-2">
         <h2 className="inline-flex items-center gap-2 text-lg font-extrabold text-slate-900">
           <FiBarChart2 className="h-4 w-4 text-brand-600" aria-hidden="true" />
@@ -17,7 +17,7 @@ export function PlayerStats({ career }: { career: PlayerCareerStat[] }): React.R
 
       {career.length ? (
         <div className="mt-4 overflow-x-auto">
-          <table className="min-w-full border-collapse text-left text-sm">
+          <table className="min-w-[440px] w-full whitespace-nowrap border-collapse text-left text-xs sm:text-sm">
             <thead>
               <tr className="border-b border-slate-200 text-xs font-extrabold uppercase tracking-wider text-slate-500">
                 <th className="py-2.5 pr-4">Format</th>

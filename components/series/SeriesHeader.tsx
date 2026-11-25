@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 
 export function SeriesHeader({ series }: { series: SeriesSummary }): React.ReactElement {
   return (
-    <Card as="header" variant="strong" className="p-5 sm:p-6">
+    <Card as="header" variant="strong" className="page-hero-card p-4 sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
           <span className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-white px-2.5 py-0.5 text-xs font-extrabold uppercase tracking-wider text-slate-700">
@@ -20,7 +20,7 @@ export function SeriesHeader({ series }: { series: SeriesSummary }): React.React
           {series.startDate || "TBD"} &mdash; {series.endDate || "TBD"}
         </span>
       </div>
-      <h1 className="mt-3 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
+      <h1 className="mt-3 break-words text-xl font-black tracking-tight text-slate-900 sm:text-3xl">
         {series.name} {series.season}
       </h1>
     </Card>

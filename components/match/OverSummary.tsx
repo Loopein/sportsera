@@ -3,16 +3,18 @@ import { Card } from "@/components/ui/card";
 
 function OverSummaryComponent({ overs }: { overs: string[] }): React.ReactElement {
   return (
-    <Card as="section" className="p-5">
+    <Card as="section" className="p-4 sm:p-5">
       <h2 className="text-base font-extrabold text-slate-900">Recent Overs</h2>
       {overs.length ? (
         <ul className="mt-3 flex flex-wrap gap-2 text-sm text-slate-700">
           {overs.map((over, index) => (
             <li
               key={`${over}-${index}`}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 font-bold tabular-nums text-slate-800"
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50/90 px-3 py-2 font-bold tabular-nums text-slate-800 shadow-xs transition hover:border-brand-200"
             >
-              <span className="text-[11px] font-extrabold uppercase text-slate-400">Ov {index + 1}</span>
+              <span className="inline-flex items-center rounded-md bg-brand-50 px-2 py-0.5 text-[11px] font-extrabold uppercase text-brand-700">
+                Ov {index + 1}
+              </span>
               <span>{over}</span>
             </li>
           ))}

@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 
 export function EmptyState({ title, description }: { title: string; description?: string }): React.ReactElement {
   return (
-    <Card className="border-dashed border-slate-300 bg-white/85 p-8 text-center">
+    <Card className="border-dashed border-slate-300 bg-white/85 p-5 text-center sm:p-8">
       <span className="mx-auto inline-flex h-11 w-11 items-center justify-center rounded-full bg-brand-50 text-brand-700">
         <FiInbox className="h-5 w-5" aria-hidden="true" />
       </span>

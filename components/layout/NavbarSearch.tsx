@@ -3,35 +3,43 @@
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { FiSearch, FiX } from "react-icons/fi";
+import { ensureGsapRegistered, gsap, prefersReducedMotion } from "@/lib/gsap/client";
 import { cn } from "@/lib/utils/text";
 
 export function NavbarSearch(): React.ReactElement {
   const router = useRouter();
   const pathname = usePathname() ?? "/";
-  const [open, setOpen] = useState(false);
+  const [openedOnPath, setOpenedOnPath] = useState<string | null>(null);
+  const open = openedOnPath === pathname;
   const [query, setQuery] = useState("");
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const isSearchPage = pathname === "/search" || pathname.startsWith("/search/");
-
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
 
   useEffect(() => {
     if (!open) return;
     inputRef.current?.focus();
 
+    if (panelRef.current && !prefersReducedMotion()) {
+      ensureGsapRegistered();
+      gsap.fromTo(
+        panelRef.current,
+        { y: -8, scale: 0.98 },
+        { y: 0, scale: 1, duration: 0.24, ease: "power3.out", clearProps: "transform" }
+      );
+    }
+
     const onPointerDown = (event: MouseEvent): void => {
       const target = event.target as Node | null;
       if (target && containerRef.current && !containerRef.current.contains(target)) {
-        setOpen(false);
+        setOpenedOnPath(null);
       }
     };
 
     const onKeyDown = (event: KeyboardEvent): void => {
       if (event.key === "Escape") {
-        setOpen(false);
+        setOpenedOnPath(null);
       }
     };
 
@@ -46,7 +54,7 @@ export function NavbarSearch(): React.ReactElement {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     const trimmed = query.trim();
-    setOpen(false);
+    setOpenedOnPath(null);
     router.push(trimmed ? `/search?q=${encodeURIComponent(trimmed)}` : "/search");
   };
 
@@ -54,12 +62,12 @@ export function NavbarSearch(): React.ReactElement {
     <div ref={containerRef} className="relative">
       <button
         type="button"
-        onClick={() => setOpen((prev) => !prev)}
+        onClick={() => setOpenedOnPath((prev) => (prev === pathname ? null : pathname))}
         aria-label={open ? "Close search" : "Search"}
         aria-expanded={open}
         title="Search"
         className={cn(
-          "menu-trigger inline-flex h-10 w-10 items-center justify-center",
+          "menu-trigger inline-flex h-9 w-9 items-center justify-center sm:h-10 sm:w-10",
           (open || isSearchPage) && "text-brand-600"
         )}
       >
@@ -71,7 +79,10 @@ export function NavbarSearch(): React.ReactElement {
       </button>
 
       {open ? (
-        <div className="header-dropdown-panel fixed inset-x-2 top-[4.15rem] z-50 rounded-xl border border-slate-200 bg-white p-2 shadow-2xl sm:absolute sm:inset-x-auto sm:right-0 sm:top-[calc(100%+0.5rem)] sm:w-96">
+        <div
+          ref={panelRef}
+          className="header-dropdown-panel fixed inset-x-2 top-[4.15rem] z-50 rounded-xl border border-slate-200 bg-white p-2 shadow-2xl sm:absolute sm:inset-x-auto sm:right-0 sm:top-[calc(100%+0.5rem)] sm:w-96"
+        >
           <form onSubmit={handleSubmit} className="flex items-center gap-1.5" role="search">
             <label htmlFor="navbar-search-input" className="sr-only">
               Search matches, teams, players, or leagues

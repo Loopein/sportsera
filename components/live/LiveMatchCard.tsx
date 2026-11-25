@@ -46,8 +46,20 @@ function LiveMatchCardComponent({ match }: { match: LiveMatch }): React.ReactEle
       <Card
         as="article"
         variant="strong"
-        className="relative flex h-full w-full min-w-0 flex-col justify-between p-4 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:border-brand-300 group-hover:shadow-lg sm:p-5"
+        className="relative flex h-full w-full min-w-0 flex-col justify-between overflow-hidden p-3.5 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:border-brand-300 group-hover:shadow-lg sm:p-5"
       >
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none absolute inset-x-0 top-0 h-1 ${
+            isLive
+              ? "bg-gradient-to-r from-red-500 via-rose-400 to-orange-400"
+              : isUpcoming
+                ? "bg-gradient-to-r from-brand-500 via-sky-400 to-indigo-500"
+                : isCompleted
+                  ? "bg-gradient-to-r from-emerald-500 to-teal-400"
+                  : "bg-gradient-to-r from-amber-500 to-orange-400"
+          }`}
+        />
         <div>
           <div className="mb-3.5 flex items-center justify-between gap-2">
             <div className="flex min-w-0 items-center gap-1.5">
@@ -75,7 +87,7 @@ function LiveMatchCardComponent({ match }: { match: LiveMatch }): React.ReactEle
             <MatchStatusBadge status={match.status} label={badgeLabel} />
           </div>
 
-          <div className="space-y-2.5 rounded-xl border border-slate-200/80 bg-white/90 p-3.5 shadow-inner">
+          <div className="space-y-2.5 rounded-xl border border-slate-200/80 bg-white/90 p-3 shadow-inner sm:p-3.5">
             <div className="flex items-center justify-between gap-2">
               <div className="flex min-w-0 items-center gap-2.5">
                 <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-brand-200 bg-brand-50 text-xs font-black text-brand-700">

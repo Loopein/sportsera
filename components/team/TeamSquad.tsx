@@ -16,7 +16,7 @@ function getInitials(name: string): string {
 
 export function TeamSquad({ members }: { members: TeamSquadMember[] }): React.ReactElement {
   return (
-    <Card as="section" className="p-5 sm:p-6">
+    <Card as="section" className="p-4 sm:p-6">
       <div className="flex items-center justify-between gap-2">
         <h2 className="inline-flex items-center gap-2 text-lg font-extrabold text-slate-900">
           <FiUsers className="h-4 w-4 text-brand-600" aria-hidden="true" />
@@ -28,7 +28,7 @@ export function TeamSquad({ members }: { members: TeamSquadMember[] }): React.Re
       </div>
 
       {members.length ? (
-        <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {members.map((member, idx) => {
             const cardInner = (
               <div className="flex items-center gap-3 rounded-xl border border-slate-200/80 bg-slate-50/80 p-3 transition hover:border-brand-300 hover:bg-brand-50/50">
@@ -55,7 +55,7 @@ export function TeamSquad({ members }: { members: TeamSquadMember[] }): React.Re
             );
 
             return (
-              <li key={member.playerId || `${member.name}-${idx}`}>
+              <li key={member.playerId || `${member.name}-${idx}`} className="min-w-0">
                 {member.playerId ? (
                   <Link href={`/players/${member.playerId}`} className="block">
                     {cardInner}

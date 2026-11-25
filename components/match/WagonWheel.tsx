@@ -5,8 +5,8 @@ export function WagonWheel({ stats }: { stats: MatchStats }): React.ReactElement
   const maxRuns = Math.max(...stats.wagonWheel.map((slice) => slice.runs), 1);
 
   return (
-    <Card as="section" className="p-5">
-      <div className="flex items-center justify-between gap-2">
+    <Card as="section" className="p-4 sm:p-5">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-base font-extrabold tracking-tight text-slate-900">Wagon Wheel (Runs by Zone)</h2>
         <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-slate-500">
           {stats.wagonWheel.length} zones
@@ -16,8 +16,8 @@ export function WagonWheel({ stats }: { stats: MatchStats }): React.ReactElement
         {stats.wagonWheel.map((slice) => {
           const widthPct = Math.max(4, Math.min(Math.round((slice.runs / maxRuns) * 100), 100));
           return (
-            <li key={slice.zone} className="flex items-center gap-3">
-              <span className="w-28 truncate text-xs font-bold uppercase tracking-wide text-slate-600">
+            <li key={slice.zone} className="flex items-center gap-2.5 sm:gap-3">
+              <span className="w-20 shrink-0 truncate text-xs font-bold uppercase tracking-wide text-slate-600 sm:w-28">
                 {slice.zone}
               </span>
               <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-slate-100">

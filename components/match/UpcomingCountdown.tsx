@@ -27,7 +27,10 @@ export function UpcomingCountdown({
     nowMs === null ? { value: null, shouldTick: false } : startsInValueStaticOrLive(startAt, nowMs, compact);
 
   useEffect(() => {
-    setNowMs(Date.now());
+    const frame = window.requestAnimationFrame(() => {
+      setNowMs(Date.now());
+    });
+    return () => window.cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {

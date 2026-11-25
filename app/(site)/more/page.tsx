@@ -32,7 +32,7 @@ const moreLinks = [
 export default function MorePage(): React.ReactElement {
   return (
     <div className="space-y-6">
-      <Card as="section" variant="strong" className="p-5 sm:p-6">
+      <Card as="section" variant="strong" className="page-hero-card p-4 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-3">
             <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700 ring-1 ring-brand-200/80">
@@ -53,7 +53,7 @@ export default function MorePage(): React.ReactElement {
         {moreLinks.map((item) => {
           const Icon = item.icon;
           return (
-            <Link key={item.href} href={item.href} className="group block h-full">
+            <Link key={item.href} href={item.href} className="group block h-full min-w-0">
               <Card interactive className="flex h-full items-start justify-between gap-3 p-4 sm:p-5">
                 <div className="flex items-start gap-3">
                   <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-brand-200/70 bg-brand-50/80 text-brand-700 transition group-hover:bg-brand-600 group-hover:text-white">

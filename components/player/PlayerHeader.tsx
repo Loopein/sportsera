@@ -15,10 +15,10 @@ function getInitials(name: string): string {
 
 export function PlayerHeader({ player }: { player: PlayerProfile }): React.ReactElement {
   return (
-    <Card as="header" variant="strong" className="p-5 sm:p-6">
+    <Card as="header" variant="strong" className="page-hero-card p-4 sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex min-w-0 items-center gap-4">
-          <span className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-brand-200 bg-brand-50 text-base font-black text-brand-700 shadow-sm sm:h-16 sm:w-16 sm:text-lg">
+        <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+          <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-brand-200 bg-brand-50 text-base font-black text-brand-700 shadow-sm sm:h-16 sm:w-16 sm:text-lg">
             {getInitials(player.name)}
           </span>
           <div className="min-w-0">
@@ -26,7 +26,7 @@ export function PlayerHeader({ player }: { player: PlayerProfile }): React.React
               <FiUser className="h-3 w-3" aria-hidden="true" />
               {player.role}
             </span>
-            <h1 className="mt-1 truncate text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
+            <h1 className="mt-1 truncate text-xl font-black tracking-tight text-slate-900 sm:text-3xl">
               {player.name}
             </h1>
           </div>

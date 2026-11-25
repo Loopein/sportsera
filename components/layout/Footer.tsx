@@ -40,9 +40,9 @@ export function Footer(): React.ReactElement {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="glass-footer relative z-10 mt-14 border-t border-slate-200/80">
+    <footer className="glass-footer relative z-10 mt-8 border-t border-slate-200/80 sm:mt-12 md:mt-14">
       <div className="relative text-slate-900">
-        <div className="relative w-full px-2 py-8 sm:px-3 md:px-4 md:py-10">
+        <div className="relative w-full px-2.5 py-6 sm:px-3.5 sm:py-8 md:px-4 md:py-10 lg:px-5">
           {/* Tier 1: Multi-Line Brand, Social & App Bar */}
           <div className="grid gap-6 border-b border-slate-200/80 pb-6 md:grid-cols-2 lg:grid-cols-[1.2fr_auto_auto] lg:items-center">
             <div className="min-w-0 space-y-2 md:col-span-2 lg:col-span-1">
@@ -79,12 +79,12 @@ export function Footer(): React.ReactElement {
 
             <div className="flex flex-col gap-2">
               <p className="text-xs font-extrabold uppercase tracking-[0.12em] text-slate-500">Download App</p>
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
                 <a
                   href="https://play.google.com/store"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-slate-900 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-md"
+                  className="inline-flex items-center justify-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-2 text-slate-900 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-md sm:justify-start sm:px-3.5"
                 >
                   <FaGooglePlay className="h-4 w-4 shrink-0 text-emerald-600" aria-hidden="true" />
                   <span className="flex flex-col leading-tight">
@@ -96,7 +96,7 @@ export function Footer(): React.ReactElement {
                   href="https://www.apple.com/app-store/"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-slate-900 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-md"
+                  className="inline-flex items-center justify-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-2 text-slate-900 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-md sm:justify-start sm:px-3.5"
                 >
                   <FaApple className="h-4 w-4 shrink-0 text-slate-900" aria-hidden="true" />
                   <span className="flex flex-col leading-tight">
@@ -109,7 +109,7 @@ export function Footer(): React.ReactElement {
           </div>
 
           {/* Tier 2: Responsive Multi-Line Content & Link Grid */}
-          <div className="grid items-start gap-8 py-8 sm:grid-cols-2 lg:grid-cols-12">
+          <div className="grid items-start gap-6 py-6 sm:grid-cols-2 sm:gap-8 sm:py-8 lg:grid-cols-12">
             <section className="min-w-0 space-y-4 sm:col-span-2 lg:col-span-4">
               <h3 className="text-lg font-extrabold text-slate-900 sm:text-xl">About {SITE_NAME}</h3>
               <p className="text-sm leading-7 text-slate-600">
@@ -128,7 +128,7 @@ export function Footer(): React.ReactElement {
               </div>
             </section>
 
-            <div className="grid grid-cols-2 gap-6 sm:col-span-2 lg:col-span-4">
+            <div className="grid grid-cols-2 gap-4 sm:col-span-2 sm:gap-6 lg:col-span-4">
               <section className="min-w-0">
                 <h3 className="text-lg font-extrabold text-slate-900 sm:text-xl">Useful Links</h3>
                 <nav className="mt-4 flex flex-col items-start gap-2.5 text-left" aria-label="Useful links">

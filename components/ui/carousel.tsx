@@ -72,10 +72,11 @@ export function Carousel({
   useEffect(() => {
     if (!api) return;
     setApi?.(api);
-    syncButtons(api);
+    const frame = window.requestAnimationFrame(() => syncButtons(api));
     api.on("reInit", syncButtons);
     api.on("select", syncButtons);
     return () => {
+      window.cancelAnimationFrame(frame);
       api.off("reInit", syncButtons);
       api.off("select", syncButtons);
     };

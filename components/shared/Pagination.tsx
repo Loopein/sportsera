@@ -11,7 +11,7 @@ export function Pagination({ page, hasNextPage, basePath }: PaginationProps): Re
   const next = hasNextPage ? `${basePath}?page=${page + 1}` : null;
 
   return (
-    <div className="flex items-center justify-between py-4">
+    <div className="flex flex-wrap items-center justify-between gap-2 py-4">
       {prev ? (
         <Link href={prev} className="rounded border border-slate-300 px-3 py-2 text-sm">
           Previous

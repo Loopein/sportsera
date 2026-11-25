@@ -147,10 +147,13 @@ export default async function HomePage(): Promise<React.ReactElement> {
             title={section.title}
             icon={section.icon}
             action={
-              <Link href={section.href} className="group subtle-link inline-flex items-center gap-1 text-sm">
+              <Link
+                href={section.href}
+                className="group inline-flex items-center gap-1 rounded-full border border-slate-200/80 bg-white/80 px-3 py-1 text-xs font-bold text-brand-600 shadow-sm transition hover:border-brand-300 hover:bg-brand-50"
+              >
                 View More
                 <FiArrowRight
-                  className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5"
+                  className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
                   aria-hidden="true"
                 />
               </Link>
@@ -159,9 +162,9 @@ export default async function HomePage(): Promise<React.ReactElement> {
 
           <div className="space-y-1.5">
             <div className="flex items-center justify-between gap-2">
-              <div className="inline-flex items-center gap-2">
-                <BiBroadcast className="h-4 w-4 text-red-600 animate-pulse-soft" aria-hidden="true" />
-                <h3 className="text-sm font-extrabold uppercase tracking-wider text-slate-800">Live</h3>
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-red-50/90 px-2.5 py-0.5">
+                <BiBroadcast className="h-3.5 w-3.5 text-red-600 animate-pulse-soft" aria-hidden="true" />
+                <h3 className="text-xs font-extrabold uppercase tracking-wider text-red-700">Live Now</h3>
               </div>
               <span className="inline-flex items-center rounded-full border border-red-200 bg-red-50/90 px-2.5 py-0.5 text-[11px] font-bold tabular-nums text-red-700">
                 {section.liveMatches.length} live
@@ -177,9 +180,9 @@ export default async function HomePage(): Promise<React.ReactElement> {
 
           <div className="space-y-1.5">
             <div className="flex items-center justify-between gap-2">
-              <div className="inline-flex items-center gap-2">
-                <FiCalendar className="h-4 w-4 text-brand-600" aria-hidden="true" />
-                <h3 className="text-sm font-extrabold uppercase tracking-wider text-slate-800">Upcoming</h3>
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-brand-200 bg-brand-50/80 px-2.5 py-0.5">
+                <FiCalendar className="h-3.5 w-3.5 text-brand-600" aria-hidden="true" />
+                <h3 className="text-xs font-extrabold uppercase tracking-wider text-brand-700">Upcoming</h3>
               </div>
               <span className="inline-flex items-center rounded-full border border-brand-200 bg-brand-50/80 px-2.5 py-0.5 text-[11px] font-bold tabular-nums text-brand-700">
                 {section.upcomingMatches.length} upcoming
@@ -199,14 +202,17 @@ export default async function HomePage(): Promise<React.ReactElement> {
         </section>
       ))}
 
-      <section className="space-y-4 animate-reveal-up" style={{ animationDelay: "120ms" }}>
+      <section className="space-y-4">
         <SectionHeading
           title="Recent Results"
           icon={<FiCheckCircle className="h-5 w-5 text-emerald-600" aria-hidden="true" />}
           action={
-            <Link href="/matches?tab=results" className="group subtle-link inline-flex items-center gap-1 text-sm">
+            <Link
+              href="/matches?tab=results"
+              className="group inline-flex items-center gap-1 rounded-full border border-slate-200/80 bg-white/80 px-3 py-1 text-xs font-bold text-brand-600 shadow-sm transition hover:border-brand-300 hover:bg-brand-50"
+            >
               View all results
-              <FiArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
+              <FiArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
             </Link>
           }
         />
@@ -221,14 +227,17 @@ export default async function HomePage(): Promise<React.ReactElement> {
 
       <AdSlot variant="leaderboard" label="Sponsored · Results Desk" />
 
-      <section className="space-y-4 animate-reveal-up" style={{ animationDelay: "180ms" }}>
+      <section className="space-y-4">
         <SectionHeading
           title="Latest News"
           icon={<FiAward className="h-5 w-5 text-brand-600" aria-hidden="true" />}
           action={
-            <Link href="/news" className="group subtle-link inline-flex items-center gap-1 text-sm">
+            <Link
+              href="/news"
+              className="group inline-flex items-center gap-1 rounded-full border border-slate-200/80 bg-white/80 px-3 py-1 text-xs font-bold text-brand-600 shadow-sm transition hover:border-brand-300 hover:bg-brand-50"
+            >
               More news
-              <FiArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
+              <FiArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
             </Link>
           }
         />

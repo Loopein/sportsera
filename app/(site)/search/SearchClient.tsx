@@ -27,10 +27,10 @@ export function SearchClient({
   const [results, setResults] = useState(initialResults);
   const [loading, setLoading] = useState(false);
   const debounced = useDebounce(query, 250);
+  const activeResults = debounced.trim() ? results : [];
 
   useEffect(() => {
     if (!debounced.trim()) {
-      setResults([]);
       return;
     }
     let cancelled = false;
@@ -85,14 +85,14 @@ export function SearchClient({
         </div>
       ) : null}
 
-      {!results.length && debounced ? (
+      {!activeResults.length && debounced.trim() ? (
         <EmptyState title="No results" description="Try another team, player, or series keyword." />
-      ) : results.length ? (
-        <ul className="grid gap-3 sm:grid-cols-2">
-          {results.map((result) => {
+      ) : activeResults.length ? (
+        <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {activeResults.map((result) => {
             const TypeIcon = iconForType(result.type);
             return (
-              <li key={`${result.type}-${result.id}`}>
+              <li key={`${result.type}-${result.id}`} className="min-w-0">
                 <Link
                   href={result.href}
                   className="group block h-full rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"

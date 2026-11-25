@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { AnimatedScoreBackground } from "@/components/layout/AnimatedScoreBackground";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { SmoothMotionRuntime } from "@/components/layout/SmoothMotionRuntime";
 import { GoogleAdSenseScript } from "@/components/shared/GoogleAdSenseScript";
 import {
   GOOGLE_ADSENSE_CLIENT_ID,
@@ -56,10 +57,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body className="min-h-screen antialiased">
+        <SmoothMotionRuntime />
         <AnimatedScoreBackground />
         <div className="relative z-10 flex min-h-screen flex-col">
           <Header />
-          <main className="relative z-10 flex-1">{children}</main>
+          <main className="relative z-10 min-w-0 flex-1">{children}</main>
           <Footer />
         </div>
       </body>

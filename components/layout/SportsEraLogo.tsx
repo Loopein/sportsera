@@ -20,7 +20,7 @@ export function SportsEraFaviconIcon({ className }: SportsEraFaviconIconProps): 
       width={64}
       height={64}
       aria-hidden="true"
-      className={cn(className || "h-10 w-10 sm:h-11 sm:w-11", "shrink-0")}
+      className={cn(className || "h-8 w-8 sm:h-11 sm:w-11", "shrink-0")}
     >
       <rect
         x={2}
@@ -80,13 +80,13 @@ export function SportsEraLogo({
         : "text-[var(--logo-sports-color)]";
 
   const wordmarkSizeClass = showPoweredBy
-    ? "text-[1.75rem] sm:text-[2.05rem]"
-    : "text-[1.45rem] sm:text-[1.7rem]";
+    ? "text-[1.45rem] sm:text-[2.05rem]"
+    : "text-[1.2rem] sm:text-[1.7rem]";
 
   return (
-    <span aria-hidden="true" className={cn("inline-flex shrink-0 items-center gap-2.5", className)}>
+    <span aria-hidden="true" className={cn("inline-flex shrink-0 items-center gap-2 sm:gap-2.5", className)}>
       <SportsEraFaviconIcon
-        className={cn(showPoweredBy && "h-11 w-11 sm:h-12 sm:w-12", iconClassName)}
+        className={cn(showPoweredBy && "h-10 w-10 sm:h-12 sm:w-12", iconClassName)}
       />
       <span className="inline-flex flex-col leading-none">
         <span className="inline-flex items-baseline leading-none">

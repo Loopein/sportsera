@@ -20,7 +20,7 @@ export default async function VideosPage(): Promise<React.ReactElement> {
 
   return (
     <div className="space-y-6">
-      <Card as="section" variant="strong" className="p-5 sm:p-6">
+      <Card as="section" variant="strong" className="page-hero-card p-4 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-3">
             <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200/80 bg-slate-50/80">
@@ -99,11 +99,11 @@ export default async function VideosPage(): Promise<React.ReactElement> {
           <span className="score-pill">{videos.length} clips</span>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {videos.map((video) => {
             const watchHref = spotlightMatchId ? `/matches/${spotlightMatchId}/watch` : "/matches";
             return (
-              <Link key={video.id} href={watchHref} className="group block">
+              <Link key={video.id} href={watchHref} className="group block min-w-0">
                 <Card className="flex h-full flex-col justify-between gap-3 p-4 transition hover:border-[#FF4D00]/60">
                   <div className="space-y-2.5">
                     <div className="relative flex aspect-video items-center justify-center overflow-hidden rounded-xl border border-slate-200/80 bg-slate-900">

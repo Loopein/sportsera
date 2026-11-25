@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Autoplay from "embla-carousel-autoplay";
 import { FiActivity, FiClock, FiMapPin, FiStar, FiZap } from "react-icons/fi";
 import type { HeroSpotlightSlide } from "@/lib/utils/hero-spotlight";
+import { ensureGsapRegistered, gsap, prefersReducedMotion } from "@/lib/gsap/client";
 import { SportsEraPlayIcon } from "@/components/layout/SportsEraLogo";
 import { MatchStatusBadge } from "@/components/live/MatchStatusBadge";
 import { UpcomingCountdown } from "@/components/match/UpcomingCountdown";
@@ -22,6 +23,8 @@ type HeroSpotlightCarouselProps = {
 export function HeroSpotlightCarousel({ slides }: HeroSpotlightCarouselProps): React.ReactElement {
   const [api, setApi] = useState<CarouselApi>();
   const [activeIndex, setActiveIndex] = useState(0);
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const hasMountedRef = useRef(false);
   const autoplayPlugin = useMemo(
     () =>
       Autoplay({
@@ -45,6 +48,29 @@ export function HeroSpotlightCarousel({ slides }: HeroSpotlightCarouselProps): R
       api.off("reInit", onSelect);
     };
   }, [api]);
+
+  useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true;
+      return;
+    }
+    if (!rootRef.current || prefersReducedMotion()) return;
+
+    ensureGsapRegistered();
+    const items = rootRef.current.querySelectorAll<HTMLElement>(
+      `[data-hero-slide="${activeIndex}"] [data-hero-stagger]`
+    );
+    if (!items.length) return;
+
+    const tween = gsap.fromTo(
+      items,
+      { y: 10, opacity: 0.5 },
+      { y: 0, opacity: 1, duration: 0.5, stagger: 0.055, ease: "power3.out", clearProps: "transform,opacity" }
+    );
+    return () => {
+      tween.kill();
+    };
+  }, [activeIndex]);
 
   if (slides.length === 0) {
     return (
@@ -73,7 +99,7 @@ export function HeroSpotlightCarousel({ slides }: HeroSpotlightCarouselProps): R
   }
 
   return (
-    <div className="w-full">
+    <div ref={rootRef} className="w-full">
       <Carousel
         opts={{ align: "start", loop: true, duration: HERO_SLIDE_DURATION }}
         plugins={[autoplayPlugin]}
@@ -90,17 +116,22 @@ export function HeroSpotlightCarousel({ slides }: HeroSpotlightCarouselProps): R
             return (
               <CarouselItem key={match.id} className="w-full">
                 <div
-                  className={`surface-card !border-0 !shadow-none group relative flex w-full cursor-pointer flex-col justify-between gap-4 rounded-2xl p-4 transition-opacity duration-700 ease-out sm:p-6 ${
-                    idx === activeIndex ? "opacity-100" : "opacity-60"
+                  data-hero-slide={idx}
+                  className={`surface-card !border-0 !shadow-none group relative flex w-full cursor-pointer flex-col justify-between gap-4 overflow-hidden rounded-2xl p-3.5 transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] sm:p-6 ${
+                    idx === activeIndex ? "scale-100 opacity-100" : "scale-[0.99] opacity-60"
                   }`}
                 >
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_top_right,rgba(29,112,242,0.12),transparent_55%)]"
+                  />
                   <Link
                     href={`/matches/${match.id}`}
                     draggable={false}
                     aria-label={`Open ${match.teamA.name} vs ${match.teamB.name}`}
                     className="absolute inset-0 z-10 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
                   />
-                  <div>
+                  <div data-hero-stagger>
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="flex flex-wrap items-center gap-2">
                         <span
@@ -140,7 +171,7 @@ export function HeroSpotlightCarousel({ slides }: HeroSpotlightCarouselProps): R
                       />
                     </div>
 
-                    <HeadingTag className="mt-2.5 text-xl font-black tracking-tight text-slate-900 transition-colors group-hover:text-brand-700 sm:text-2xl md:text-3xl">
+                    <HeadingTag className="mt-2.5 text-lg font-black tracking-tight text-slate-900 transition-colors group-hover:text-brand-700 sm:text-2xl md:text-3xl">
                       {match.teamA.name} vs {match.teamB.name}
                     </HeadingTag>
                     <p className="mt-1 text-xs font-semibold text-slate-600 sm:text-sm">
@@ -149,10 +180,10 @@ export function HeroSpotlightCarousel({ slides }: HeroSpotlightCarouselProps): R
                   </div>
 
                   {/* Upcoming Matchup Box */}
-                  <div className="space-y-3 rounded-xl bg-slate-50/80 p-3.5 sm:p-4">
-                    <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-                      <div className="flex min-w-0 items-center gap-2.5">
-                        <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-sm font-black text-brand-700">
+                  <div data-hero-stagger className="space-y-3 rounded-xl bg-slate-50/80 p-3 sm:p-4">
+                    <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 sm:gap-3">
+                      <div className="flex min-w-0 items-center gap-2 sm:gap-2.5">
+                        <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-brand-50 text-xs font-black text-brand-700 shadow-sm sm:h-12 sm:w-12 sm:text-sm">
                           {match.teamA.shortName.slice(0, 3)}
                         </span>
                         <div className="min-w-0">
@@ -165,11 +196,16 @@ export function HeroSpotlightCarousel({ slides }: HeroSpotlightCarouselProps): R
                         </div>
                       </div>
 
-                      <span className="rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-widest text-slate-500">
-                        VS
-                      </span>
+                      <div className="flex flex-col items-center gap-1">
+                        <span className="rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-widest text-slate-500 shadow-sm">
+                          VS
+                        </span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                          {match.format}
+                        </span>
+                      </div>
 
-                      <div className="flex min-w-0 items-center justify-end gap-2.5 text-right">
+                      <div className="flex min-w-0 items-center justify-end gap-2 text-right sm:gap-2.5">
                         <div className="min-w-0">
                           <p className="truncate text-sm font-extrabold text-slate-900 sm:text-base">
                             {match.teamB.shortName}
@@ -178,7 +214,7 @@ export function HeroSpotlightCarousel({ slides }: HeroSpotlightCarouselProps): R
                             {match.teamB.name}
                           </p>
                         </div>
-                        <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-sm font-black text-indigo-800">
+                        <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-indigo-50 text-xs font-black text-indigo-800 shadow-sm sm:h-12 sm:w-12 sm:text-sm">
                           {match.teamB.shortName.slice(0, 3)}
                         </span>
                       </div>
@@ -206,18 +242,18 @@ export function HeroSpotlightCarousel({ slides }: HeroSpotlightCarouselProps): R
                   </div>
 
                   {/* CTA Row & Indicator Dots */}
-                  <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div data-hero-stagger className="flex flex-wrap items-center justify-between gap-3">
                     <div className="relative z-20 flex flex-wrap items-center gap-2">
                       <Link
                         href={`/matches/${match.id}/watch`}
-                        className="inline-flex items-center gap-2 rounded-xl bg-[#0B1221] px-4 py-2 text-xs font-extrabold uppercase tracking-wider text-white shadow-sm transition hover:brightness-110"
+                        className="inline-flex items-center gap-2 rounded-xl bg-[#0B1221] px-3 py-2 text-[11px] font-extrabold uppercase tracking-wider text-white shadow-sm transition hover:brightness-110 sm:px-4 sm:text-xs"
                       >
                         <SportsEraPlayIcon className="h-3.5 w-3.5" />
                         <span>Watch in SportsEra Player</span>
                       </Link>
                       <Link
                         href={`/matches/${match.id}/squads`}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-slate-50 px-3.5 py-2 text-xs font-bold text-slate-800 transition hover:bg-brand-50 hover:text-brand-700"
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-slate-50 px-3 py-2 text-[11px] font-bold text-slate-800 transition hover:bg-brand-50 hover:text-brand-700 sm:px-3.5 sm:text-xs"
                       >
                         <FiActivity className="h-3.5 w-3.5 text-brand-600" aria-hidden="true" />
                         <span>View Squads</span>

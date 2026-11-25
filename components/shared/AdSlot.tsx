@@ -181,7 +181,7 @@ export function AdSlot({
             </p>
           </div>
           <div className="flex shrink-0 items-center gap-1">
-            <span className="rounded border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[9px] font-bold tabular-nums text-slate-500">
+            <span className="hidden rounded border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[9px] font-bold tabular-nums text-slate-500 sm:inline-flex">
               {variantDimensionBadge["banner-compact"]}
             </span>
             <button
@@ -214,10 +214,12 @@ export function AdSlot({
             </span>
             <p className="flex min-w-0 items-center gap-1.5 truncate text-[11px] font-semibold text-slate-600 sm:text-xs">
               <span className="truncate font-bold text-slate-800">{label}</span>
-              <span className="text-slate-300">·</span>
-              <LoopeinLoopIcon className="h-3.5 w-auto shrink-0" />
-              <span className="truncate">
-                {SITE_NAME} Google Ads ({SITE_POWERED_BY})
+              <span className="hidden min-w-0 items-center gap-1.5 sm:inline-flex">
+                <span className="text-slate-300">·</span>
+                <LoopeinLoopIcon className="h-3.5 w-auto shrink-0" />
+                <span className="truncate">
+                  {SITE_NAME} Google Ads ({SITE_POWERED_BY})
+                </span>
               </span>
             </p>
           </div>
@@ -228,7 +230,7 @@ export function AdSlot({
                 Banner Unit
               </span>
             ) : null}
-            <span className="rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[9px] font-bold tabular-nums text-slate-500">
+            <span className="hidden rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[9px] font-bold tabular-nums text-slate-500 sm:inline">
               {variantDimensionBadge[variant]}
             </span>
             <button

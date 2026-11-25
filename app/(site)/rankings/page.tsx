@@ -81,20 +81,20 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps):
 
   return (
     <div className="space-y-5">
-      <Card as="section" variant="strong" className="p-5 sm:p-6">
+      <Card as="section" variant="strong" className="page-hero-card p-4 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-3">
             <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700 ring-1 ring-brand-200/80">
               <FiAward className="h-5 w-5" aria-hidden="true" />
             </span>
-            <div>
+            <div className="min-w-0">
               <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">Standings</h1>
               <p className="mt-1 text-sm text-slate-600">
                 League tables, tournament group standings, points, and qualification snapshots across sports.
               </p>
             </div>
           </div>
-          <span className="score-pill">
+          <span className="score-pill max-w-full truncate">
             {currentSeries?.label ?? "Tournament"} · {currentSeason.season}
           </span>
         </div>
@@ -173,13 +173,13 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps):
         </div>
 
         {(currentSeries?.stages ?? []).length ? (
-          <div className="flex flex-wrap gap-1.5 border-b border-slate-200/80 bg-slate-50/70 px-4 py-2.5 sm:px-5">
+          <div className="flex gap-1.5 overflow-x-auto whitespace-nowrap border-b border-slate-200/80 bg-slate-50/70 px-4 py-2.5 [scrollbar-width:none] sm:px-5 [&::-webkit-scrollbar]:hidden">
             {(currentSeries?.stages ?? []).map((stage) => (
               <Link
                 key={stage.id}
                 href={buildHref(currentSeason.season, currentSeries?.id, stage.id)}
                 className={cn(
-                  "rounded-xl px-3.5 py-2 text-xs font-bold uppercase tracking-wide transition sm:text-sm",
+                  "shrink-0 rounded-xl px-3.5 py-2 text-xs font-bold uppercase tracking-wide transition sm:text-sm",
                   currentStage?.id === stage.id
                     ? "bg-[rgb(6,12,58)] text-white shadow-sm"
                     : "text-slate-600 hover:bg-white hover:text-slate-900"
@@ -191,7 +191,7 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps):
           </div>
         ) : null}
 
-        <div className="space-y-6 px-4 py-5 md:px-5">
+        <div className="space-y-6 px-3 py-4 sm:px-5 sm:py-5">
           {!currentStage ? (
             <EmptyState title="No stage data" description="No stage standings are available for this series." />
           ) : (
@@ -205,15 +205,15 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps):
                 </div>
 
                 <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-sm">
-                  <table className="min-w-[640px] w-full text-left text-sm">
+                  <table className="min-w-[480px] sm:min-w-[600px] w-full text-left text-xs sm:text-sm">
                     <thead className="bg-slate-50/90">
                       <tr className="border-b border-slate-200 text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
-                        <th className="px-4 py-3">Team</th>
-                        <th className="px-3 py-3 text-right tabular-nums">M</th>
-                        <th className="px-3 py-3 text-right tabular-nums">W</th>
-                        <th className="px-3 py-3 text-right tabular-nums">L</th>
-                        <th className="px-3 py-3 text-right tabular-nums">NRR</th>
-                        <th className="px-4 py-3 text-right font-extrabold text-slate-800 tabular-nums">Pts</th>
+                        <th className="px-2.5 py-2.5 sm:px-4 sm:py-3">Team</th>
+                        <th className="px-2 py-2.5 text-right tabular-nums sm:px-3 sm:py-3">M</th>
+                        <th className="px-2 py-2.5 text-right tabular-nums sm:px-3 sm:py-3">W</th>
+                        <th className="px-2 py-2.5 text-right tabular-nums sm:px-3 sm:py-3">L</th>
+                        <th className="px-2 py-2.5 text-right tabular-nums sm:px-3 sm:py-3">NRR</th>
+                        <th className="px-2.5 py-2.5 text-right font-extrabold text-slate-800 tabular-nums sm:px-4 sm:py-3">Pts</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -226,8 +226,8 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps):
                               row.highlight && "bg-emerald-50/45"
                             )}
                           >
-                            <td className="px-4 py-3">
-                              <div className="flex items-center gap-3">
+                            <td className="px-2.5 py-2.5 sm:px-4 sm:py-3">
+                              <div className="flex items-center gap-2 sm:gap-3">
                                 <span
                                   className={cn(
                                     "inline-flex h-6 w-7 shrink-0 items-center justify-center rounded-md text-xs font-extrabold tabular-nums",
@@ -250,18 +250,18 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps):
                                 </div>
                               </div>
                             </td>
-                            <td className="px-3 py-3 text-right font-medium tabular-nums text-slate-700">{row.played}</td>
-                            <td className="px-3 py-3 text-right font-medium tabular-nums text-slate-700">{row.won}</td>
-                            <td className="px-3 py-3 text-right font-medium tabular-nums text-slate-700">{row.lost}</td>
+                            <td className="px-2 py-2.5 text-right font-medium tabular-nums text-slate-700 sm:px-3 sm:py-3">{row.played}</td>
+                            <td className="px-2 py-2.5 text-right font-medium tabular-nums text-slate-700 sm:px-3 sm:py-3">{row.won}</td>
+                            <td className="px-2 py-2.5 text-right font-medium tabular-nums text-slate-700 sm:px-3 sm:py-3">{row.lost}</td>
                             <td
                               className={cn(
-                                "px-3 py-3 text-right tabular-nums",
+                                "px-2 py-2.5 text-right tabular-nums sm:px-3 sm:py-3",
                                 row.netRunRate >= 0 ? "font-semibold text-emerald-700" : "font-medium text-slate-600"
                               )}
                             >
                               {formatNrr(row.netRunRate)}
                             </td>
-                            <td className="px-4 py-3 text-right">
+                            <td className="px-2.5 py-2.5 text-right sm:px-4 sm:py-3">
                               <span className="score-pill tabular-nums">{row.points}</span>
                             </td>
                           </tr>

@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { FiActivity, FiArrowRight, FiPlayCircle, FiRadio } from "react-icons/fi";
 import { MatchTabs } from "@/app/(site)/matches/[matchId]/MatchTabs";
 import { ScorecardTable } from "@/components/match/ScorecardTable";
 import { AdSlot } from "@/components/shared/AdSlot";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { Tabs } from "@/components/shared/Tabs";
+import { Card } from "@/components/ui/card";
 import { getMatchScorecard, getMatchSummary, getTeam } from "@/lib/api/read";
 import type { MatchSummary, ScorecardInnings } from "@/types/match";
 import type { TeamProfile } from "@/types/team";
@@ -151,8 +154,8 @@ export default async function ScorecardPage({ params, searchParams }: ScorecardP
     <div className="space-y-4">
       <MatchTabs matchId={summary.id} currentPath={`/matches/${summary.id}/scorecard`} status={summary.status} />
 
-      <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-sm">
-        <div className="px-6 py-5">
+      <Card as="section" variant="strong" className="page-hero-card overflow-hidden p-0 text-slate-900">
+        <div className="px-4 py-4 sm:px-6 sm:py-5">
           <p className="text-sm text-slate-600">
             {summary.seriesName}
             <span className="text-brand-700"> - {kickoffLabel}</span>
@@ -201,45 +204,84 @@ export default async function ScorecardPage({ params, searchParams }: ScorecardP
         </div>
 
         {summary.status !== "upcoming" ? (
-          <div className="grid gap-3 border-t border-slate-200 bg-slate-50 px-4 py-4 md:grid-cols-3">
-            <div className="rounded-xl border border-slate-200 bg-white p-4">
-              <p className="text-xs text-slate-500">Highlights</p>
-              <p className="mt-2 text-sm font-semibold text-slate-800">Match highlights</p>
-            </div>
-            <div className="rounded-xl border border-slate-200 bg-white p-4">
-              <p className="text-xs text-slate-500">Story</p>
-              <p className="mt-2 text-sm font-semibold text-slate-800">Live story</p>
-            </div>
-            <div className="rounded-xl border border-slate-200 bg-white p-4">
-              <p className="text-xs text-slate-500">Innings</p>
-              <p className="mt-2 text-sm font-semibold text-slate-800">Innings highlights</p>
-            </div>
+          <div className="grid gap-3 border-t border-slate-200/80 bg-slate-50/80 px-4 py-4 sm:grid-cols-3 sm:px-6">
+            <Link
+              href={`/matches/${summary.id}/watch`}
+              className="group flex items-center justify-between gap-3 rounded-xl border border-slate-200/80 bg-white/90 p-3.5 transition hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-md"
+            >
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-red-50/90 text-red-600">
+                  <FiPlayCircle className="h-4 w-4" aria-hidden="true" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Broadcast</p>
+                  <p className="truncate text-sm font-extrabold text-slate-900 group-hover:text-brand-700">
+                    Watch Live Stream
+                  </p>
+                </div>
+              </div>
+              <FiArrowRight className="h-4 w-4 shrink-0 text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-brand-600" aria-hidden="true" />
+            </Link>
+
+            <Link
+              href={`/matches/${summary.id}/commentary`}
+              className="group flex items-center justify-between gap-3 rounded-xl border border-slate-200/80 bg-white/90 p-3.5 transition hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-md"
+            >
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+                  <FiRadio className="h-4 w-4" aria-hidden="true" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Commentary</p>
+                  <p className="truncate text-sm font-extrabold text-slate-900 group-hover:text-brand-700">
+                    Play-by-Play Updates
+                  </p>
+                </div>
+              </div>
+              <FiArrowRight className="h-4 w-4 shrink-0 text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-brand-600" aria-hidden="true" />
+            </Link>
+
+            <Link
+              href={`/matches/${summary.id}/stats`}
+              className="group flex items-center justify-between gap-3 rounded-xl border border-slate-200/80 bg-white/90 p-3.5 transition hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-md"
+            >
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-800">
+                  <FiActivity className="h-4 w-4" aria-hidden="true" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Analytics</p>
+                  <p className="truncate text-sm font-extrabold text-slate-900 group-hover:text-brand-700">
+                    Match Insights &amp; Stats
+                  </p>
+                </div>
+              </div>
+              <FiArrowRight className="h-4 w-4 shrink-0 text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-brand-600" aria-hidden="true" />
+            </Link>
           </div>
         ) : null}
-      </section>
+      </Card>
 
       <AdSlot variant="in-feed" label="Sponsored · Live Match Partner" />
 
       {hasInnings && selectedInnings ? (
-        <div className="space-y-0">
-          <div className="grid grid-cols-2 overflow-hidden rounded-2xl border border-slate-200 bg-white">
-            <Link
-              href={buildTeamHref("a")}
-              className={`border-r border-slate-200 px-3 py-2 text-center text-lg font-bold transition ${
-                activeTeamKey === "a" ? "bg-brand-600 text-white" : "text-slate-700 hover:bg-slate-100"
-              }`}
-            >
-              {summary.teamA.name}
-            </Link>
-            <Link
-              href={buildTeamHref("b")}
-              className={`px-3 py-2 text-center text-lg font-bold transition ${
-                activeTeamKey === "b" ? "bg-brand-600 text-white" : "text-slate-700 hover:bg-slate-100"
-              }`}
-            >
-              {summary.teamB.name}
-            </Link>
-          </div>
+        <div className="space-y-4">
+          <Tabs
+            fullWidth
+            groupId={`scorecard-team-${summary.id}`}
+            tabs={[
+              {
+                href: buildTeamHref("a"),
+                label: summary.teamA.name,
+                isActive: activeTeamKey === "a"
+              },
+              {
+                href: buildTeamHref("b"),
+                label: summary.teamB.name,
+                isActive: activeTeamKey === "b"
+              }
+            ]}
+          />
 
           <ScorecardTable
             innings={selectedInnings}
@@ -248,7 +290,7 @@ export default async function ScorecardPage({ params, searchParams }: ScorecardP
             yetToBat={yetToBat}
           />
 
-          <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+          <Card as="section" className="overflow-hidden p-0">
             <div className="space-y-2 px-4 py-4 text-sm sm:px-5">
               {summary.toss ? (
                 <p className="text-slate-700">
@@ -262,28 +304,26 @@ export default async function ScorecardPage({ params, searchParams }: ScorecardP
             <div className="border-t border-slate-200 px-4 py-3 text-xs text-slate-500 sm:px-5">
               Start time: {fullStartLabel}
             </div>
-          </section>
+          </Card>
         </div>
       ) : hasInnings ? (
-        <div className="space-y-0">
-          <div className="grid grid-cols-2 overflow-hidden rounded-2xl border border-slate-200 bg-white">
-            <Link
-              href={buildTeamHref("a")}
-              className={`border-r border-slate-200 px-3 py-2 text-center text-lg font-bold transition ${
-                activeTeamKey === "a" ? "bg-brand-600 text-white" : "text-slate-700 hover:bg-slate-100"
-              }`}
-            >
-              {summary.teamA.name}
-            </Link>
-            <Link
-              href={buildTeamHref("b")}
-              className={`px-3 py-2 text-center text-lg font-bold transition ${
-                activeTeamKey === "b" ? "bg-brand-600 text-white" : "text-slate-700 hover:bg-slate-100"
-              }`}
-            >
-              {summary.teamB.name}
-            </Link>
-          </div>
+        <div className="space-y-4">
+          <Tabs
+            fullWidth
+            groupId={`scorecard-team-${summary.id}`}
+            tabs={[
+              {
+                href: buildTeamHref("a"),
+                label: summary.teamA.name,
+                isActive: activeTeamKey === "a"
+              },
+              {
+                href: buildTeamHref("b"),
+                label: summary.teamB.name,
+                isActive: activeTeamKey === "b"
+              }
+            ]}
+          />
           <div>
             <EmptyState title={`${activeTeamKey === "a" ? summary.teamA.name : summary.teamB.name} scorecard not available yet`} />
           </div>

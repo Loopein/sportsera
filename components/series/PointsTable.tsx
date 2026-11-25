@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 
 export function PointsTable({ rows }: { rows: SeriesStanding[] }): React.ReactElement {
   return (
-    <Card as="section" className="p-5 sm:p-6">
+    <Card as="section" className="p-4 sm:p-6">
       <div className="flex items-center justify-between gap-2">
         <h2 className="inline-flex items-center gap-2 text-lg font-extrabold text-slate-900">
           <FiAward className="h-4 w-4 text-brand-600" aria-hidden="true" />
@@ -18,7 +18,7 @@ export function PointsTable({ rows }: { rows: SeriesStanding[] }): React.ReactEl
 
       {rows.length ? (
         <div className="mt-4 overflow-x-auto">
-          <table className="min-w-full border-collapse text-left text-sm">
+          <table className="min-w-[460px] w-full whitespace-nowrap border-collapse text-left text-xs sm:text-sm">
             <thead>
               <tr className="border-b border-slate-200 text-xs font-extrabold uppercase tracking-wider text-slate-500">
                 <th className="py-2.5 pr-3">#</th>
@@ -33,21 +33,38 @@ export function PointsTable({ rows }: { rows: SeriesStanding[] }): React.ReactEl
             <tbody className="divide-y divide-slate-100">
               {rows.map((row, idx) => (
                 <tr key={row.teamId || row.teamName} className="transition hover:bg-brand-50/40">
-                  <td className="py-3 pr-3 font-bold tabular-nums text-slate-500">{idx + 1}</td>
+                  <td className="py-3 pr-3 font-bold tabular-nums text-slate-500">
+                    <span
+                      className={`inline-flex h-6 w-6 items-center justify-center rounded-lg text-xs font-black ${
+                        idx < 2
+                          ? "bg-brand-50 text-brand-700"
+                          : idx < 4
+                            ? "bg-emerald-50 text-emerald-700"
+                            : "bg-slate-100 text-slate-600"
+                      }`}
+                    >
+                      {idx + 1}
+                    </span>
+                  </td>
                   <td className="py-3 pr-4 font-extrabold text-slate-900">
-                    {row.teamId ? (
-                      <Link href={`/teams/${row.teamId}`} className="hover:text-brand-700 hover:underline">
-                        {row.teamName}
-                      </Link>
-                    ) : (
-                      row.teamName
-                    )}
+                    <div className="flex items-center gap-2.5">
+                      <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-[11px] font-black text-slate-700">
+                        {row.teamName.slice(0, 2).toUpperCase()}
+                      </span>
+                      {row.teamId ? (
+                        <Link href={`/teams/${row.teamId}`} className="hover:text-brand-700 hover:underline">
+                          {row.teamName}
+                        </Link>
+                      ) : (
+                        <span>{row.teamName}</span>
+                      )}
+                    </div>
                   </td>
                   <td className="py-3 pr-3 text-right font-semibold tabular-nums text-slate-700">{row.played}</td>
                   <td className="py-3 pr-3 text-right font-semibold tabular-nums text-emerald-700">{row.won}</td>
                   <td className="py-3 pr-3 text-right font-semibold tabular-nums text-rose-600">{row.lost}</td>
                   <td className="py-3 pr-3 text-right">
-                    <span className="inline-flex min-w-[1.8rem] justify-center rounded-md bg-brand-50 px-2 py-0.5 font-black tabular-nums text-brand-700">
+                    <span className="score-pill min-w-[2rem] justify-center tabular-nums">
                       {row.points}
                     </span>
                   </td>
