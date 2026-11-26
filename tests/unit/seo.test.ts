@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import robots from "@/app/robots";
-import { SITE_NAME } from "@/lib/constants/site";
+import { SITE_NAME, getSiteUrl } from "@/lib/constants/site";
 import {
   buildBreadcrumbJsonLd,
   buildNewsArticleJsonLd,
@@ -9,6 +9,7 @@ import {
   serializeJsonLd
 } from "@/lib/seo/jsonld";
 import { buildPageMetadata } from "@/lib/seo/metadata";
+import { getOgLogoSrc } from "@/lib/seo/og-image";
 
 describe("SEO metadata and structured data", () => {
   it("builds canonical, Open Graph, Twitter, and noIndex metadata", () => {
@@ -87,5 +88,22 @@ describe("SEO metadata and structured data", () => {
         disallow: ["/api/"]
       }
     ]);
+  });
+
+  it("loads OG logo as local data URI without localhost HTTP fetch and resolves Vercel domain fallback", async () => {
+    const logoSrc = await getOgLogoSrc();
+    expect(logoSrc.startsWith("data:image/")).toBe(true);
+    expect(logoSrc).not.toContain("localhost");
+
+    const prevSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+    const prevVercelProd = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+    delete process.env.NEXT_PUBLIC_SITE_URL;
+    process.env.VERCEL_PROJECT_PRODUCTION_URL = "sportsera.vercel.app";
+    expect(getSiteUrl()).toBe("https://sportsera.vercel.app");
+
+    if (prevSiteUrl === undefined) delete process.env.NEXT_PUBLIC_SITE_URL;
+    else process.env.NEXT_PUBLIC_SITE_URL = prevSiteUrl;
+    if (prevVercelProd === undefined) delete process.env.VERCEL_PROJECT_PRODUCTION_URL;
+    else process.env.VERCEL_PROJECT_PRODUCTION_URL = prevVercelProd;
   });
 });

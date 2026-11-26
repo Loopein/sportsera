@@ -1,6 +1,9 @@
 import { ImageResponse } from "next/og";
-import { SITE_LOGO_PATH, SITE_NAME } from "@/lib/constants/site";
+import { SITE_NAME } from "@/lib/constants/site";
+import { getOgLogoSrc } from "@/lib/seo/og-image";
 
+export const runtime = "nodejs";
+export const alt = `${SITE_NAME} - Real-time match center`;
 export const size = {
   width: 1200,
   height: 600
@@ -8,15 +11,9 @@ export const size = {
 
 export const contentType = "image/png";
 
-const logoUrl = (() => {
-  try {
-    return new URL(SITE_LOGO_PATH, process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").toString();
-  } catch {
-    return `http://localhost:3000${SITE_LOGO_PATH}`;
-  }
-})();
+export default async function TwitterImage(): Promise<ImageResponse> {
+  const logoSrc = await getOgLogoSrc();
 
-export default function TwitterImage(): ImageResponse {
   return new ImageResponse(
     (
       <div
@@ -48,7 +45,7 @@ export default function TwitterImage(): ImageResponse {
             <span style={{ marginTop: 10, fontSize: 30, opacity: 0.95 }}>Real-time match center</span>
           </div>
           <img
-            src={logoUrl}
+            src={logoSrc}
             alt={`${SITE_NAME} logo`}
             width={240}
             height={240}
