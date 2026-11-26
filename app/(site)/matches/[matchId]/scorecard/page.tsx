@@ -1,13 +1,17 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FiActivity, FiArrowRight, FiPlayCircle, FiRadio } from "react-icons/fi";
 import { MatchTabs } from "@/app/(site)/matches/[matchId]/MatchTabs";
 import { ScorecardTable } from "@/components/match/ScorecardTable";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { AdSlot } from "@/components/shared/AdSlot";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { Tabs } from "@/components/shared/Tabs";
 import { Card } from "@/components/ui/card";
 import { getMatchScorecard, getMatchSummary, getTeam } from "@/lib/api/read";
+import { buildBreadcrumbJsonLd, buildSportsEventJsonLd } from "@/lib/seo/jsonld";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 import type { MatchSummary, ScorecardInnings } from "@/types/match";
 import type { TeamProfile } from "@/types/team";
 
@@ -95,6 +99,26 @@ function buildYetToBat(innings: ScorecardInnings, team: TeamProfile | null): str
     .map((member) => `${member.name}${member.isCaptain ? " (C)" : ""}${member.isWicketKeeper ? " (WK)" : ""}`);
 }
 
+export async function generateMetadata({ params }: ScorecardPageProps): Promise<Metadata> {
+  const { matchId } = await params;
+  const match = await getMatchSummary(matchId);
+  if (!match) {
+    return buildPageMetadata({
+      title: "Match Scorecard Not Found",
+      description: "The requested match scorecard could not be found.",
+      path: `/matches/${matchId}/scorecard`,
+      noIndex: true
+    });
+  }
+
+  return buildPageMetadata({
+    title: `${match.teamA.shortName} vs ${match.teamB.shortName} Scorecard`,
+    description: `Full batting and bowling scorecard, fall of wickets, and live score updates for ${match.teamA.name} vs ${match.teamB.name} (${match.seriesName}).`,
+    path: `/matches/${match.id}/scorecard`,
+    keywords: [match.teamA.name, match.teamB.name, match.seriesName, "scorecard", "live score"]
+  });
+}
+
 export default async function ScorecardPage({ params, searchParams }: ScorecardPageProps): Promise<React.ReactElement> {
   const { matchId } = await params;
   const query = (await searchParams) ?? {};
@@ -152,6 +176,17 @@ export default async function ScorecardPage({ params, searchParams }: ScorecardP
 
   return (
     <div className="space-y-4">
+      <JsonLd
+        data={[
+          buildSportsEventJsonLd(summary, `/matches/${summary.id}/scorecard`),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Matches", path: "/matches" },
+            { name: `${summary.teamA.shortName} vs ${summary.teamB.shortName}`, path: `/matches/${summary.id}` },
+            { name: "Scorecard", path: `/matches/${summary.id}/scorecard` }
+          ])
+        ]}
+      />
       <MatchTabs matchId={summary.id} currentPath={`/matches/${summary.id}/scorecard`} status={summary.status} />
 
       <Card as="section" variant="strong" className="page-hero-card overflow-hidden p-0 text-slate-900">

@@ -1,15 +1,39 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { FiActivity, FiAward, FiTrendingUp } from "react-icons/fi";
 import { SeriesTabs } from "@/app/(site)/series/[seriesId]/SeriesTabs";
 import { PointsTable } from "@/components/series/PointsTable";
 import { SeriesHeader } from "@/components/series/SeriesHeader";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { AdSlot } from "@/components/shared/AdSlot";
 import { Card } from "@/components/ui/card";
 import { getSeriesById } from "@/lib/api/read";
+import { buildBreadcrumbJsonLd, buildSeriesEventJsonLd } from "@/lib/seo/jsonld";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 
 type SeriesStatsProps = {
   params: Promise<{ seriesId: string }>;
 };
+
+export async function generateMetadata({ params }: SeriesStatsProps): Promise<Metadata> {
+  const { seriesId } = await params;
+  const data = await getSeriesById(seriesId);
+  if (!data) {
+    return buildPageMetadata({
+      title: "Series Stats Not Found",
+      description: "The requested tournament stats could not be found.",
+      path: `/series/${seriesId}/stats`,
+      noIndex: true
+    });
+  }
+
+  return buildPageMetadata({
+    title: `${data.series.name} ${data.series.season} Stats & Standings`,
+    description: `Tournament stats snapshot, table leaders, net run rates, and points table for ${data.series.name} ${data.series.season}.`,
+    path: `/series/${data.series.id}/stats`,
+    keywords: [data.series.name, "series stats", "tournament standings", "net run rate"]
+  });
+}
 
 export default async function SeriesStatsPage({ params }: SeriesStatsProps): Promise<React.ReactElement> {
   const { seriesId } = await params;
@@ -20,6 +44,17 @@ export default async function SeriesStatsPage({ params }: SeriesStatsProps): Pro
 
   return (
     <div className="space-y-5">
+      <JsonLd
+        data={[
+          buildSeriesEventJsonLd(data.series, `/series/${data.series.id}/stats`),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Series", path: "/series" },
+            { name: `${data.series.name} ${data.series.season}`.trim(), path: `/series/${data.series.id}` },
+            { name: "Stats", path: `/series/${data.series.id}/stats` }
+          ])
+        ]}
+      />
       <SeriesHeader series={data.series} />
       <SeriesTabs seriesId={data.series.id} currentPath={`/series/${data.series.id}/stats`} />
 

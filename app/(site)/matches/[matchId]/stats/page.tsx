@@ -1,11 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MatchTabs } from "@/app/(site)/matches/[matchId]/MatchTabs";
 import { UpcomingCountdown } from "@/components/match/UpcomingCountdown";
 import { WagonWheel } from "@/components/match/WagonWheel";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { AdSlot } from "@/components/shared/AdSlot";
 import { Card } from "@/components/ui/card";
 import { getMatches, getMatchStats, getMatchSummary, getTournamentPlayerStats } from "@/lib/api/read";
+import { buildBreadcrumbJsonLd, buildSportsEventJsonLd } from "@/lib/seo/jsonld";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 import type { MatchSummary } from "@/types/match";
 import type { TournamentPlayerStat } from "@/types/stats";
 
@@ -69,6 +73,26 @@ function pickTopStat(
   return scoped.reduce((best, row) => (row[metric] > best[metric] ? row : best));
 }
 
+export async function generateMetadata({ params }: StatsPageProps): Promise<Metadata> {
+  const { matchId } = await params;
+  const match = await getMatchSummary(matchId);
+  if (!match) {
+    return buildPageMetadata({
+      title: "Match Stats Not Found",
+      description: "The requested match statistics could not be found.",
+      path: `/matches/${matchId}/stats`,
+      noIndex: true
+    });
+  }
+
+  return buildPageMetadata({
+    title: `${match.teamA.shortName} vs ${match.teamB.shortName} Stats & Head-to-Head`,
+    description: `Run rates, partnerships, head-to-head records, wagon wheel zones, and player stats for ${match.teamA.name} vs ${match.teamB.name}.`,
+    path: `/matches/${match.id}/stats`,
+    keywords: [match.teamA.name, match.teamB.name, "match stats", "head to head", "partnerships"]
+  });
+}
+
 export default async function StatsPage({ params }: StatsPageProps): Promise<React.ReactElement> {
   const { matchId } = await params;
   const summary = await getMatchSummary(matchId);
@@ -94,6 +118,17 @@ export default async function StatsPage({ params }: StatsPageProps): Promise<Rea
 
     return (
       <div className="space-y-4">
+        <JsonLd
+          data={[
+            buildSportsEventJsonLd(summary, `/matches/${summary.id}/stats`),
+            buildBreadcrumbJsonLd([
+              { name: "Home", path: "/" },
+              { name: "Matches", path: "/matches" },
+              { name: `${summary.teamA.shortName} vs ${summary.teamB.shortName}`, path: `/matches/${summary.id}` },
+              { name: "Stats", path: `/matches/${summary.id}/stats` }
+            ])
+          ]}
+        />
         <MatchTabs matchId={summary.id} currentPath={`/matches/${summary.id}/stats`} status={summary.status} />
 
         <Card as="section" variant="strong" className="page-hero-card overflow-hidden p-0 text-slate-900">
@@ -240,6 +275,17 @@ export default async function StatsPage({ params }: StatsPageProps): Promise<Rea
 
   return (
     <div className="space-y-4">
+      <JsonLd
+        data={[
+          buildSportsEventJsonLd(summary, `/matches/${summary.id}/stats`),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Matches", path: "/matches" },
+            { name: `${summary.teamA.shortName} vs ${summary.teamB.shortName}`, path: `/matches/${summary.id}` },
+            { name: "Stats", path: `/matches/${summary.id}/stats` }
+          ])
+        ]}
+      />
       <MatchTabs matchId={summary.id} currentPath={`/matches/${summary.id}/stats`} status={summary.status} />
       <Card as="section" variant="strong" className="page-hero-card p-4 sm:p-5">
         <h2 className="text-base font-extrabold text-slate-900">Matchup Stats</h2>

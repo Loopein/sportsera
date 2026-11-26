@@ -1,22 +1,40 @@
 import type { Metadata } from "next";
 import { BiBroadcast } from "react-icons/bi";
 import { LivePageClient } from "@/app/(site)/live/LivePageClient";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { AdSlot } from "@/components/shared/AdSlot";
 import { Card } from "@/components/ui/card";
 import { getLiveMatches } from "@/lib/api/read";
+import { buildBreadcrumbJsonLd, buildCollectionPageJsonLd } from "@/lib/seo/jsonld";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 
 export const revalidate = 10;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Live Matches",
-  description: "All currently live sports matches with fast real-time score refresh."
-};
+  description: "All currently live sports matches with fast real-time score refresh, play-by-play commentary, and match centers.",
+  path: "/live",
+  keywords: ["live matches", "live scores", "real-time scoreboard"]
+});
 
 export default async function LivePage(): Promise<React.ReactElement> {
   const matches = await getLiveMatches();
 
   return (
     <div className="space-y-6">
+      <JsonLd
+        data={[
+          buildCollectionPageJsonLd({
+            name: "Live Matches",
+            description: "All currently live sports matches with fast real-time score refresh.",
+            path: "/live"
+          }),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Live Matches", path: "/live" }
+          ])
+        ]}
+      />
       <Card as="section" variant="strong" className="page-hero-card p-4 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-3">

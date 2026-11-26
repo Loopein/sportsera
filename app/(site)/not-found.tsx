@@ -1,6 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { FiAlertCircle, FiArrowLeft } from "react-icons/fi";
 import { Card } from "@/components/ui/card";
+import { buildPageMetadata } from "@/lib/seo/metadata";
+
+export const metadata: Metadata = buildPageMetadata({
+  title: "Content Not Found",
+  description: "The requested match, series, team, player, or article could not be found.",
+  path: "/",
+  noIndex: true
+});
 
 export default function SiteNotFound(): React.ReactElement {
   return (

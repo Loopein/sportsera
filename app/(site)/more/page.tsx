@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { BiBroadcast } from "react-icons/bi";
 import {
@@ -12,10 +13,20 @@ import {
   FiShield,
   FiUsers
 } from "react-icons/fi";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { AdSlot } from "@/components/shared/AdSlot";
 import { PoweredByLoopein } from "@/components/shared/LoopeinBranding";
 import { Card } from "@/components/ui/card";
 import { SITE_NAME } from "@/lib/constants/site";
+import { buildBreadcrumbJsonLd, buildCollectionPageJsonLd } from "@/lib/seo/jsonld";
+import { buildPageMetadata } from "@/lib/seo/metadata";
+
+export const metadata: Metadata = buildPageMetadata({
+  title: "Explore SportsHub & Directories",
+  description: `Navigate live match centers, fixtures, results, series, teams, players, standings, stats, and search on ${SITE_NAME}.`,
+  path: "/more",
+  keywords: ["sports directory", "all sections", "navigation hub"]
+});
 
 const moreLinks = [
   { href: "/live", label: "Live Center", description: "Real-time multi-sport scores & active play-by-play commentary", icon: BiBroadcast },
@@ -32,6 +43,19 @@ const moreLinks = [
 export default function MorePage(): React.ReactElement {
   return (
     <div className="space-y-6">
+      <JsonLd
+        data={[
+          buildCollectionPageJsonLd({
+            name: `Explore ${SITE_NAME}`,
+            description: `Explore live match centers, fixtures, results, series, teams, players, and stats on ${SITE_NAME}.`,
+            path: "/more"
+          }),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "More", path: "/more" }
+          ])
+        ]}
+      />
       <Card as="section" variant="strong" className="page-hero-card p-4 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-3">

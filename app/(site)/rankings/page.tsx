@@ -1,12 +1,23 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { FiAward, FiChevronDown } from "react-icons/fi";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { AdSlot } from "@/components/shared/AdSlot";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { Card } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { getStandingsSeasons } from "@/lib/api/read";
+import { buildBreadcrumbJsonLd, buildCollectionPageJsonLd } from "@/lib/seo/jsonld";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 import { cn } from "@/lib/utils/text";
 import type { StandingsSeason, StandingsSeries, StandingsStage } from "@/types/api";
+
+export const metadata: Metadata = buildPageMetadata({
+  title: "Standings & Points Tables",
+  description: "League tables, tournament group standings, points, net run rates, and qualification snapshots across sports.",
+  path: "/rankings",
+  keywords: ["standings", "points table", "rankings", "net run rate"]
+});
 
 type RankingsPageProps = {
   searchParams?: Promise<{
@@ -81,6 +92,19 @@ export default async function RankingsPage({ searchParams }: RankingsPageProps):
 
   return (
     <div className="space-y-5">
+      <JsonLd
+        data={[
+          buildCollectionPageJsonLd({
+            name: "Standings & Points Tables",
+            description: "League tables, tournament group standings, points, and qualification snapshots across sports.",
+            path: "/rankings"
+          }),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Standings", path: "/rankings" }
+          ])
+        ]}
+      />
       <Card as="section" variant="strong" className="page-hero-card p-4 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-3">

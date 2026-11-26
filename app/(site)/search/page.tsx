@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import { FiSearch } from "react-icons/fi";
 import { SearchClient } from "@/app/(site)/search/SearchClient";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { AdSlot } from "@/components/shared/AdSlot";
 import { Card } from "@/components/ui/card";
 import { search } from "@/lib/api/read";
+import { buildBreadcrumbJsonLd } from "@/lib/seo/jsonld";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 import { sanitizeSearchQuery } from "@/lib/validations/search";
 
 type SearchPageProps = {
@@ -12,10 +15,15 @@ type SearchPageProps = {
   }>;
 };
 
-export const metadata: Metadata = {
-  title: "Search",
-  description: "Search matches, teams, players and series."
-};
+export async function generateMetadata({ searchParams }: SearchPageProps): Promise<Metadata> {
+  const query = sanitizeSearchQuery((await searchParams)?.q ?? "");
+  return buildPageMetadata({
+    title: query ? `Search: ${query}` : "Search",
+    description: "Search live matches, teams, players, series, and news across SportsEra.",
+    path: "/search",
+    noIndex: true
+  });
+}
 
 export default async function SearchPage({ searchParams }: SearchPageProps): Promise<React.ReactElement> {
   const query = sanitizeSearchQuery((await searchParams)?.q ?? "");
@@ -23,6 +31,12 @@ export default async function SearchPage({ searchParams }: SearchPageProps): Pro
 
   return (
     <div className="space-y-6">
+      <JsonLd
+        data={buildBreadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Search", path: "/search" }
+        ])}
+      />
       <Card as="section" variant="strong" className="page-hero-card p-4 sm:p-6">
         <div className="flex items-start gap-3">
           <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700 ring-1 ring-brand-200/80">

@@ -1,13 +1,37 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { FiActivity } from "react-icons/fi";
 import { PlayerTabs } from "@/app/(site)/players/[playerId]/PlayerTabs";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { AdSlot } from "@/components/shared/AdSlot";
 import { Card } from "@/components/ui/card";
 import { getPlayer } from "@/lib/api/read";
+import { buildBreadcrumbJsonLd, buildPersonJsonLd } from "@/lib/seo/jsonld";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 
 type PlayerRecentProps = {
   params: Promise<{ playerId: string }>;
 };
+
+export async function generateMetadata({ params }: PlayerRecentProps): Promise<Metadata> {
+  const { playerId } = await params;
+  const player = await getPlayer(playerId);
+  if (!player) {
+    return buildPageMetadata({
+      title: "Player Recent Form Not Found",
+      description: "The requested player recent form could not be found.",
+      path: `/players/${playerId}/recent`,
+      noIndex: true
+    });
+  }
+
+  return buildPageMetadata({
+    title: `${player.name} Recent Form & Match Log`,
+    description: `Latest match appearances and recent scoring/bowling form tracker for ${player.name}.`,
+    path: `/players/${player.id}/recent`,
+    keywords: [player.name, "recent form", "match log", player.role]
+  });
+}
 
 export default async function PlayerRecentPage({ params }: PlayerRecentProps): Promise<React.ReactElement> {
   const { playerId } = await params;
@@ -16,6 +40,17 @@ export default async function PlayerRecentPage({ params }: PlayerRecentProps): P
 
   return (
     <div className="space-y-4">
+      <JsonLd
+        data={[
+          buildPersonJsonLd(player, `/players/${player.id}/recent`),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Players", path: "/players" },
+            { name: player.name, path: `/players/${player.id}` },
+            { name: "Recent Form", path: `/players/${player.id}/recent` }
+          ])
+        ]}
+      />
       <PlayerTabs playerId={player.id} currentPath={`/players/${player.id}/recent`} />
       <Card as="section" className="p-4 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-2">

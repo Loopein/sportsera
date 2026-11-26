@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { BiBroadcast } from "react-icons/bi";
 import {
@@ -12,12 +13,24 @@ import { HeroSpotlightCarousel } from "@/components/home/HeroSpotlightCarousel";
 import { LiveMatchList } from "@/components/live/LiveMatchList";
 import { LiveUpcomingCarousel } from "@/components/live/LiveUpcomingCarousel";
 import { NewsList } from "@/components/news/NewsList";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { AdSlot } from "@/components/shared/AdSlot";
 import { PrefetchRoutes } from "@/components/shared/PrefetchRoutes";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { getLiveMatches, getMatches, getNews } from "@/lib/api/read";
+import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/constants/site";
+import { buildBreadcrumbJsonLd, buildCollectionPageJsonLd } from "@/lib/seo/jsonld";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 import { buildHeroSpotlightSlides } from "@/lib/utils/hero-spotlight";
 import type { LiveMatch } from "@/types/match";
+
+export const metadata: Metadata = buildPageMetadata({
+  title: `${SITE_NAME} | Live Scores, Fixtures, Results & Sports Hub`,
+  description: SITE_DESCRIPTION,
+  path: "/",
+  absoluteTitle: true,
+  keywords: ["live cricket score", "live football score", "fixtures", "results", "news"]
+});
 
 function detectMatchSport(match: LiveMatch): "cricket" | "football" | "other" {
   const scoreText = `${match.teamA.score ?? ""} ${match.teamB.score ?? ""}`;
@@ -102,6 +115,16 @@ export default async function HomePage(): Promise<React.ReactElement> {
 
   return (
     <div className="space-y-5 md:space-y-6">
+      <JsonLd
+        data={[
+          buildCollectionPageJsonLd({
+            name: `${SITE_NAME} Live Scores & Sports Hub`,
+            description: SITE_DESCRIPTION,
+            path: "/"
+          }),
+          buildBreadcrumbJsonLd([{ name: "Home", path: "/" }])
+        ]}
+      />
       <PrefetchRoutes />
       <section className="relative w-full">
         <HeroSpotlightCarousel slides={heroSlides} />

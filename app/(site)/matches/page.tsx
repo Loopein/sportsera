@@ -5,11 +5,14 @@ import { FiCalendar, FiCheckCircle, FiChevronDown } from "react-icons/fi";
 import { getMatches } from "@/lib/api/read";
 import { cn } from "@/lib/utils/text";
 import { LiveMatchList } from "@/components/live/LiveMatchList";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { AdSlot } from "@/components/shared/AdSlot";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { Tabs } from "@/components/shared/Tabs";
 import { Card } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { buildBreadcrumbJsonLd, buildCollectionPageJsonLd } from "@/lib/seo/jsonld";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 
 type MatchesPageProps = {
   searchParams?: Promise<{
@@ -21,10 +24,12 @@ type MatchesPageProps = {
   }>;
 };
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Matches",
-  description: "Results and fixtures in a clean match-centre layout."
-};
+  description: "Live matches, upcoming fixtures, and completed match results in a unified multi-sport match center.",
+  path: "/matches",
+  keywords: ["matches", "live scores", "fixtures", "results"]
+});
 
 export default async function MatchesPage({ searchParams }: MatchesPageProps): Promise<React.ReactElement> {
   const params = await searchParams;
@@ -126,6 +131,19 @@ export default async function MatchesPage({ searchParams }: MatchesPageProps): P
 
   return (
     <div className="space-y-6">
+      <JsonLd
+        data={[
+          buildCollectionPageJsonLd({
+            name: "Matches",
+            description: "Browse live action, upcoming fixtures, and completed match results.",
+            path: "/matches"
+          }),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Matches", path: "/matches" }
+          ])
+        ]}
+      />
       <Card as="section" variant="strong" className="page-hero-card p-4 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-3">

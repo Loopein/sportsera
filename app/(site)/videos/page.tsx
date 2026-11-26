@@ -3,16 +3,21 @@ import Link from "next/link";
 import { BiBroadcast } from "react-icons/bi";
 import { FiArrowRight, FiFilm } from "react-icons/fi";
 import { SportsEraPlayIcon } from "@/components/layout/SportsEraLogo";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { AdSlot } from "@/components/shared/AdSlot";
 import { Card } from "@/components/ui/card";
 import { getLiveMatches, getVideoPosts } from "@/lib/api/read";
+import { buildBreadcrumbJsonLd, buildCollectionPageJsonLd } from "@/lib/seo/jsonld";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 
 export const revalidate = 10;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Videos & Live Streams",
-  description: "Live match streams, highlights, and tactical breakdowns on SportsEra Player."
-};
+  description: "Watch live sports streams, match highlights, and tactical breakdowns on SportsEra Player.",
+  path: "/videos",
+  keywords: ["sports videos", "live streams", "match highlights", "SportsEra Player"]
+});
 
 export default async function VideosPage(): Promise<React.ReactElement> {
   const [videos, liveMatches] = await Promise.all([getVideoPosts(), getLiveMatches()]);
@@ -20,6 +25,19 @@ export default async function VideosPage(): Promise<React.ReactElement> {
 
   return (
     <div className="space-y-6">
+      <JsonLd
+        data={[
+          buildCollectionPageJsonLd({
+            name: "Videos & Live Streams",
+            description: "Live match streams, highlights, and tactical breakdowns on SportsEra Player.",
+            path: "/videos"
+          }),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Videos", path: "/videos" }
+          ])
+        ]}
+      />
       <Card as="section" variant="strong" className="page-hero-card p-4 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-3">

@@ -1,15 +1,41 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FiArrowLeft, FiClock, FiFileText } from "react-icons/fi";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { AdSlot } from "@/components/shared/AdSlot";
 import { LoopeinLogo } from "@/components/shared/LoopeinBranding";
 import { Card } from "@/components/ui/card";
 import { getNewsArticle } from "@/lib/api/read";
+import { buildBreadcrumbJsonLd, buildNewsArticleJsonLd } from "@/lib/seo/jsonld";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 import { formatTime } from "@/lib/utils/date";
 
 type NewsDetailProps = {
   params: Promise<{ slug: string }>;
 };
+
+export async function generateMetadata({ params }: NewsDetailProps): Promise<Metadata> {
+  const { slug } = await params;
+  const article = await getNewsArticle(slug);
+  if (!article) {
+    return buildPageMetadata({
+      title: "Article Not Found",
+      description: "The requested sports news article could not be found.",
+      path: `/news/${slug}`,
+      noIndex: true
+    });
+  }
+
+  return buildPageMetadata({
+    title: article.title,
+    description: article.summary,
+    path: `/news/${article.slug}`,
+    type: "article",
+    publishedTime: article.publishedAt,
+    keywords: ["sports news", "match report", article.title]
+  });
+}
 
 export default async function NewsDetailPage({ params }: NewsDetailProps): Promise<React.ReactElement> {
   const { slug } = await params;
@@ -18,6 +44,16 @@ export default async function NewsDetailPage({ params }: NewsDetailProps): Promi
 
   return (
     <div className="mx-auto max-w-3xl space-y-4">
+      <JsonLd
+        data={[
+          buildNewsArticleJsonLd(article),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "News", path: "/news" },
+            { name: article.title, path: `/news/${article.slug}` }
+          ])
+        ]}
+      />
       <Link
         href="/news"
         className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-slate-700 shadow-sm transition hover:border-brand-300 hover:text-brand-700"

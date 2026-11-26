@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { FiAward, FiBarChart2, FiChevronDown, FiChevronRight } from "react-icons/fi";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { AdSlot } from "@/components/shared/AdSlot";
 import { Card } from "@/components/ui/card";
 import { getTournamentPlayerStats } from "@/lib/api/read";
+import { buildBreadcrumbJsonLd, buildCollectionPageJsonLd } from "@/lib/seo/jsonld";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 import { cn } from "@/lib/utils/text";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { StatsCategory, TournamentPlayerStat } from "@/types/stats";
@@ -97,10 +100,12 @@ function formatStat(value: number | null | undefined, decimals = 2): string {
   return parsed.toFixed(decimals);
 }
 
-export const metadata: Metadata = {
-  title: "Stats",
-  description: "Multi-sport tournament and season stats leaderboards."
-};
+export const metadata: Metadata = buildPageMetadata({
+  title: "Tournament Stats & Leaderboards",
+  description: "Season and tournament leaderboards across runs, wickets, strike rate, economy, and multi-sport efficiency.",
+  path: "/stats",
+  keywords: ["tournament stats", "player leaderboards", "most runs", "most wickets"]
+});
 
 export default async function StatsPage({ searchParams }: StatsPageProps): Promise<React.ReactElement> {
   const params = await searchParams;
@@ -130,6 +135,19 @@ export default async function StatsPage({ searchParams }: StatsPageProps): Promi
 
   return (
     <div className="space-y-6">
+      <JsonLd
+        data={[
+          buildCollectionPageJsonLd({
+            name: "Tournament Stats & Leaderboards",
+            description: "Multi-sport tournament and season stats leaderboards.",
+            path: "/stats"
+          }),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Stats", path: "/stats" }
+          ])
+        ]}
+      />
       <Card as="section" variant="strong" className="page-hero-card p-4 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-3">

@@ -1,11 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MatchTabs } from "@/app/(site)/matches/[matchId]/MatchTabs";
 import { UpcomingCountdown } from "@/components/match/UpcomingCountdown";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { AdSlot } from "@/components/shared/AdSlot";
 import { TeamSquad } from "@/components/team/TeamSquad";
 import { Card } from "@/components/ui/card";
 import { getMatchSummary, getPlayers, getTeam } from "@/lib/api/read";
+import { buildBreadcrumbJsonLd, buildSportsEventJsonLd } from "@/lib/seo/jsonld";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 
 type SquadsPageProps = {
   params: Promise<{ matchId: string }>;
@@ -33,6 +37,26 @@ function formatKickoffLabel(isoDate: string): string {
     day: "numeric"
   });
   return `${dateLabel}, ${timeLabel}`;
+}
+
+export async function generateMetadata({ params }: SquadsPageProps): Promise<Metadata> {
+  const { matchId } = await params;
+  const match = await getMatchSummary(matchId);
+  if (!match) {
+    return buildPageMetadata({
+      title: "Match Squads Not Found",
+      description: "The requested match squads could not be found.",
+      path: `/matches/${matchId}/squads`,
+      noIndex: true
+    });
+  }
+
+  return buildPageMetadata({
+    title: `${match.teamA.shortName} vs ${match.teamB.shortName} Squads & Playing XI`,
+    description: `Confirmed Playing XI, captains, wicketkeepers, and full team squads for ${match.teamA.name} vs ${match.teamB.name} (${match.seriesName}).`,
+    path: `/matches/${match.id}/squads`,
+    keywords: [match.teamA.name, match.teamB.name, "playing xi", "squads"]
+  });
 }
 
 export default async function SquadsPage({ params, searchParams }: SquadsPageProps): Promise<React.ReactElement> {
@@ -71,6 +95,17 @@ export default async function SquadsPage({ params, searchParams }: SquadsPagePro
 
     return (
       <div className="space-y-4">
+        <JsonLd
+          data={[
+            buildSportsEventJsonLd(summary, `/matches/${summary.id}/squads`),
+            buildBreadcrumbJsonLd([
+              { name: "Home", path: "/" },
+              { name: "Matches", path: "/matches" },
+              { name: `${summary.teamA.shortName} vs ${summary.teamB.shortName}`, path: `/matches/${summary.id}` },
+              { name: "Squads", path: `/matches/${summary.id}/squads` }
+            ])
+          ]}
+        />
         <MatchTabs matchId={summary.id} currentPath={`/matches/${summary.id}/squads`} status={summary.status} />
         <Card as="section" variant="strong" className="page-hero-card overflow-hidden p-0 text-slate-900">
           <div className="px-4 py-4 sm:px-6 sm:py-5">
@@ -215,6 +250,17 @@ export default async function SquadsPage({ params, searchParams }: SquadsPagePro
 
   return (
     <div className="space-y-4">
+      <JsonLd
+        data={[
+          buildSportsEventJsonLd(summary, `/matches/${summary.id}/squads`),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Matches", path: "/matches" },
+            { name: `${summary.teamA.shortName} vs ${summary.teamB.shortName}`, path: `/matches/${summary.id}` },
+            { name: "Squads", path: `/matches/${summary.id}/squads` }
+          ])
+        ]}
+      />
       <MatchTabs matchId={summary.id} currentPath={`/matches/${summary.id}/squads`} status={summary.status} />
       <AdSlot variant="in-feed" label="Sponsored · Match Squads" />
       <div className="grid gap-4 lg:grid-cols-2">

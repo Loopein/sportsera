@@ -1,10 +1,21 @@
+import type { Metadata } from "next";
 import { FiCalendar } from "react-icons/fi";
 import { LiveMatchList } from "@/components/live/LiveMatchList";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { AdSlot } from "@/components/shared/AdSlot";
 import { Card } from "@/components/ui/card";
 import { getMatches } from "@/lib/api/read";
+import { buildBreadcrumbJsonLd, buildCollectionPageJsonLd } from "@/lib/seo/jsonld";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 
 export const revalidate = 30;
+
+export const metadata: Metadata = buildPageMetadata({
+  title: "Fixtures & Match Schedule",
+  description: "Upcoming international, league, and tournament fixtures, start times, venues, and squad previews.",
+  path: "/fixtures",
+  keywords: ["match fixtures", "upcoming matches", "match schedule"]
+});
 
 export default async function FixturesPage(): Promise<React.ReactElement> {
   const fixtures = await getMatches("upcoming");
@@ -24,6 +35,19 @@ export default async function FixturesPage(): Promise<React.ReactElement> {
 
   return (
     <div className="space-y-6">
+      <JsonLd
+        data={[
+          buildCollectionPageJsonLd({
+            name: "Fixtures & Match Schedule",
+            description: "Upcoming matches, start times, venues, and squad previews.",
+            path: "/fixtures"
+          }),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Fixtures", path: "/fixtures" }
+          ])
+        ]}
+      />
       <Card as="section" variant="strong" className="page-hero-card p-4 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-3">

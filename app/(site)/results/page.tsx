@@ -1,10 +1,21 @@
+import type { Metadata } from "next";
 import { FiCheckCircle } from "react-icons/fi";
 import { LiveMatchList } from "@/components/live/LiveMatchList";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { AdSlot } from "@/components/shared/AdSlot";
 import { Card } from "@/components/ui/card";
 import { getMatches } from "@/lib/api/read";
+import { buildBreadcrumbJsonLd, buildCollectionPageJsonLd } from "@/lib/seo/jsonld";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 
 export const revalidate = 30;
+
+export const metadata: Metadata = buildPageMetadata({
+  title: "Match Results",
+  description: "Recent sports match outcomes, final totals, full scorecards, and post-match summaries.",
+  path: "/results",
+  keywords: ["match results", "final scores", "scorecards"]
+});
 
 export default async function ResultsPage(): Promise<React.ReactElement> {
   const results = await getMatches("completed");
@@ -23,6 +34,19 @@ export default async function ResultsPage(): Promise<React.ReactElement> {
 
   return (
     <div className="space-y-6">
+      <JsonLd
+        data={[
+          buildCollectionPageJsonLd({
+            name: "Match Results",
+            description: "Recent match outcomes, final totals, and full scorecards.",
+            path: "/results"
+          }),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Results", path: "/results" }
+          ])
+        ]}
+      />
       <Card as="section" variant="strong" className="page-hero-card p-4 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-3">

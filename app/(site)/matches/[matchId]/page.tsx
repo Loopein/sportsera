@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { MatchSummaryLive } from "@/app/(site)/matches/[matchId]/MatchSummaryLive";
 import { MatchTabs } from "@/app/(site)/matches/[matchId]/MatchTabs";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { AdSlot } from "@/components/shared/AdSlot";
 import { getMatchSummary } from "@/lib/api/read";
+import { buildBreadcrumbJsonLd, buildSportsEventJsonLd } from "@/lib/seo/jsonld";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 
 type MatchPageProps = {
   params: Promise<{ matchId: string }>;
@@ -13,12 +16,21 @@ export async function generateMetadata({ params }: MatchPageProps): Promise<Meta
   const { matchId } = await params;
   const match = await getMatchSummary(matchId);
   if (!match) {
-    return { title: "Match Not Found" };
+    return buildPageMetadata({
+      title: "Match Not Found",
+      description: "The requested match could not be found.",
+      path: `/matches/${matchId}`,
+      noIndex: true
+    });
   }
-  return {
-    title: `${match.teamA.shortName} vs ${match.teamB.shortName}`,
-    description: `${match.seriesName} live summary, score updates, and match details.`
-  };
+  return buildPageMetadata({
+    title: `${match.teamA.shortName} vs ${match.teamB.shortName} - ${match.seriesName}`,
+    description:
+      match.resultText ||
+      `${match.teamA.name} vs ${match.teamB.name} (${match.format}) in ${match.seriesName} at ${match.venue}. Live score updates and match summary.`,
+    path: `/matches/${match.id}`,
+    keywords: [match.teamA.name, match.teamB.name, match.seriesName, match.format, "live score"]
+  });
 }
 
 export default async function MatchPage({ params }: MatchPageProps): Promise<React.ReactElement> {
@@ -31,6 +43,16 @@ export default async function MatchPage({ params }: MatchPageProps): Promise<Rea
 
   return (
     <div className="space-y-4">
+      <JsonLd
+        data={[
+          buildSportsEventJsonLd(match, `/matches/${match.id}`),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Matches", path: "/matches" },
+            { name: `${match.teamA.shortName} vs ${match.teamB.shortName}`, path: `/matches/${match.id}` }
+          ])
+        ]}
+      />
       <MatchTabs matchId={match.id} currentPath={`/matches/${match.id}`} status={match.status} />
       <AdSlot variant="in-feed" label="Sponsored · Match Summary" />
       <MatchSummaryLive initialMatch={match} />

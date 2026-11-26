@@ -1,11 +1,22 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { FiArrowRight, FiCalendar, FiLayers } from "react-icons/fi";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { AdSlot } from "@/components/shared/AdSlot";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { getSeries } from "@/lib/api/read";
+import { buildBreadcrumbJsonLd, buildCollectionPageJsonLd } from "@/lib/seo/jsonld";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 
 export const revalidate = 30;
+
+export const metadata: Metadata = buildPageMetadata({
+  title: "Series & Tournaments",
+  description: "Browse global sports leagues, international championships, points tables, and tournament schedules.",
+  path: "/series",
+  keywords: ["sports series", "tournaments", "leagues", "championships"]
+});
 
 function statusPillClass(status: string): string {
   if (status === "ongoing") return "bg-emerald-100 text-emerald-800 ring-1 ring-emerald-200";
@@ -18,6 +29,19 @@ export default async function SeriesPage(): Promise<React.ReactElement> {
 
   return (
     <div className="space-y-6">
+      <JsonLd
+        data={[
+          buildCollectionPageJsonLd({
+            name: "Series & Tournaments",
+            description: "Browse global leagues, international championships, points tables, and tournament schedules.",
+            path: "/series"
+          }),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Series", path: "/series" }
+          ])
+        ]}
+      />
       <Card as="section" variant="strong" className="page-hero-card p-4 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-3">

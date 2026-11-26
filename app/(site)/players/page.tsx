@@ -1,11 +1,22 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { FiArrowRight, FiAward, FiUser } from "react-icons/fi";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { AdSlot } from "@/components/shared/AdSlot";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { getPlayers } from "@/lib/api/read";
+import { buildBreadcrumbJsonLd, buildCollectionPageJsonLd } from "@/lib/seo/jsonld";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 
 export const revalidate = 60;
+
+export const metadata: Metadata = buildPageMetadata({
+  title: "Players & Athlete Directory",
+  description: "Athlete profiles, roles, playing styles, career statistics, and recent form across sports.",
+  path: "/players",
+  keywords: ["players", "athlete profiles", "career stats", "recent form"]
+});
 
 function getInitials(name: string): string {
   return (
@@ -23,6 +34,19 @@ export default async function PlayersPage(): Promise<React.ReactElement> {
 
   return (
     <div className="space-y-6">
+      <JsonLd
+        data={[
+          buildCollectionPageJsonLd({
+            name: "Players & Athlete Directory",
+            description: "Athlete profiles, roles, playing styles, career statistics, and recent form.",
+            path: "/players"
+          }),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Players", path: "/players" }
+          ])
+        ]}
+      />
       <Card as="section" variant="strong" className="page-hero-card p-4 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-3">
